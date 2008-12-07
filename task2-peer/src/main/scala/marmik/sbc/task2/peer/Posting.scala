@@ -6,12 +6,12 @@ trait Posting {
 
   def author():String;
   def subject():String;
-  def creation():Date;
+  def createdAt():Date;
   def content():String;
   
-  def responses():List[Posting];
+  def replies():List[Posting];
   def reply(posting:Posting);
   
-  def edit(content:String);
+  def edit(newContent:String);
   
 }

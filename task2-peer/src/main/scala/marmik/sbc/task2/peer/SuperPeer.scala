@@ -4,9 +4,9 @@ trait SuperPeer {
   
   def login(url:String, selfName:String, selfUrl:String);
 
-  def register(l:Listener);
+  def registerListener(l:Listener);
 
-  def getPeers():List[Peer];
+  def peers():List[Peer];
   
   def logout();  
   
