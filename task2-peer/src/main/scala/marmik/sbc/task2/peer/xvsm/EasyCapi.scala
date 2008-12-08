@@ -140,7 +140,7 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfUrl:String, selfName:String) {
     catch {
       case e:InvalidContainerException => { //ContainerNameOccupiedException 
         //e.printStackTrace(); 
-        capi.createContainer(tx, uri, container, -1, coodinators);
+        capi.createContainer(tx, uri, container, -1, coodinators: _*);
       };
     }
   )
