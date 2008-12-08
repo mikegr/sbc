@@ -6,6 +6,7 @@ trait Topic {
   def postings(): List[Posting];
   def subscribe();
   def unsubscribe();
-  def createPosting(posting: Posting);
+  
+  def createPosting(author:String, subject:String, content:String):Posting;
   
 }

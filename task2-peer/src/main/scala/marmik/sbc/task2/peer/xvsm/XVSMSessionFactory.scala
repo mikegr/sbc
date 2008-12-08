@@ -1,0 +1,27 @@
+package marmik.sbc.task2.peer.xvsm
+
+import org.xvsm.interfaces._
+import org.xvsm.core._
+import org.xvsm.transactions._
+import org.xvsm.coordinators._
+import org.xvsm.selectors._
+import marmik.sbc.task2.peer.xvsm.XVSMContants._
+
+class XVSMSessionFactory extends SessionFactory {
+
+  def login(url: String, selfName: String, selfUrl: String):Session =  {
+    val capi = new Capi();
+    val uri = new java.net.URI(url);
+    
+    val easyCapi = new EasyCapi(capi, uri, selfUrl, selfName);
+    
+    //val tx = capi.createTransaction(uri, ICapi.INFINITE_TIMEOUT);
+    //val superpeer = capi.lookupContainer(tx, uri, CONTAINER);
+    
+    easyCapi.writePeerInfo(); 
+ 
+    new XVSMSession(easyCapi, url, selfUrl, selfName);
+    
+  } 
+ 
+}

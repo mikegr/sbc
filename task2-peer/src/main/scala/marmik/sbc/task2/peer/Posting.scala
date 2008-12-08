@@ -10,7 +10,7 @@ trait Posting {
   def content(): String;
   
   def replies(): List[Posting];
-  def reply(posting: Posting);
+  def reply(author:String, subject:String, content:String):Posting;
   
   def edit(newContent: String);
   
