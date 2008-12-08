@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
   <parent>
-        <artifactId>task2-parent</artifactId>
+        <artifactId>task2</artifactId>
         <groupId>marmik.sbc</groupId>
         <version>${sbc.version}</version>
     </parent>
@@ -12,11 +12,6 @@
   <inceptionYear>2008</inceptionYear>
   
   <dependencies>
-    <dependency>
-      <groupId>marmik.sbc</groupId>
-      <artifactId>task2-shared</artifactId>
-      <version>${sbc.version}</version>
-    </dependency>
   </dependencies>
   <build>
     <sourceDirectory>src/main/scala</sourceDirectory>
