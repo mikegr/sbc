@@ -34,12 +34,12 @@
     </dependency>
     <dependency>
       <groupId>org.eclipse.swt</groupId>
-      <artifactId>org.eclipse.swt.gtk.linux.x86.source</artifactId>
+      <artifactId>${swt.os-specific-dep}.source</artifactId>
       <version>[3.4.0,4.0.0)</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.swt</groupId>
-      <artifactId>org.eclipse.swt.gtk.linux.x86</artifactId>
+      <artifactId>${swt.os-specific-dep}</artifactId>
       <version>[3.4.0,4.0.0)</version>
     </dependency>
     <dependency>
@@ -58,6 +58,41 @@
       <version>[3.4.0,4.0.0)</version>
     </dependency>
   </dependencies>
+  <profiles>
+    <profile>
+      <id>unix</id>
+      <activation>
+            <os>
+              <name>Linux</name>
+            </os>
+      </activation>
+      <properties>
+            <swt.os-specific-dep>org.eclipse.swt.gtk.linux.x86</swt.os-specific-dep>
+      </properties>
+    </profile>
+    <profile>
+      <id>windows</id>
+      <activation>
+            <os>
+              <name>Windows</name>
+            </os>
+      </activation>
+      <properties>
+            <swt.os-specific-dep>org.eclipse.swt.win32.win32.x86</swt.os-specific-dep>
+      </properties>
+    </profile>
+    <profile>
+      <id>mac</id>
+      <activation>
+            <os>
+              <name>Mac OS X</name>
+            </os>
+      </activation>
+      <properties>
+        <swt.os-specific-dep>org.eclipse.swt.carbon.macosx</swt.os-specific-dep>
+      </properties>
+    </profile>
+  </profiles>
   <build>
     <sourceDirectory>src/main/scala</sourceDirectory>
     <testSourceDirectory>src/test/scala</testSourceDirectory>
