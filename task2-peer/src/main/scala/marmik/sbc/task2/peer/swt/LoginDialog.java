@@ -1,10 +1,5 @@
 package marmik.sbc.task2.peer.swt;
 
-import org.eclipse.core.databinding.Binding;
-import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.beans.BeansObservables;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -19,8 +14,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 public class LoginDialog extends Dialog {
-  private DataBindingContext m_bindingContext;
-  private Binding testBinding;
   private Text peerNameText;
   private Combo urlCombo;
   private Combo serviceCombo;
@@ -89,25 +82,12 @@ public class LoginDialog extends Dialog {
   protected void createButtonsForButtonBar(Composite parent) {
     createButton(parent, IDialogConstants.OK_ID, "Anmelden", true);
     createButton(parent, IDialogConstants.CANCEL_ID, "Beenden", false);
-    m_bindingContext = initDataBindings();
   }
 
   @Override
   protected void configureShell(Shell newShell) {
     super.configureShell(newShell);
     newShell.setText("Anmelden");
-  }
-
-  protected DataBindingContext initDataBindings() {
-    IObservableValue peerNameTextTextObserveWidget = SWTObservables.observeText(peerNameText, SWT.Modify);
-    IObservableValue urlComboTextObserveValue = BeansObservables.observeValue(urlCombo, "text");
-    //
-    //
-    DataBindingContext bindingContext = new DataBindingContext();
-    //
-    testBinding = bindingContext.bindValue(peerNameTextTextObserveWidget, urlComboTextObserveValue, null, null);
-    //
-    return bindingContext;
   }
 
 }
