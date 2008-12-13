@@ -15,6 +15,6 @@ trait SessionFactory {
    * @param selfName: Name of this peer
    * @param url: Url of this peer 
    */
-  def login(url: String, selfName: String, selfUrl: String):Session;
+  def login(superPeerUrl: String, selfName: String, selfUrl: String):Session;
 
 }

@@ -21,5 +21,8 @@ class XVSMSession(capi:EasyCapi, superpeer:String, selfUrl:String, selfName:Stri
   def logout() {
     capi.logout;
   }
+  def dumpTopics() {
+     capi.dumpTopics();
+  } 
   
 }
