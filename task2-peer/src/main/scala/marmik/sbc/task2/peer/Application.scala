@@ -3,7 +3,7 @@ package marmik.sbc.task2.peer
 import marmik.sbc.task2.peer.swt.LoginDialog
 
 object Application {
-  val log = org.slf4j.LoggerFactory.getLogger(this.getClass.getName);
+  val log = org.slf4j.LoggerFactory.getLogger(this.getClass);
 
   def main(args: Array[String]): Unit = {
     log.info("Starting Task2 Peer")
