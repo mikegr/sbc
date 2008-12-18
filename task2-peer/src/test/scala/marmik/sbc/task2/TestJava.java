@@ -13,7 +13,10 @@ public class TestJava {
 
 	@Test
 	public void test() throws Exception {
+<<<<<<< Updated upstream:task2-peer/src/test/scala/marmik/sbc/task2/TestJava.java
         /*
+=======
+>>>>>>> Stashed changes:task2-peer/src/test/scala/marmik/sbc/task2/TestJava.java
 		System.out.println("TEST");
 	    String uriSetting =  "TcpJava.uri";
 
@@ -37,7 +40,11 @@ public class TestJava {
 
         thisPeer.createTransaction(new URI(otherUrl), ICapi.INFINITE_TIMEOUT);
 
+<<<<<<< Updated upstream:task2-peer/src/test/scala/marmik/sbc/task2/TestJava.java
         */
+=======
+
+>>>>>>> Stashed changes:task2-peer/src/test/scala/marmik/sbc/task2/TestJava.java
 
 	}
 }
