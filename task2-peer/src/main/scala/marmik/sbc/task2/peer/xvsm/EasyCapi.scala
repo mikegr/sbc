@@ -9,12 +9,13 @@ import org.xvsm.internal.exceptions._
 import org.xvsm.coordinators._
 import org.xvsm.selectors._
 import marmik.sbc.task2.peer.xvsm.XVSMContants._
+
 import scala.Null;
 
 import java.net.URI
 
 class EasyCapi(capi:ICapi, superPeer:URI, selfUrl:String, selfName:String) {
-  
+
   val log = org.slf4j.LoggerFactory.getLogger(this.getClass.getName);
 
     /** Writes entry within a transaction*/

@@ -1,4 +1,4 @@
-#Sun Dec 07 13:14:10 CET 2008
+#Thu Dec 18 13:30:30 CET 2008
 TcpXML.sender=org.xvsm.remote.tcpconnection.TcpConnectedTransport
 DefaultAnswerToProtocol=TcpJava
 ReplySenderThreads=5
@@ -8,13 +8,13 @@ EventProcessingThreads=5
 TcpXML.listener=org.xvsm.remote.tcpconnection.TcpConnectedTransport
 SchedulerMaxThreads=1
 RemoteProtocols=TcpJava|TcpXML
-TcpJava.uri=tcpjava\://localhost\:0
+TcpJava.uri=tcpjava\://localhost\:56473
 WebAccess.sender=org.xvsm.remote.tcp.WebAccess
 SchedulerTimeoutDelay=500
 EnableRemoteAccess=true
 TcpJava.marshaller=org.xvsm.remote.marshaller.JavaMarshaller
 TcpXML.marshaller=org.xvsm.remote.marshaller.XMLMarshaller
-WebAccess.marshaller=org.xvsm.remote.tcp.WebAccess
-TcpJava.listener=org.xvsm.remote.tcpconnection.TcpConnectedTransport
 TcpJava.sender=org.xvsm.remote.tcpconnection.TcpConnectedTransport
 WebAccess.listener=org.xvsm.remote.tcp.WebAccess
+TcpJava.listener=org.xvsm.remote.tcpconnection.TcpConnectedTransport
+WebAccess.marshaller=org.xvsm.remote.tcp.WebAccess
