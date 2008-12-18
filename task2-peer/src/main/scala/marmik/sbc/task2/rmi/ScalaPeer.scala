@@ -18,6 +18,9 @@ trait ScalaPeer extends java.rmi.Remote {
   def post(topic:String, id:Integer, author:String, subject:String, content:String );
 
   @throws (classOf[java.rmi.RemoteException])
+  def edit(id:Integer, content:String);
+
+  @throws (classOf[java.rmi.RemoteException])
   def subscribe(topic:String, url:String);
 
   @throws (classOf[java.rmi.RemoteException])
