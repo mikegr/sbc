@@ -10,10 +10,10 @@ object SessionFactory {
 trait SessionFactory {
   def name();
 
-  /** 
+  /**
    * @param url: Url of super pper
    * @param selfName: Name of this peer
-   * @param url: Url of this peer 
+   * @param url: Url of this peer
    */
   def login(superPeerUrl: String, selfName: String, selfUrl: String):Session;
 
