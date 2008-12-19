@@ -4,9 +4,8 @@ import java.rmi._
 import java.rmi.server.UnicastRemoteObject
 import java.util._
 
+@SerialVersionUID(-60061789656005512L)
 class RmiScalaSuperPeer @throws(classOf[java.rmi.RemoteException]) extends UnicastRemoteObject with ScalaSuperPeer   {
-
-	val serialVersionUID:long = -60061789656005512L;
 
 	val list = new ArrayList[ScalaTopic]();
 
