@@ -14,7 +14,7 @@ import scala.Null;
 import java.net.URI
 
 class EasyCapi(capi:ICapi, superPeer:URI, selfUrl:String, selfName:String) {
-  
+
   val log = org.slf4j.LoggerFactory.getLogger(this.getClass.getName);
 
     /** Writes entry within a transaction*/
@@ -23,14 +23,14 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfUrl:String, selfName:String) {
     val entry = new AtomicEntry[SpacePeer](new SpacePeer(selfUrl, selfName));
     val coordinators = Array(new KeyCoordinator(new KeyCoordinator.KeyType("Url", classOf[String]) ), new FifoCoordinator());
     entry.addSelectors(new KeySelector[String]("Url", selfUrl));
-    val tx = transaction(superPeer); 
+    val tx = transaction(superPeer);
     val ct = container(tx, superPeer, CONTAINER_PEERS, coordinators);
     capi.shift(ct,tx, entry);
     //TODO: clear topics;
     capi.commitTransaction(tx);
   }
 
-  
+
   def readPeerInfo():List[XVSMPeer] = {
     val tx = transaction(superPeer);
     val ct = container(tx, superPeer, CONTAINER_PEERS, Array(new FifoCoordinator()));
@@ -38,7 +38,7 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfUrl:String, selfName:String) {
     capi.commitTransaction(tx);
     entries.map(x => {
       val value = x.asInstanceOf[AtomicEntry[SpacePeer]].getValue();
-      new XVSMPeer(this, 
+      new XVSMPeer(this,
                    value.url,
                    value.name)
     }).toList
@@ -52,25 +52,25 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfUrl:String, selfName:String) {
     val entries = capi.read(ct, 0, tx, new LindaSelector(Selector.CNT_ALL, template))
     capi.commitTransaction(tx);
     entries.map(x => {
-       val entry = x.asInstanceOf[Tuple].getEntryAt(3).asInstanceOf[AtomicEntry[SpacePosting]].getValue; 
+       val entry = x.asInstanceOf[Tuple].getEntryAt(3).asInstanceOf[AtomicEntry[SpacePosting]].getValue;
        new XVSMPosting(this, url, name, entry.author, entry.subject, entry.content, entry.date);
     }).toList
   }
-  
+
   def postingContainer(tx:Transaction, uri:URI):ContainerRef =  {
-    container(tx, uri, CONTAINER_POSTINGS, Array(new LindaCoordinator(), new LifoCoordinator()));    
+    container(tx, uri, CONTAINER_POSTINGS, Array(new LindaCoordinator(), new LifoCoordinator()));
   }
-  
+
   def createPosting(url:String, name:String, author:String, subject:String, content:String):Posting = {
     //use LIFO for getting last post id;
     //use Linda for getting postings;
     val uri = if (url == null) null else new URI(url);
     val tx = transaction(uri);
-    val ct = postingContainer(tx, uri); 
-    
+    val ct = postingContainer(tx, uri);
+
     val date = new GregorianCalendar();
-    
-    val newIndex:Long = 
+
+    val newIndex:Long =
     try {
       val lastEntries = capi.read(ct, 0 , tx, new LifoSelector());
       lastEntries(0).asInstanceOf[Tuple].getEntryAt(0).asInstanceOf[AtomicEntry[Long]].getValue() + 1
@@ -80,18 +80,18 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfUrl:String, selfName:String) {
     }
     val tuple = construcPostingTuple(newIndex, name, null, new SpacePosting(author, subject, content, date));
     capi.write(ct, 0, tx, tuple);
-    
+
     capi.commitTransaction(tx);
     new XVSMPosting(this, url, name, author, subject, content, date)
   }
-  
+
   def construcPostingTuple(id:java.lang.Long, topic:java.lang.String, parent:java.lang.Long, post:SpacePosting):Tuple = {
-    new Tuple(if (id == null) null else new AtomicEntry[java.lang.Long](id), //ID 
+    new Tuple(if (id == null) null else new AtomicEntry[java.lang.Long](id), //ID
               if (topic == null) null else new AtomicEntry[java.lang.String](topic),  //topic
               if (parent == null) null else new AtomicEntry[java.lang.Long](parent), //Parent
               if (post == null) null else new AtomicEntry[SpacePosting](post));
   }
-  
+
   def logout() {
     capi.shutdown(null, false)
   }
@@ -103,7 +103,7 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfUrl:String, selfName:String) {
     val tx = transaction(superPeer);
     val ct = container(tx, superPeer, CONTAINER_TOPICS, Array(new LindaCoordinator()));
     val template = new Tuple(new AtomicEntry[java.lang.String](selfUrl), null);
-    
+
     val entries = capi.read(ct, 0, tx, new LindaSelector(Selector.CNT_ALL, template));
     capi.commitTransaction(tx);
     entries.map{ x =>
@@ -112,38 +112,38 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfUrl:String, selfName:String) {
       new XVSMTopic(this, url, name)
     }.toList
   }
-  
+
   /** @param url URL for new Topic. Should be null for local Topic.
    */
-  
+
   def newTopic(url:String, name:String):Topic = {
     val tx = transaction(superPeer);
     val ct = container(tx, superPeer, CONTAINER_TOPICS, Array(new LindaCoordinator()));
     val st = new org.xvsm.core.Tuple(new AtomicEntry[String](selfUrl), new AtomicEntry[String](name));
-    
+
     capi.write(ct, 0, tx, st);
-    
+
     capi.commitTransaction(tx);
-    
+
     new XVSMTopic(this, url, name);
-    
+
   }
-  
+
   def transaction(uri:URI):Transaction = {
     capi.createTransaction(uri, ICapi.INFINITE_TIMEOUT);
   }
-  
+
   def container(tx:Transaction, uri:URI, container:String, coodinators:Array[ICoordinator]):ContainerRef = (
     try {
       capi.lookupContainer(tx, uri, container);
     }
     catch {
-      case e:InvalidContainerException => { //ContainerNameOccupiedException 
-        //e.printStackTrace(); 
+      case e:InvalidContainerException => { //ContainerNameOccupiedException
+        //e.printStackTrace();
         capi.createContainer(tx, uri, container, -1, coodinators: _*);
       };
     }
   )
-  
-  
+
+
 }
