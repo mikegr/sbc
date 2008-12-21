@@ -34,11 +34,6 @@
       </artifactId>
       <version>[1.2.0,2.0.0)</version>
     </dependency>
-    <!--
-      <dependency> <groupId>org.eclipse.swt</groupId>
-      <artifactId>${swt.os-specific-dep}.source</artifactId>
-      <version>[3.4.0,4.0.0)</version> </dependency>
-    -->
     <dependency>
       <groupId>${swt.os-specific-groupId}</groupId>
       <artifactId>${swt.os-specific-artifactId}</artifactId>
