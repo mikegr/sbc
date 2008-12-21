@@ -11,6 +11,31 @@
   <version>${sbc.version}</version>
   <inceptionYear>2008</inceptionYear>
   <packaging>jar</packaging>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+      <groupId>org.eclipse.core</groupId>
+      <artifactId>commands</artifactId>
+      <version>3.4.0-I20080509-2000</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.equinox</groupId>
+      <artifactId>registry</artifactId>
+      <version>3.4.0-v20080516-0950</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.core</groupId>
+      <artifactId>contenttype</artifactId>
+      <version>3.3.0-v20080604-1400</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse</groupId>
+      <artifactId>text</artifactId>
+      <version>3.4.0-v20080605-1800</version>
+    </dependency>
+
+    </dependencies>
+  </dependencyManagement>
   <dependencies>
     <dependency>
       <groupId>org.eclipse</groupId>
