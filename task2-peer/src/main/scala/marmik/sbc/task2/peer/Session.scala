@@ -1,7 +1,7 @@
 package marmik.sbc.task2.peer
 
 trait Session {
-  
+
   /**
    Registers a listener to get notification about new posts or edits.
    */
@@ -10,10 +10,10 @@ trait Session {
   /** Returns list of available peers
    */
   def peers(): List[Peer];
-  
+
   /** Returns local peer */
   def localPeer(): Peer;
-  
-  def logout();  
-  
+
+  def logout();
+
 }
