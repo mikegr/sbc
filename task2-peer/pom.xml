@@ -13,25 +13,24 @@
   <packaging>jar</packaging>
   <dependencies>
     <dependency>
-      <groupId>org.eclipse.osgi</groupId>
-      <artifactId>org.eclipse.osgi</artifactId>
+      <groupId>org.eclipse</groupId>
+      <artifactId>osgi</artifactId>
       <version>[3.4.0,4.0.0)</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.core</groupId>
-      <artifactId>org.eclipse.core.databinding
-      </artifactId>
+      <artifactId>databinding</artifactId>
       <version>[1.1.0,2.0.0)</version>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.core</groupId>
-      <artifactId>org.eclipse.core.databinding.beans
+      <groupId>org.eclipse.core.databinding</groupId>
+      <artifactId>beans
       </artifactId>
       <version>[1.1.0,2.0.0)</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jface</groupId>
-      <artifactId>org.eclipse.jface.databinding
+      <artifactId>databinding
       </artifactId>
       <version>[1.2.0,2.0.0)</version>
     </dependency>
@@ -41,23 +40,23 @@
       <version>[3.4.0,4.0.0)</version> </dependency>
     -->
     <dependency>
-      <groupId>org.eclipse.swt</groupId>
-      <artifactId>${swt.os-specific-dep}</artifactId>
+      <groupId>${swt.os-specific-groupId}</groupId>
+      <artifactId>${swt.os-specific-artifactId}</artifactId>
       <version>[3.4.0,4.0.0)</version>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.swt</groupId>
-      <artifactId>org.eclipse.swt</artifactId>
+      <groupId>org.eclipse</groupId>
+      <artifactId>swt</artifactId>
+      <version>[3.4.0,4.0.0)</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse</groupId>
+      <artifactId>jface</artifactId>
       <version>[3.4.0,4.0.0)</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jface</groupId>
-      <artifactId>org.eclipse.jface</artifactId>
-      <version>[3.4.0,4.0.0)</version>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jface</groupId>
-      <artifactId>org.eclipse.jface.text</artifactId>
+      <artifactId>text</artifactId>
       <version>[3.4.0,4.0.0)</version>
     </dependency>
     <dependency>
@@ -80,8 +79,10 @@
         </os>
       </activation>
       <properties>
-        <swt.os-specific-dep>org.eclipse.swt.gtk.linux.x86
-        </swt.os-specific-dep>
+        <swt.os-specific-groupId>org.eclipse.swt.gtk.linux
+        </swt.os-specific-groupId>
+        <swt.os-specific-artifactId>x86
+        </swt.os-specific-artifactId>
       </properties>
     </profile>
     <profile>
