@@ -1,0 +1,8 @@
+1. Download eclipse 3.4 RCP and unpack it
+2. mvn eclipse:to-maven -DstripQualifier=true -DeclipseDir=/home/user/Downloads/eclipse
+
+If you want to have source attachments in eclipse:
+3. cd ~/.m2/repository/org/eclipse
+4. find . -exec ruby /home/user/projects/task2-peer/eclipse-sources.rb '{}' \;
+
+5. mvn eclipse:eclipse
