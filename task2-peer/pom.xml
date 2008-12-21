@@ -144,6 +144,7 @@
         <artifactId>maven-eclipse-plugin</artifactId>
         <configuration>
           <downloadSources>true</downloadSources>
+          <downloadJavadocs>false</downloadJavadocs>
           <buildcommands>
             <buildcommand>ch.epfl.lamp.sdt.core.scalabuilder
             </buildcommand>
