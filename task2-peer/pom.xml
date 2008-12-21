@@ -132,6 +132,12 @@
             </goals>
             <phase>test-compile</phase>
           </execution>
+          <execution>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
         </executions>
       </plugin>
       <plugin>
