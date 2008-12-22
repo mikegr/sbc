@@ -24,14 +24,12 @@
     </dependency>
     <dependency>
       <groupId>org.eclipse.core.databinding</groupId>
-      <artifactId>beans
-      </artifactId>
+      <artifactId>beans</artifactId>
       <version>[1.1.0,2.0.0)</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jface</groupId>
-      <artifactId>databinding
-      </artifactId>
+      <artifactId>databinding</artifactId>
       <version>[1.2.0,2.0.0)</version>
     </dependency>
     <dependency>
@@ -74,10 +72,8 @@
         </os>
       </activation>
       <properties>
-        <swt.os-specific-groupId>org.eclipse.swt.gtk.linux
-        </swt.os-specific-groupId>
-        <swt.os-specific-artifactId>x86
-        </swt.os-specific-artifactId>
+        <swt.os-specific-groupId>org.eclipse.swt.gtk.linux</swt.os-specific-groupId>
+        <swt.os-specific-artifactId>x86</swt.os-specific-artifactId>
       </properties>
     </profile>
     <profile>
@@ -88,8 +84,7 @@
         </os>
       </activation>
       <properties>
-        <swt.os-specific-dep>org.eclipse.swt.win32.win32.x86
-        </swt.os-specific-dep>
+        <swt.os-specific-dep>org.eclipse.swt.win32.win32.x86</swt.os-specific-dep>
       </properties>
     </profile>
     <profile>
@@ -100,8 +95,7 @@
         </os>
       </activation>
       <properties>
-        <swt.os-specific-dep>org.eclipse.swt.carbon.macosx
-        </swt.os-specific-dep>
+        <swt.os-specific-dep>org.eclipse.swt.carbon.macosx</swt.os-specific-dep>
       </properties>
     </profile>
   </profiles>
@@ -159,18 +153,14 @@
           <downloadSources>true</downloadSources>
           <downloadJavadocs>false</downloadJavadocs>
           <buildcommands>
-            <buildcommand>ch.epfl.lamp.sdt.core.scalabuilder
-            </buildcommand>
+            <buildcommand>ch.epfl.lamp.sdt.core.scalabuilder</buildcommand>
           </buildcommands>
           <additionalProjectnatures>
-            <projectnature>ch.epfl.lamp.sdt.core.scalanature
-            </projectnature>
+            <projectnature>ch.epfl.lamp.sdt.core.scalanature</projectnature>
           </additionalProjectnatures>
           <classpathContainers>
-            <classpathContainer>ch.epfl.lamp.sdt.launching.SCALA_CONTAINER
-            </classpathContainer>
-            <classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER
-            </classpathContainer>
+            <classpathContainer>ch.epfl.lamp.sdt.launching.SCALA_CONTAINER</classpathContainer>
+            <classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER</classpathContainer>
           </classpathContainers>
         </configuration>
       </plugin>
