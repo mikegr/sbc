@@ -1,4 +1,7 @@
 target
+.checkstyle
+.externalToolBuilder
+.nbactions.xml
 .manager
 .classpath
 .project
