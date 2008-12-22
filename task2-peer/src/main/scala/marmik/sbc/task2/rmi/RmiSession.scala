@@ -8,24 +8,26 @@ import scala.collection.jcl.Conversions._
 import scala.collection.mutable._
 
 
-class RmiSession(superPeer:RemoteSuperPeer, selfName:String, selfUrl:String) extends Session {
+class RmiSession(val superPeer:RemoteSuperPeer, selfName:String, selfUrl:String) extends Session {
 
   val logger = org.slf4j.LoggerFactory.getLogger(classOf[RmiSession]);
+
+  val listener = new ListBuffer[Listener]();
   /**
    Registers a listener to get notification about new posts or edits.
    */
   def registerListener(l: Listener) {
-    //TODO:implement
+    listener += l;
   }
 
   /** Returns list of available peers
    */
   def peers(): List[Peer] = {
-    superPeer.peers.map(x => new RmiPeer(superPeer, this, x)).toList;
+    superPeer.peers.map(x => new RmiPeer(this, x)).toList;
   }
 
   /** Returns local peer */
-  val localPeer:Peer = new LocalPeer(superPeer, this, new PeerInfo(selfUrl, selfName));
+  val localPeer:Peer = new LocalPeer(this, new PeerInfo(selfUrl, selfName));
 
   def logout() {
     superPeer.logout(selfUrl);
@@ -37,5 +39,6 @@ class RmiSession(superPeer:RemoteSuperPeer, selfName:String, selfUrl:String) ext
     logger trace ("Lookup of " + url);
     remotePeers.getOrElseUpdate(url, Naming.lookup(url).asInstanceOf[RemotePeer]);
   }
+
 
 }

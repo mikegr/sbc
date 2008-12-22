@@ -10,12 +10,12 @@ import scala.collection.mutable.ListBuffer
 
 import marmik.sbc.task2.peer._
 
-class LocalPeer(sp:RemoteSuperPeer, rmis:RmiSession, p:PeerInfo) extends RmiPeer(sp, rmis, p) {
+class LocalPeer(session:RmiSession, p:PeerInfo) extends RmiPeer(session, p) {
 
   override
   def newTopic(name:String): Topic = {
-    sp.newTopic(url, name);
-    new RmiTopic(sp, rmis, new TopicInfo(url, name));
+    session.superPeer.newTopic(url, name);
+    new RmiTopic(session, new TopicInfo(url, name));
   }
 
 }

@@ -59,6 +59,7 @@ class TestRmi extends TestCase {
              peer1From2.topics.first.postings.first.replies.first.content);
 
 
+      //TODO: check listeners
 
       session1.logout;
       session2.logout;

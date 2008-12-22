@@ -3,7 +3,7 @@ package marmik.sbc.task2.rmi
 import marmik.sbc.task2.peer._
 import scala.collection.jcl.Conversions._
 
-class RmiTopic(superPeer:RemoteSuperPeer, session:RmiSession, internal:TopicInfo) extends Topic {
+class RmiTopic(session:RmiSession, internal:TopicInfo) extends Topic {
 
   val logger = org.slf4j.LoggerFactory.getLogger(classOf[RmiTopic])
   val name:String = internal.name;

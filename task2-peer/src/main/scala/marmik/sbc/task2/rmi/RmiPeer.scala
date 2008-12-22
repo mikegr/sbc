@@ -4,7 +4,7 @@ import marmik.sbc.task2.peer._
 import scala.collection.jcl.Conversions._
 
 
-class RmiPeer(superPeer:RemoteSuperPeer, rmiSession:RmiSession, peerInfo:PeerInfo) extends Peer {
+class RmiPeer(session:RmiSession, peerInfo:PeerInfo) extends Peer {
 
   val logger = org.slf4j.LoggerFactory.getLogger(classOf[RmiPeer]);
   val name = peerInfo.name;
@@ -12,7 +12,7 @@ class RmiPeer(superPeer:RemoteSuperPeer, rmiSession:RmiSession, peerInfo:PeerInf
 
   def topics(): List[Topic] = {
     logger debug("Topcics for " + url + " with name '" + name + "'")
-    superPeer.topics.map(x => new RmiTopic(superPeer, rmiSession, x)).toList;
+    session.superPeer.topics.map(x => new RmiTopic(session, x)).toList;
   }
 
   /**Usually it's only allowed on own peer a*/

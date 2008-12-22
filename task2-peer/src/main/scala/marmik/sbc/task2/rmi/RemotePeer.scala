@@ -31,5 +31,14 @@ trait RemotePeer extends java.rmi.Remote {
 
   @throws (classOf[java.rmi.RemoteException])
   def postEdited(url:String, topic:String, id:Integer);
+
+  @throws (classOf[java.rmi.RemoteException])
+  def peerLoggedIn(url:String, name:String);
+
+  @throws (classOf[java.rmi.RemoteException])
+  def peerLoggedOut(url:String, name:String);
+
+  @throws (classOf[java.rmi.RemoteException])
+  def peerHasNewTopic(url:String, name:String);
 }
 

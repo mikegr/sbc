@@ -16,7 +16,7 @@ import java.rmi._
 import java.rmi.server._
 
 @SerialVersionUID(-1234589656005512L)
-class RemotePeerImpl @throws(classOf[java.rmi.RemoteException]) (selfUrl:String) extends UnicastRemoteObject with RemotePeer {
+class RemotePeerImpl @throws(classOf[java.rmi.RemoteException]) (selfUrl:String, session:RmiSession) extends UnicastRemoteObject with RemotePeer {
 
   val logger = LoggerFactory.getLogger(classOf[RemotePeerImpl]);
 
@@ -70,7 +70,7 @@ class RemotePeerImpl @throws(classOf[java.rmi.RemoteException]) (selfUrl:String)
   }
 
   @throws (classOf[java.rmi.RemoteException])
-  override def edit(id:Integer, content:String) {
+  override def edit(id:Integer, content:String) = synchronized {
     indexPostings.get(id.intValue).foreach{posting =>
       posting content_= content;
       reverse.get(id.intValue).foreach { topic =>
@@ -103,11 +103,33 @@ class RemotePeerImpl @throws(classOf[java.rmi.RemoteException]) (selfUrl:String)
 
   @throws (classOf[java.rmi.RemoteException])
   override def postCreated(url:String, topic:String, id:Integer) = synchronized {
-    //TODO: Notify GUI
+    logger info (selfUrl + ": at " + url + " for topic " + topic + " a post with id " + id + "has been created");
+    session.listener.foreach(_.postingCreated(new RmiPosting(session, url, topic, session.getRemotePeer(url).getPost(id))));
   }
 
   @throws (classOf[java.rmi.RemoteException])
   override def postEdited(url:String, topic:String, id:Integer) = synchronized {
-    //TODO: Notify GUI
+    logger info (selfUrl + ": at " + url + " for topic " + topic + " a post with id " + id + "has been edited");
+    session.listener.foreach(_.postingEdited(new RmiPosting(session, url, topic, session.getRemotePeer(url).getPost(id))));
   }
+
+  @throws (classOf[java.rmi.RemoteException])
+  def peerLoggedIn(url:String, name:String) {
+    logger info (selfUrl + ": peer logged in: " + url + " with name " + name)
+    session.listener.foreach(_.peerJoins(new RmiPeer(session, new PeerInfo(url, name))));
+  }
+
+  @throws (classOf[java.rmi.RemoteException])
+  def peerLoggedOut(url:String, name:String) {
+    logger info (selfUrl + ": peer logged out: " + url + " with name " + name)
+    session.listener.foreach(_.peerLeaves(new RmiPeer(session, new PeerInfo(url, name))));
+  }
+
+  @throws (classOf[java.rmi.RemoteException])
+  def peerHasNewTopic(url:String, name:String) {
+     logger info (selfUrl + ": peer " + url + " has new topic: " + name)
+     //TODO: Add method to listener interface
+     //session.listener.foreach(_.peerLeaves(new RmiPeer(session, new PeerInfo(url, name))));
+  }
+
 }

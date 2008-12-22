@@ -1,6 +1,6 @@
 package marmik.sbc.task2.rmi
 
-class TopicInfo(var url:String, var name:String) extends java.io.Serializable {
+class TopicInfo(val url:String, val name:String) extends java.io.Serializable {
 
   def this() = this("","");
 
