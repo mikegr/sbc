@@ -134,6 +134,17 @@
             </goals>
           </execution>
         </executions>
+        <configuration>
+          <launchers>
+            <launcher>
+              <id>main</id>
+              <mainClass>marmik.sbc.task2.peer.Application</mainClass>
+              <jvmArgs>
+                <jvmArg>-Xmx128m</jvmArg>
+              </jvmArgs>
+            </launcher>
+          </launchers>
+        </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
