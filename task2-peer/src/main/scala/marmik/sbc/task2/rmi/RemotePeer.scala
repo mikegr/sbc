@@ -3,19 +3,19 @@ package marmik.sbc.task2.rmi
 import java.util.List
 import java.lang.Integer
 
-trait ScalaPeer extends java.rmi.Remote {
+trait RemotePeer extends java.rmi.Remote {
 
   @throws (classOf[java.rmi.RemoteException])
-  def getPosting(name:String):List[Posting];
+  def getPostings(name:String):List[PostingInfo];
 
   @throws (classOf[java.rmi.RemoteException])
-  def getPost(id:Integer):Posting;
+  def getPost(id:Integer):PostingInfo;
 
   @throws (classOf[java.rmi.RemoteException])
-  def getReplys(id:Integer):List[Posting];
+  def getReplys(id:Integer):List[PostingInfo];
 
   @throws (classOf[java.rmi.RemoteException])
-  def post(topic:String, id:Integer, author:String, subject:String, content:String );
+  def post(topic:String, id:Integer, author:String, subject:String, content:String ):Integer;
 
   @throws (classOf[java.rmi.RemoteException])
   def edit(id:Integer, content:String);

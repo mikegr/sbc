@@ -10,54 +10,63 @@ import scala.collection.mutable.ListBuffer
 
 import scala.actors.Actor._
 
-class ScalaPeerImpl(selfUrl:String) extends ScalaPeer {
+import marmik.sbc.task2._
+import org.slf4j._
+import java.rmi._
+import java.rmi.server._
+
+@SerialVersionUID(-1234589656005512L)
+class RemotePeerImpl @throws(classOf[java.rmi.RemoteException]) (selfUrl:String) extends UnicastRemoteObject with RemotePeer {
+
+  val logger = LoggerFactory.getLogger(classOf[RemotePeerImpl]);
 
   var index:Int = 0;
 
-  val postings = new HashMap[String, List[Posting]]();
-  val children = new HashMap[Int, List[Posting]]();
+  val postings = new HashMap[String, List[PostingInfo]]();
+  val children = new HashMap[Int, List[PostingInfo]]();
 
-  val indexPostings = new HashMap[Int, Posting]();
+  val indexPostings = new HashMap[Int, PostingInfo]();
   val reverse = new HashMap[Int, String]();
 
   @throws (classOf[java.rmi.RemoteException])
-  override def getPosting(name:String):List[Posting] = synchronized {
+  override def getPostings(name:String):List[PostingInfo] = synchronized {
      postings.getOrElse(name, null);
   }
 
   @throws (classOf[java.rmi.RemoteException])
-  override def getPost(id:Integer):Posting = synchronized {
+  override def getPost(id:Integer):PostingInfo = synchronized {
     indexPostings.getOrElse(id.intValue, null);
   }
 
   @throws (classOf[java.rmi.RemoteException])
-  override def getReplys(id:Integer):java.util.List[Posting] = synchronized {
+  override def getReplys(id:Integer):java.util.List[PostingInfo] = synchronized {
     children.getOrElse(id.intValue(), null);
   }
 
   @throws (classOf[java.rmi.RemoteException])
-  override def post(topic:String, id:Integer, author:String, subject:String, content:String ) = synchronized {
+  override def post(topic:String, id:Integer, author:String, subject:String, content:String ):Integer = synchronized {
     index =  index.intValue + 1;
-    val post = new Posting(index, null, author, subject, content, new GregorianCalendar());
+    val post = new PostingInfo(index, null, author, subject, content, new GregorianCalendar());
     indexPostings += ((index, post));
     if (id == null) {
-      postings.getOrElseUpdate(topic, new ArrayList[Posting]()) += post;
+      postings.getOrElseUpdate(topic, new ArrayList[PostingInfo]()) += post;
 
     }
     else {
-      children.getOrElseUpdate(id.intValue(), new ArrayList[Posting]()) += post;
+      children.getOrElseUpdate(id.intValue(), new ArrayList[PostingInfo]()) += post;
     }
     reverse += (index -> topic);
     subscriptions.get(topic).foreach{list =>
       list.foreach { url =>
         val notifier = actor {
           receive {
-            case u:String => java.rmi.Naming.lookup(u).asInstanceOf[ScalaPeer].postCreated(selfUrl, topic, index);
+            case u:String => java.rmi.Naming.lookup(u).asInstanceOf[RemotePeer].postCreated(selfUrl, topic, index);
           }
         }
         notifier ! url;
       }
     }
+    index
   }
 
   @throws (classOf[java.rmi.RemoteException])
@@ -69,7 +78,7 @@ class ScalaPeerImpl(selfUrl:String) extends ScalaPeer {
           list.foreach { url =>
             val notifier = actor {
               receive {
-                case u:String => java.rmi.Naming.lookup(u).asInstanceOf[ScalaPeer].postEdited(selfUrl, topic, index);
+                case u:String => java.rmi.Naming.lookup(u).asInstanceOf[RemotePeer].postEdited(selfUrl, topic, id);
               } //reverse
             }
             notifier ! url;
@@ -93,8 +102,12 @@ class ScalaPeerImpl(selfUrl:String) extends ScalaPeer {
   }
 
   @throws (classOf[java.rmi.RemoteException])
-  override def postCreated(url:String, topic:String, id:Integer) = synchronized {null}
+  override def postCreated(url:String, topic:String, id:Integer) = synchronized {
+    //TODO: Notify GUI
+  }
 
   @throws (classOf[java.rmi.RemoteException])
-  override def postEdited(url:String, topic:String, id:Integer) = synchronized {null}
+  override def postEdited(url:String, topic:String, id:Integer) = synchronized {
+    //TODO: Notify GUI
+  }
 }

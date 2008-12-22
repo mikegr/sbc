@@ -5,7 +5,7 @@ import java.util._
 
 
 @SerialVersionUID(3198400326138638466L)
-class Posting(var id:Integer, var parent:Integer,
+class PostingInfo(var id:Integer, var parent:Integer,
               var author:String, var subject:String,
               var content:String, var date:GregorianCalendar) extends java.io.Serializable {
 
