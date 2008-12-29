@@ -12,7 +12,7 @@ class RmiPeer(session:RmiSession, peerInfo:PeerInfo) extends Peer {
 
   def topics(): List[Topic] = {
     logger debug("Topcics for " + url + " with name '" + name + "'")
-    session.superPeer.topics.map(x => new RmiTopic(session, x)).toList;
+    session.superPeer.topics.map(x => new RmiTopic(session, x.url, x.name)).toList;
   }
 
   /**Usually it's only allowed on own peer a*/

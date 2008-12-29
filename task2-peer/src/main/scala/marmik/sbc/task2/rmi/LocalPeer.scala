@@ -15,7 +15,7 @@ class LocalPeer(session:RmiSession, p:PeerInfo) extends RmiPeer(session, p) {
   override
   def newTopic(name:String): Topic = {
     session.superPeer.newTopic(url, name);
-    new RmiTopic(session, new TopicInfo(url, name));
+    new RmiTopic(session, url, name);
   }
 
 }

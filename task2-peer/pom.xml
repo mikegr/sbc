@@ -55,7 +55,7 @@
     <dependency>
       <groupId>com.workingmouse</groupId>
       <artifactId>scalaz</artifactId>
-      <version>[3.0,4.0)</version>
+      <version>3.0</version>
     </dependency>
     <dependency>
       <groupId>org.scalaforge</groupId>

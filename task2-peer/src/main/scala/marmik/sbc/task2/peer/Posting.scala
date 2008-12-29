@@ -4,6 +4,9 @@ import java.util.GregorianCalendar
 
 trait Posting {
 
+  def topic():Topic;
+  def parent():Posting;
+
   def author(): String;
   def subject(): String;
   def createdAt(): GregorianCalendar;

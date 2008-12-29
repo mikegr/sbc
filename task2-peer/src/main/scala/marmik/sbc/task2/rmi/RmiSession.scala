@@ -7,8 +7,7 @@ import java.rmi._
 import scala.collection.jcl.Conversions._
 import scala.collection.mutable._
 
-
-class RmiSession(val superPeer:RemoteSuperPeer, selfName:String, selfUrl:String) extends Session {
+class RmiSession(val superPeer:RemoteSuperPeer, val selfName:String, val selfUrl:String) extends Session {
 
   val logger = org.slf4j.LoggerFactory.getLogger(classOf[RmiSession]);
 
@@ -41,4 +40,13 @@ class RmiSession(val superPeer:RemoteSuperPeer, selfName:String, selfUrl:String)
   }
 
 
+  override
+  def equals(o:Any):Boolean = {
+    if (o.isInstanceOf[RmiSession]) {
+      val rs = o.asInstanceOf[RmiSession]
+      if (rs.selfUrl == this.selfUrl &&
+            rs.selfName == this.selfName) true;
+    }
+    false
+  }
 }

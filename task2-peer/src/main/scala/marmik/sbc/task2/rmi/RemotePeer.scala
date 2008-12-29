@@ -15,6 +15,9 @@ trait RemotePeer extends java.rmi.Remote {
   def getReplys(id:Integer):List[PostingInfo];
 
   @throws (classOf[java.rmi.RemoteException])
+  def getParents(id:Integer):List[PostingInfo];
+
+  @throws (classOf[java.rmi.RemoteException])
   def post(topic:String, parent:Integer, author:String, subject:String, content:String ):Integer;
 
   @throws (classOf[java.rmi.RemoteException])

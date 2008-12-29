@@ -1,7 +1,4 @@
-package marmik.sbc.task2
-
-import marmik.sbc.task2.peer._
-import marmik.sbc.task2.peer.xvsm._
+package marmik.sbc.task2.rmi
 
 import junit.framework._
 import junit.framework.Assert._
@@ -9,29 +6,30 @@ import junit.framework.Assert._
 import java.net.URI
 import java.rmi.server._
 
-object TestMain {
-    
-  def main(args:Array[String]) {
+import marmik.sbc.task2.peer._
+import marmik.sbc.task2.rmi._
 
-    println("Start")
-    org.xvsm.server.Server.main(Array("spaces1.prop"));
-    org.xvsm.server.Server.main(Array("spaces2.prop"));
 
-    val peer1Name = "Peer1"
-    val peer2Name = "Peer2"
+class TestRmi extends TestCase {
 
-    val superPeerUrl = "tcpjava://localhost:56473";
-    val peer1Url = "tcpjava://localhost:56474";
-    val peer2Url = "tcpjava://localhost:56475";
+   def testRmi() {
 
-    val factory = new XVSMSessionFactory();
+      //setup superPeer
+      val superPeerUrl = "rmi://localhost/superpeer";
+      val peer1Url = "rmi://localhost/peer1"
+      val peer2Url = "rmi://localhost/peer2"
+      val peer1Name = "Peer1"
+      val peer2Name = "Peer2"
 
-    val session1 = factory.login(superPeerUrl, peer1Name, peer1Url);
+      val superPeer = SuperPeerMain.setup(superPeerUrl);
+
+      val sf1:SessionFactory = new RmiSessionFactory();
+      val session1 = sf1.login(superPeerUrl, peer1Name, peer1Url);
       val localPeer1 = session1.localPeer;
       val topic1 = localPeer1.newTopic("Peer1/Topic1");
 
-
-      val session2 = factory.login(superPeerUrl, peer2Name, peer2Url);
+      val sf2:SessionFactory = new RmiSessionFactory();
+      val session2 = sf2.login(superPeerUrl, peer2Name, peer2Url);
       val localPeer2 = session2.localPeer;
       val topic2 = localPeer2.newTopic("Peer2/Topic1");
 
@@ -61,17 +59,11 @@ object TestMain {
              peer1From2.topics.first.postings.first.replies.first.content);
 
 
+      //TODO: check listeners
 
       session1.logout;
       session2.logout;
+      UnicastRemoteObject.unexportObject(superPeer, true);
 
-
-
-    //start local
-    //junit.textui.TestRunner.run(classOf[TestXVSM]);
-    println("end")
-    System.exit(0)
-  }
+   }
 }
-
-

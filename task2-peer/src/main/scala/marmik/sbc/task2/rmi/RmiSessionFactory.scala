@@ -32,4 +32,5 @@ class RmiSessionFactory extends SessionFactory {
     session;
   }
 
+
 }
