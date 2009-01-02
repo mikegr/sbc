@@ -144,10 +144,10 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfUrl:String, selfName:String) {
 
 
   def constructReadingPostingTuple(id:java.lang.Long, topic:java.lang.String, parent:java.lang.Long, post:SpacePosting):Tuple = {
-    new Tuple(if (id == null) null else new AtomicEntry[java.lang.Long](id), //ID
-              if (topic == null) null else new AtomicEntry[java.lang.String](topic),  //topic
-              if (parent == null) null else new AtomicEntry[java.lang.Long](parent), //Parent
-              if (post == null) null else new AtomicEntry[SpacePosting](post));
+    new Tuple(constructAtomicEntry(classOf[id], id), //ID
+              constructAtomicEntry(classOf[topic], topic),  //topic
+              constructAtomicEntry(classOf[parent], parent), //Parent
+              constructAtomicEntry(classOf[post], post));
   }
 
   def logout() {
