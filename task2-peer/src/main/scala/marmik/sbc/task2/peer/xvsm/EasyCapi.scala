@@ -45,30 +45,67 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfUrl:String, selfName:String) {
     }).toList
   }
 
-  def postings(url:String, name:String):List[Posting] = {
-    val uri = if (url == selfUrl) null else new URI(url);
+  def postings(topic:XVSMTopic):List[Posting] = {
+    postingsInternal(topic, null);
+  }
+  
+  def getUri(url:String):URI = if (url == selfUrl) null else new URI(url);
+  
+  def postingsInternal(topic:XVSMTopic, posting:XVSMPosting):List[XVSMPosting] = {
+    val url = topic.url;
+    val topicName = topic.name;
+    val postingId:java.lang.Long = if (posting != null) posting.id else null;
+    val uri = getUri(url); 
     val tx = transaction(uri);
     val ct = postingContainer(tx, uri);
-    val template = construcPostingTuple(null, name, null, null);
+    val template = constructReadingPostingTuple(null, topicName, postingId, null);
     val entries = capi.read(ct, 0, tx, new LindaSelector(Selector.CNT_ALL, template))
     capi.commitTransaction(tx);
-    entries.map(x => {
-       val entry = x.asInstanceOf[Tuple].getEntryAt(3).asInstanceOf[AtomicEntry[SpacePosting]].getValue;
-       new XVSMPosting(this, url, name, entry.author, entry.subject, entry.content, entry.date);
-    }).toList
+    entries.map(x => entry2Posting(topic, posting, x)).toList;
   }
+  
+  def dumpPostings(url:String) {
+    val uri = getUri(url); 
+    val tx = transaction(uri);
+    val ct = postingContainer(tx, uri);
+    val template = constructReadingPostingTuple(null, null, null, null);
+    val entries = capi.read(ct, 0, tx, new LindaSelector(Selector.CNT_ALL, template))
+    capi.commitTransaction(tx);
+    entries.foreach{x => 
+      val tuple = x.asInstanceOf[Tuple];
+      val output:String = tuple.getEntryAt(0).asInstanceOf[AtomicEntry[Long]].getValue + 
+        tuple.getEntryAt(1).asInstanceOf[AtomicEntry[String]].getValue +
+        //tuple.getEntryAt(2).asInstanceOf[AtomicEntry[Long]].getValue + 
+        tuple.getEntryAt(3).asInstanceOf[AtomicEntry[SpacePosting]].getValue;
+      Console.println(output);
+    }  
+  }
+  
+  def entry2Posting(topic:XVSMTopic, parent:XVSMPosting, x:Entry):XVSMPosting = {
+    val tuple = x.asInstanceOf[Tuple]
+    val idx = tuple.getEntryAt(0).asInstanceOf[AtomicEntry[Long]].getValue;
+    val entry = tuple.getEntryAt(3).asInstanceOf[AtomicEntry[SpacePosting]].getValue;
+    new XVSMPosting(this, topic, parent, idx, entry.author, entry.subject, entry.content, entry.date);
+  }
+  
 
   def postingContainer(tx:Transaction, uri:URI):ContainerRef =  {
     container(tx, uri, CONTAINER_POSTINGS, Array(new LindaCoordinator(), new LifoCoordinator()));
   }
 
-  def createPosting(url:String, name:String, author:String, subject:String, content:String):Posting = {
+  def createPosting(topic:XVSMTopic, author:String, subject:String, content:String):Posting = 
+    createPostingInternal(topic, null, author,subject, content);
+  
+  def createPostingInternal (topic:XVSMTopic, parent:XVSMPosting, author:String, subject:String, content:String):XVSMPosting = {
+    val url = topic.url;
+    val name = topic.name;
     //use LIFO for getting last post id;
     //use Linda for getting postings;
     val uri = if (url == selfUrl) null else new URI(url);
     val tx = transaction(uri);
     val ct = postingContainer(tx, uri);
-
+    val parentId:java.lang.Long = if (parent != null) parent.id else null;
+    
     val date = new GregorianCalendar();
 
     val newIndex:Long =
@@ -79,14 +116,27 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfUrl:String, selfName:String) {
     catch {
       case e:CountNotMetException => 0;
     }
-    val tuple = construcPostingTuple(newIndex, name, null, new SpacePosting(author, subject, content, date));
+    
+    val tuple = constructWritingPostingTuple(newIndex, name, parentId, new SpacePosting(author, subject, content, date));
     capi.write(ct, 0, tx, tuple);
 
     capi.commitTransaction(tx);
-    new XVSMPosting(this, url, name, author, subject, content, date)
+    new XVSMPosting(this, topic, parent, newIndex, author, subject, content, date)
   }
 
-  def construcPostingTuple(id:java.lang.Long, topic:java.lang.String, parent:java.lang.Long, post:SpacePosting):Tuple = {
+  def constructWritingPostingTuple(id:java.lang.Long, topic:java.lang.String, parent:java.lang.Long, post:SpacePosting):Tuple = {
+    new Tuple(if (id == null) new AtomicEntry[java.lang.Long](classOf[java.lang.Long])
+                else new AtomicEntry[java.lang.Long](id), //ID
+              if (topic == null) new AtomicEntry[java.lang.String](classOf[java.lang.String])
+                else new AtomicEntry[java.lang.String](topic),  //topic
+              if (parent == null) new AtomicEntry[java.lang.Long](classOf[java.lang.Long]) 
+                else new AtomicEntry[java.lang.Long](parent), //Parent
+              if (post == null) new AtomicEntry[SpacePosting](classOf[SpacePosting])
+                else new AtomicEntry[SpacePosting](post)); //Posting
+  }
+  
+
+  def constructReadingPostingTuple(id:java.lang.Long, topic:java.lang.String, parent:java.lang.Long, post:SpacePosting):Tuple = {
     new Tuple(if (id == null) null else new AtomicEntry[java.lang.Long](id), //ID
               if (topic == null) null else new AtomicEntry[java.lang.String](topic),  //topic
               if (parent == null) null else new AtomicEntry[java.lang.Long](parent), //Parent
@@ -160,6 +210,25 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfUrl:String, selfName:String) {
       };
     }
   )
-
-
+  
+  def reply(posting:XVSMPosting, author:String, subject:String, content:String):XVSMPosting = {
+    createPostingInternal(posting.topic, posting, author, subject, content)
+  }
+  
+  def replies(posting:XVSMPosting):List[XVSMPosting] = {
+    postingsInternal(posting.topic, posting);
+  }
+  
+  def editPosting(posting:XVSMPosting, newContent:String) {
+    val uri = getUri(posting.topic.url); 
+    val tx = transaction(uri);
+    val ct = postingContainer(tx, uri);
+    val template = constructReadingPostingTuple(posting.id, null, null, null);
+    val entry = capi.take(ct, 0, tx, new LindaSelector(Selector.CNT_ALL, template)).first;
+    val spacePosting = entry.asInstanceOf[Tuple].getEntryAt(3).asInstanceOf[AtomicEntry[SpacePosting]].getValue;
+    spacePosting.content = newContent;
+    capi.write(ct, 0, tx, entry);
+    capi.commitTransaction(tx);
+  }
+  
 }

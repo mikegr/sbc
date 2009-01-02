@@ -13,7 +13,11 @@ class XVSMSession(capi:EasyCapi, superpeer:String, selfUrl:String, selfName:Stri
   
   val localPeer = new XVSMLocalPeer(capi, selfUrl, selfName); //setting url to null, because of embedded space
   
-  def registerListener(l:Listener) = {}
+  val listener:ListBuffer = new ListBuffer[Listener]();
+    
+  def registerListener(l:Listener) = {
+    listener + l;
+  }
   def peers():List[Peer] = {
     capi.readPeerInfo();
   }

@@ -5,7 +5,7 @@ import java.util.GregorianCalendar;
 import marmik.sbc.task2.peer._
 import scala.collection.jcl.Conversions._
 
-class RmiPosting(val session:RmiSession, val topic:RmiTopic, val parents:RmiPosting, val internal:PostingInfo) extends Posting {
+class RmiPosting(val session:RmiSession, val topic:RmiTopic, val parent:RmiPosting, val internal:PostingInfo) extends Posting {
 
   val logger = org.slf4j.LoggerFactory.getLogger(classOf[RmiPosting]);
 

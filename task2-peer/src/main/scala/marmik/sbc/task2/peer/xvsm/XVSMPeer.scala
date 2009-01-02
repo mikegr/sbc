@@ -17,4 +17,8 @@ class XVSMPeer(ec:EasyCapi, val url:String, val name:String) extends Peer {
     else if (o.asInstanceOf[XVSMPeer].url != this.url) false
     else true;
   }
+  
+  def dumpPostings() {
+    ec.dumpPostings(url);
+  }
 }

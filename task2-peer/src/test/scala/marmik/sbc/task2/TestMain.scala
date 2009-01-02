@@ -2,6 +2,7 @@ package marmik.sbc.task2
 
 import marmik.sbc.task2.peer._
 import marmik.sbc.task2.peer.xvsm._
+import marmik.sbc.task2.peer.xvsm.XVSMSessionFactory
 
 import junit.framework._
 import junit.framework.Assert._
@@ -10,8 +11,8 @@ import java.net.URI
 import java.rmi.server._
 
 object TestMain {
-    
-  def main(args:Array[String]) {
+  
+  def testXVSM() {
 
     println("Start")
     org.xvsm.server.Server.main(Array("spaces1.prop"));
@@ -36,8 +37,10 @@ object TestMain {
       val topic2 = localPeer2.newTopic("Peer2/Topic1");
 
 
-      assertEquals("2 peers", 2, session2.peers.size);
-      val peer1From2 = session2.peers.find(x=> x != localPeer1).get;
+      
+      val peersFrom2 = session2.peers;
+      assertEquals("2 peers", 2, peersFrom2.size);
+      val peer1From2 = peersFrom2.find(x=> x == localPeer1).get;
       assertEquals("Check peer1 from peer2", peer1Name, peer1From2.name);
 
       assertEquals("Check Topic1", "Peer1/Topic1", peer1From2.topics.first.name);
@@ -52,6 +55,8 @@ object TestMain {
 
       postCheckedBy1.reply("Peer1Author", "SubjectReply", "ReplyFrom1" );
 
+      peer1From2.asInstanceOf[XVSMPeer].dumpPostings;
+      
       assertEquals("Check reply of peer1 by peer2", "ReplyFrom1",
              peer1From2.topics.first.postings.first.replies.first.content);
 
@@ -72,6 +77,12 @@ object TestMain {
     println("end")
     System.exit(0)
   }
+  
+    
+  def main(args:Array[String]) {
+    testXVSM();
+  }
+  
 }
 
 
