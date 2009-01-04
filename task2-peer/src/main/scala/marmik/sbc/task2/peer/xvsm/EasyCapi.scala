@@ -4,6 +4,11 @@ import java.util.GregorianCalendar
 import org.xvsm.interfaces._
 import org.xvsm.core._
 import org.xvsm.core.Tuple
+import org.xvsm.core._
+import org.xvsm.core.notifications._
+import org.xvsm.core.aspect._
+import org.xvsm.core.aspect.LocalIPoint
+
 import org.xvsm.transactions._
 import org.xvsm.internal.exceptions._
 import org.xvsm.coordinators._
@@ -14,7 +19,7 @@ import scala.Null;
 
 import java.net.URI
 
-class EasyCapi(capi:ICapi, superPeer:URI, selfUrl:String, selfName:String) {
+class EasyCapi(capi:ICapi, superPeer:URI, selfUrl:String, selfName:String) extends NotificationListenerAdapter {
 
   val log = org.slf4j.LoggerFactory.getLogger(this.getClass.getName);
 
@@ -135,13 +140,6 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfUrl:String, selfName:String) {
                 else new AtomicEntry[SpacePosting](post)); //Posting
   }
 
-  def constructAtomicEntry[A](clazz: Class[A], value: A): AtomicEntry[A] = {
-    if(value == null)
-      new AtomicEntry[A](clazz)
-    else
-      new AtomicEntry[A](value)
-  }
-
 
   def constructReadingPostingTuple(id:java.lang.Long, topic:java.lang.String, parent:java.lang.Long, post:SpacePosting):Tuple = {
     new Tuple(constructAtomicEntry(classOf[java.lang.Long], id), //ID
@@ -149,6 +147,7 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfUrl:String, selfName:String) {
               constructAtomicEntry(classOf[java.lang.Long], parent), //Parent
               constructAtomicEntry(classOf[SpacePosting], post));
   }
+
 
   def logout() {
     capi.shutdown(null, false)
@@ -236,6 +235,28 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfUrl:String, selfName:String) {
     spacePosting.content = newContent;
     capi.write(ct, 0, tx, entry);
     capi.commitTransaction(tx);
+  }
+
+  def subscribe(topic: XVSMTopic) {
+      val uri = getUri(topic.url);
+      val tx = transaction(uri);
+      val ct = postingContainer(tx, uri);
+      capi.commitTransaction(tx);
+
+      topic.listener = capi.createNotification(postingContainer(tx, uri), this, Operation.Write);
+
+  }
+
+  def unsubscribe(topic: XVSMTopic) {
+      val uri = getUri(topic.url);
+      val tx = transaction(uri);
+      val ct = postingContainer(tx, uri);
+      capi.removeAspect(ct, java.util.Arrays.asList(LocalIPoint.PostWrite), topic.listener);
+      capi.commitTransaction(tx);
+  }
+
+  def handleNotificationScala(op:Operation, entries:Array[Entry]):Unit = {
+     log debug "handleNotification called"
   }
 
 }

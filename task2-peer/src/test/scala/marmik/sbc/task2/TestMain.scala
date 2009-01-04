@@ -11,12 +11,12 @@ import java.net.URI
 import java.rmi.server._
 
 object TestMain {
-  
+
   def testXVSM() {
 
     println("Start")
-    org.xvsm.server.Server.main(Array("spaces1.prop"));
-    org.xvsm.server.Server.main(Array("spaces2.prop"));
+    org.xvsm.server.Server.main(Array("spaces1.prop")); //superpeer
+    org.xvsm.server.Server.main(Array("spaces2.prop")); //peer1
 
     val peer1Name = "Peer1"
     val peer2Name = "Peer2"
@@ -37,13 +37,32 @@ object TestMain {
       val topic2 = localPeer2.newTopic("Peer2/Topic1");
 
 
-      
       val peersFrom2 = session2.peers;
       assertEquals("2 peers", 2, peersFrom2.size);
       val peer1From2 = peersFrom2.find(x=> x == localPeer1).get;
       assertEquals("Check peer1 from peer2", peer1Name, peer1From2.name);
 
       assertEquals("Check Topic1", "Peer1/Topic1", peer1From2.topics.first.name);
+
+      var calls:Int = 0
+
+      session2.registerListener(new Listener() {
+                            def peerJoins(peer: Peer) {
+                              calls += 1;
+                            };
+                            def peerLeaves(peer: Peer) {
+                              calls += 1;
+                            };
+                            def postingCreated(posting: Posting) {
+                              calls += 1;
+                            };
+                            def postingEdited(posting: Posting) {
+                              calls += 1;
+                            };
+
+                        });
+
+      peer1From2.topics.first.subscribe;
 
       peer1From2.topics.first.createPosting("Peer2Author", "SubjectX", "ContentFrom2");
 
@@ -56,7 +75,7 @@ object TestMain {
       postCheckedBy1.reply("Peer1Author", "SubjectReply", "ReplyFrom1" );
 
       peer1From2.asInstanceOf[XVSMPeer].dumpPostings;
-      
+
       assertEquals("Check reply of peer1 by peer2", "ReplyFrom1",
              peer1From2.topics.first.postings.first.replies.first.content);
 
@@ -77,12 +96,12 @@ object TestMain {
     println("end")
     System.exit(0)
   }
-  
-    
+
+
   def main(args:Array[String]) {
     testXVSM();
   }
-  
+
 }
 
 
