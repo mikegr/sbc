@@ -34,8 +34,6 @@ object Application {
       loginAction.execute(factories)
     }: Unit)
 
-
     log.info("Terminating Task2 Peer")
-
   }
 }
