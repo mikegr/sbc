@@ -27,6 +27,6 @@ object Application {
         case None => log.info("User aborted")
       }
       log.info("Terminating Task2 Peer")
-    }: Unit)
+    })
   }
 }
