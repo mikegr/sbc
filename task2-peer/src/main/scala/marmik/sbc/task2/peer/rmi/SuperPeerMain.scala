@@ -5,7 +5,7 @@
  * and open the template in the editor.
  */
 
-package marmik.sbc.task2.rmi
+package marmik.sbc.task2.peer.rmi
 
 import java.rmi.Naming;
 import java.rmi.registry.LocateRegistry;

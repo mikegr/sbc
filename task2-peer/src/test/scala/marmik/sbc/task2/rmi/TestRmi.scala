@@ -1,4 +1,4 @@
-package marmik.sbc.task2.rmi
+package marmik.sbc.task2.peer.rmi
 
 import junit.framework._
 import junit.framework.Assert._
@@ -7,7 +7,7 @@ import java.net.URI
 import java.rmi.server._
 
 import marmik.sbc.task2.peer._
-import marmik.sbc.task2.rmi._
+import marmik.sbc.task2.peer.rmi._
 
 
 class TestRmi extends TestCase {

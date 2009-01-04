@@ -7,7 +7,7 @@ import java.net.URI
 import java.rmi.server._
 
 import marmik.sbc.task2.peer._
-import marmik.sbc.task2.rmi._
+import marmik.sbc.task2.peer.rmi._
 
 class TestRMI extends TestCase {
 

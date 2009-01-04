@@ -1,4 +1,4 @@
-package marmik.sbc.task2.rmi
+package marmik.sbc.task2.peer.rmi
 
 import marmik.sbc.task2.peer._
 

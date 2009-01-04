@@ -1,4 +1,4 @@
-package marmik.sbc.task2.rmi
+package marmik.sbc.task2.peer.rmi
 
 import java.rmi._
 import java.rmi.registry._
