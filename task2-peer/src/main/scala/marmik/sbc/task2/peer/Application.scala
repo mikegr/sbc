@@ -14,15 +14,18 @@ object Application {
 
   def main(args: Array[String]): Unit = {
     log.info("Starting Task2 Peer")
-
-    val factories = List(new MockSessionFactory(), new XVSMSessionFactory())
-
     val display = new Display();
-    JFaceHelpers.withRealm( () => {
-      val loginAction = new LoginAction()
-      loginAction.execute(factories)
-    }: Unit)
 
-    log.info("Terminating Task2 Peer")
+    JFaceHelpers.withRealm( () => {
+      val factories = List(new MockSessionFactory(), new XVSMSessionFactory())
+      val loginAction = new LoginAction()
+      loginAction.execute(factories) match {
+        case Some(session) =>
+          log.info("Connected")
+          log.warn("TODO: Continue GUI")
+        case None => log.info("User aborted")
+      }
+      log.info("Terminating Task2 Peer")
+    }: Unit)
   }
 }

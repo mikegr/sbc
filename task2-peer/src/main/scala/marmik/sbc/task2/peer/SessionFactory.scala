@@ -8,7 +8,7 @@ object SessionFactory {
 }
 
 trait SessionFactory {
-  def name();
+  def name(): String;
 
   /**
    * @param url: Url of super pper
