@@ -148,6 +148,12 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfUrl:String, selfName:String) exten
               constructAtomicEntry(classOf[SpacePosting], post));
   }
 
+  def constructAtomicEntry[A](clazz: Class[A], value: A): AtomicEntry[A] = {
+    if(value == null)
+      new AtomicEntry[A](clazz)
+    else
+      new AtomicEntry[A](value)
+  }
 
   def logout() {
     capi.shutdown(null, false)
