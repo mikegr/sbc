@@ -2,7 +2,6 @@ package marmik.sbc.task2.peer
 
 import marmik.sbc.task2.peer.swt.LoginAction
 import marmik.sbc.task2.peer.swt.JFaceHelpers
-import marmik.sbc.task2.peer.swt.JFaceHelpers.asRunnable
 import marmik.sbc.task2.peer.mock.MockSessionFactory
 import marmik.sbc.task2.peer.xvsm.XVSMSessionFactory
 
