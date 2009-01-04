@@ -12,7 +12,7 @@ import java.lang.Runnable
 object Application {
   val log = org.slf4j.LoggerFactory.getLogger(this.getClass);
 
-  def main(args: Array[String]): Unit = {
+  def main(args: Array[String]) {
     log.info("Starting Task2 Peer")
     val display = new Display();
 
