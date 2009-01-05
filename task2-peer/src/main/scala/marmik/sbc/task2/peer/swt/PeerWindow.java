@@ -1,5 +1,7 @@
 package marmik.sbc.task2.peer.swt;
 
+import marmik.sbc.task2.peer.swt.model.Session;
+
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
@@ -22,6 +24,8 @@ public class PeerWindow extends
 
   private Tree tree;
   private List list;
+  private Session session;
+
   /**
    * Create the application window
    */
@@ -31,6 +35,11 @@ public class PeerWindow extends
     addToolBar(SWT.FLAT | SWT.WRAP);
     addMenuBar();
     addStatusLine();
+  }
+
+  public PeerWindow(Session session) {
+    this();
+    this.session = session;
   }
 
   /**
