@@ -22,4 +22,19 @@ public class Peer extends ModelObject {
   public WritableList getTopics() {
     return topics;
   }
+
+  @Override
+  public boolean equals(Object obj) {
+    if(obj instanceof Peer)
+      return ((Peer)obj).backing == backing;
+    else
+      return super.equals(obj);
+  }
+
+  @Override
+  public int hashCode() {
+    return backing.hashCode();
+  }
+
+
 }

@@ -10,4 +10,12 @@ public class Topic extends ModelObject {
   public marmik.sbc.task2.peer.Topic getBacking() {
     return backing;
   }
+
+  public String getName() {
+    return backing.name();
+  }
+
+  public Peer getPeer() {
+    return PeerAdapter.toSwtPeer(backing.peer());
+  }
 }

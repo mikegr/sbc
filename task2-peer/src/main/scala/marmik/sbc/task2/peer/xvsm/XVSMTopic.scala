@@ -13,6 +13,10 @@ class XVSMTopic(ec:EasyCapi, val url:String, val name:String) extends Topic {
   def postings(): List[Posting] = {
     ec.postings(this);
   }
+  def peer(): Peer = {
+    // TODO: Implement
+    throw new UnsupportedOperationException("Not implemented");
+  }
   def subscribe() = {
     ec.subscribe(this);
   }

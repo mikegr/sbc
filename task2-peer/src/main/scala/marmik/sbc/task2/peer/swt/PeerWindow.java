@@ -1,6 +1,8 @@
 package marmik.sbc.task2.peer.swt;
 
 import marmik.sbc.task2.peer.swt.model.Session;
+import marmik.sbc.task2.peer.swt.model.SidebarEntry;
+import marmik.sbc.task2.peer.swt.model.Topic;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeansObservables;
@@ -13,16 +15,26 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.jface.viewers.OwnerDrawLabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
@@ -30,6 +42,24 @@ import marmik.sbc.task2.peer.swt.model.Peer;
 
 public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
 
+  class Sorter extends ViewerSorter {
+
+    @Override
+    public int category(Object element) {
+      if(element instanceof SidebarEntry) {
+        SidebarEntry e = (SidebarEntry) element;
+        if(e.hasTopic()) {
+          Topic t = e.getTopic();
+          return t.getPeer().hashCode();
+        } else {
+          Peer p = e.getPeer();
+          return p.hashCode();
+        }
+      } else
+        throw new IllegalArgumentException("Can only handle SidebarEntry, not " + element.getClass().getName());
+    }
+
+  }
   private DataBindingContext bindingContext;
   private ListViewer listViewer;
   private Tree tree;
@@ -65,6 +95,7 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     container.setLayout(gridLayout);
 
     listViewer = new ListViewer(container, SWT.BORDER);
+    listViewer.setSorter(new Sorter());
     list = listViewer.getList();
     final GridData gd_list = new GridData(SWT.LEFT, SWT.FILL, false, true, 1, 2);
     gd_list.minimumHeight = 50;
@@ -185,10 +216,10 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     listViewer.setContentProvider(listViewerContentProviderList);
     //
     IObservableMap[] listViewerLabelProviderMaps = BeansObservables.observeMaps(listViewerContentProviderList
-        .getKnownElements(), Peer.class, new String[] { "name" });
+         .getKnownElements(), SidebarEntry.class, new String[] { "name" });
     listViewer.setLabelProvider(new ObservableMapLabelProvider(listViewerLabelProviderMaps));
     //
-    listViewer.setInput(session.getPeers());
+    listViewer.setInput(session.getSidebarEntries());
     //
     DataBindingContext bindingContext = new DataBindingContext();
     //

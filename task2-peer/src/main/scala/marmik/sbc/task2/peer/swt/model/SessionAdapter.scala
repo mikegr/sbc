@@ -6,6 +6,7 @@ import marmik.sbc.task2.peer.{Peer => ScalaPeer, Posting => ScalaPosting, Sessio
 import marmik.sbc.task2.peer.swt.model.{Peer => SwtPeer, Posting => SwtPosting}
 import marmik.sbc.task2.peer.swt.model.{Session => SwtSession, Topic => SwtTopic}
 import marmik.sbc.task2.peer.swt.model.PeerAdapter.{toSwtPeer, toSwtPeerList}
+import marmik.sbc.task2.peer.swt.model.TopicAdapter.toSwtTopic
 
 import scalaz.javas.List.ScalaList_JavaList
 import marmik.sbc.task2.peer.swt.JFaceHelpers.{asRunnable, withRealm}
@@ -13,6 +14,11 @@ import marmik.sbc.task2.peer.swt.JFaceHelpers.{asRunnable, withRealm}
 object SessionAdapter {
   implicit def toSwtSession(session: ScalaSession): SwtSession = {
     val peers = scalaPeers2WritableList(session.peers)
+
+    val topicEntries: List[SidebarEntry] = for(peer <- session.peers; topic <- peer.topics) yield new SidebarEntry(topic)
+    val peerEntries: List[SidebarEntry] = for(peer <- session.peers) yield new SidebarEntry(peer)
+    val sidebarEntries = peerEntries.union(topicEntries)
+
     session.registerListener(new Listener() {
       def peerJoins(peer: ScalaPeer) = withRealm(() => peers.add(peer): Unit)
       def peerLeaves(peer: ScalaPeer) = withRealm(() => peers.remove(peer): Unit)
@@ -26,7 +32,7 @@ object SessionAdapter {
       def topicCreated(peer: ScalaPeer, topic: ScalaTopic) {
       }
     })
-    new SwtSession(session, peers, session.localPeer)
+    new SwtSession(session, peers, session.localPeer, new WritableList(sidebarEntries, classOf[SidebarEntry]))
   }
 
   def scalaPeers2WritableList(peers: List[ScalaPeer]): WritableList =

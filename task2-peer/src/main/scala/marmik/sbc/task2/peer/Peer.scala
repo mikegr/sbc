@@ -7,4 +7,5 @@ trait Peer {
   /**Usually it's only allowed on own peer a*/
   def newTopic(name:String): Topic;
 
+  def hashCode(): Int;
 }
