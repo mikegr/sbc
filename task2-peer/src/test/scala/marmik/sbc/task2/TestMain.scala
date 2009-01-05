@@ -59,7 +59,9 @@ object TestMain {
                             def postingEdited(posting: Posting) {
                               calls += 1;
                             };
-
+                            def topicCreated(peer: Peer, topic: Topic) {
+                              // TODO: Implement
+                            }
                         });
 
       peer1From2.topics.first.subscribe;

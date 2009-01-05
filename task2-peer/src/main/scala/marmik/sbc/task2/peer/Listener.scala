@@ -8,4 +8,6 @@ trait Listener {
   def postingCreated(posting: Posting);
   def postingEdited(posting: Posting);
 
+  def topicCreated(peer: Peer, topic: Topic);
+
 }

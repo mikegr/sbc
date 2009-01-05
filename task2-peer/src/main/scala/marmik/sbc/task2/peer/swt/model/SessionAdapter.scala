@@ -2,8 +2,9 @@ package marmik.sbc.task2.peer.swt.model
 
 import org.eclipse.core.databinding.observable.list.WritableList;
 
-import marmik.sbc.task2.peer.{Peer => ScalaPeer, Posting => ScalaPosting, Session => ScalaSession}
-import marmik.sbc.task2.peer.swt.model.{Peer => SwtPeer, Posting => SwtPosting, Session => SwtSession}
+import marmik.sbc.task2.peer.{Peer => ScalaPeer, Posting => ScalaPosting, Session => ScalaSession, Topic => ScalaTopic}
+import marmik.sbc.task2.peer.swt.model.{Peer => SwtPeer, Posting => SwtPosting}
+import marmik.sbc.task2.peer.swt.model.{Session => SwtSession, Topic => SwtTopic}
 import marmik.sbc.task2.peer.swt.model.PeerAdapter.{toSwtPeer, toSwtPeerList}
 
 import scalaz.javas.List.ScalaList_JavaList
@@ -21,6 +22,8 @@ object SessionAdapter {
       }
       def postingEdited(posting: ScalaPosting) {
 
+      }
+      def topicCreated(peer: ScalaPeer, topic: ScalaTopic) {
       }
     })
     new SwtSession(session, peers, session.localPeer)

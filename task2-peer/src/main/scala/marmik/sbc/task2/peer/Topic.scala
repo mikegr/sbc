@@ -1,7 +1,7 @@
 package marmik.sbc.task2.peer
 
 trait Topic {
-  def name():  String;
+  def name(): String;
 
   def postings(): List[Posting];
   def subscribe();
