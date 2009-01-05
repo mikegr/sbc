@@ -11,9 +11,11 @@ import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
+import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -145,14 +147,6 @@ public class LoginDialog extends Dialog {
     serviceLabel.setText("Service:");
 
     serviceComboViewer = new ComboViewer(container, SWT.READ_ONLY);
-    serviceComboViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-      public void selectionChanged(final SelectionChangedEvent event) {
-        // TODO: This should be expressed with JFace Databinding...
-        IStructuredSelection selection = (IStructuredSelection)event.getSelection();
-        SessionFactory factory = (SessionFactory)selection.getFirstElement();
-        model.setFactory(factory);
-      }
-    });
     serviceCombo = serviceComboViewer.getCombo();
     final GridData gd_serviceCombo = new GridData(SWT.FILL, SWT.CENTER, true, false);
     serviceCombo.setLayoutData(gd_serviceCombo);
@@ -199,6 +193,7 @@ public class LoginDialog extends Dialog {
     // Now set the Viewer's input
     serviceComboViewer.setInput(new WritableList(factories, SessionFactory.class));
 
+    bindingContext.bindValue(ViewersObservables.observeSingleSelection(serviceComboViewer), BeansObservables.observeValue(model, "factory"), null, null);
     bindingContext.bindValue(SWTObservables.observeText(urlCombo), BeansObservables.observeValue(model, "url"), null, null);
     bindingContext.bindValue(SWTObservables.observeText(peerNameText, SWT.Modify), BeansObservables.observeValue(model, "name"), null, null);
     //
