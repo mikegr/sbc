@@ -9,6 +9,8 @@ import org.eclipse.swt.widgets.Display
 
 import java.lang.Runnable
 
+import marmik.sbc.task2.peer.swt.model.SessionAdapter.toSwtSession
+
 object Application {
   val log = org.slf4j.LoggerFactory.getLogger(this.getClass);
 
@@ -22,7 +24,7 @@ object Application {
       loginAction.execute(factories) match {
         case Some(session) =>
           log.info("Connected")
-          val mainWindow = new PeerWindow()
+          val mainWindow = new PeerWindow(session)
           mainWindow.setBlockOnOpen(true)
           mainWindow.open()
         case None => log.info("User aborted")

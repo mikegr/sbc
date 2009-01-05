@@ -10,6 +10,7 @@ public class Session extends ModelObject {
 
   public Session(marmik.sbc.task2.peer.Session backing, WritableList peers, Peer localPeer) {
     this.backing = backing;
+    this.peers = peers;
     this.localPeer = localPeer;
   }
 
