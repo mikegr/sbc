@@ -1,18 +1,26 @@
 package marmik.sbc.task2.peer.swt.model
 
-import marmik.sbc.task2.peer.{Peer => ScalaPeer, Session => ScalaSession}
-import marmik.sbc.task2.peer.swt.model.{Peer => SwtPeer, Session => SwtSession}
-import scalaz.javas.List.ScalaList_JavaList
+import marmik.sbc.task2.peer.{Peer => ScalaPeer, Posting => ScalaPosting, Session => ScalaSession}
+import marmik.sbc.task2.peer.swt.model.{Peer => SwtPeer, Posting => SwtPosting, Session => SwtSession}
+import marmik.sbc.task2.peer.swt.model.PeerAdapter.toSwtPeer
 
-import org.eclipse.core.databinding.observable.list.WritableList;
+import marmik.sbc.task2.peer.swt.JFaceHelpers.{asRunnable, withRealm}
+import marmik.sbc.task2.peer.swt.model.PeerAdapter.toWritablePeerList
 
-class SessionAdapter(session: ScalaSession) {
-  def toSwtModel(): SwtSession = {
-    new SwtSession(session, scalaPeersToWritableList(session.peers))
+object SessionAdapter {
+  implicit def toSwtSession(session: ScalaSession): SwtSession = {
+    val peers = toWritablePeerList(session.peers)
+    session.registerListener(new Listener() {
+      def peerJoins(peer: ScalaPeer) = withRealm(() => peers.add(peer): Unit)
+      def peerLeaves(peer: ScalaPeer) = withRealm(() => peers.remove(peer): Unit)
+
+      def postingCreated(posting: ScalaPosting) {
+
+      }
+      def postingEdited(posting: ScalaPosting) {
+
+      }
+    })
+    new SwtSession(session, peers, session.localPeer)
   }
-
-  protected def scalaPeersToSwtPeers(peers: List[ScalaPeer]): List[SwtPeer] = peers.map(new SwtPeer(_))
-
-  protected def scalaPeersToWritableList(peers: List[ScalaPeer]): WritableList =
-    new WritableList(scalaPeersToSwtPeers(peers), classOf[SwtPeer])
 }

@@ -8,9 +8,11 @@ import marmik.sbc.task2.peer.Listener;
 public class Session extends ModelObject {
   private marmik.sbc.task2.peer.Session backing;
   private WritableList peers;
+  private Peer localPeer;
 
-  public Session(marmik.sbc.task2.peer.Session backing, WritableList peers) {
+  public Session(marmik.sbc.task2.peer.Session backing, WritableList peers, Peer localPeer) {
     this.backing = backing;
+    this.localPeer = localPeer;
 //    backing.registerListener(new Listener() {
 //      public void peerJoins(marmik.sbc.task2.peer.Peer peer) {
 //      }
@@ -30,11 +32,11 @@ public class Session extends ModelObject {
     return backing;
   }
 
-  public void setPeers(WritableList peers) {
-    firePropertyChange("peers", this.peers, this.peers = peers);
-  }
-
   public WritableList getPeers() {
     return peers;
+  }
+
+  public Peer getLocalPeer() {
+    return localPeer;
   }
 }
