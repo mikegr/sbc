@@ -135,6 +135,9 @@
           </execution>
         </executions>
         <configuration>
+          <jvmArgs>
+	    <arg>-Xss128m</arg>
+	  </jvmArgs>
           <launchers>
             <launcher>
               <id>main</id>
