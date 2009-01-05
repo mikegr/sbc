@@ -3,13 +3,15 @@ package marmik.sbc.task2.peer.swt
 import marmik.sbc.task2.peer.{Session, SessionFactory}
 import marmik.sbc.task2.peer.swt.model.{SessionFactory => SwtSessionFactory}
 import scala.reflect.BeanProperty
+
 import scalaz.javas.List.ScalaList_JavaList
+import marmik.sbc.task2.peer.swt.model.SessionFactoryAdapter.scalaSessionFactories2SwtFactories
 
 class LoginAction {
   val log = org.slf4j.LoggerFactory.getLogger(this.getClass);
 
   def execute(factories: List[SessionFactory]): Option[Session] = {
-    val dialog = new LoginDialog(null, modelToSwtModel(factories))
+    val dialog = new LoginDialog(null, scalaSessionFactories2SwtFactories(factories))
 
     dialog.setBlockOnOpen(true)
     dialog.open
@@ -25,6 +27,4 @@ class LoginAction {
     Some(factory.login(url, name, null))
   }
 
-  def modelToSwtModel(list: List[SessionFactory]): List[SwtSessionFactory] =
-    list.map(new SwtSessionFactory(_))
 }
