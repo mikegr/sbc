@@ -173,7 +173,7 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     final SashForm sashForm_1 = new SashForm(composite, SWT.VERTICAL);
     sashForm_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-    treeViewer = new TableTreeViewer(sashForm_1, SWT.BORDER);
+    treeViewer = new TableTreeViewer(sashForm_1, SWT.FULL_SELECTION | SWT.BORDER);
     tree = treeViewer.getTableTree();
     final GridData gd_tree = new GridData(SWT.FILL, SWT.FILL, true, true);
     gd_tree.minimumHeight = 50;
