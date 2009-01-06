@@ -12,6 +12,7 @@ class RmiPeer(val session:RmiSession, peerInfo:PeerInfo) extends Peer {
   val url = peerInfo.url;
 
   val cachedTopics = new HashMap[String, RmiTopic]();
+
   def topics(): List[Topic] = {
     logger debug("Called topcics() for " + url + " with name '" + name + "'")
 
