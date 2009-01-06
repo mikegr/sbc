@@ -24,6 +24,47 @@ public class Topic extends ModelObject implements SidebarEntry {
     return scalaz.javas.List.ScalaList_JavaList(PostingAdapter.toSwtPostingList(backing.postings()));
   }
 
+  public Posting getTopLevelPosting() {
+    return new Posting(null) {
+
+      @Override
+      public boolean equals(Object obj) {
+        return this == obj;
+      }
+
+      @Override
+      public String getAuthor() {
+        return "TOP LEVEL";
+      }
+
+      @Override
+      public String getContent() {
+        return "TOP LEVEL";
+      }
+
+      @Override
+      public Posting getParent() {
+        return null;
+      }
+
+      @Override
+      public List<Posting> getReplies() {
+        return Topic.this.getPostings();
+      }
+
+      @Override
+      public String getSubject() {
+        return "TOP LEVEL";
+      }
+
+      @Override
+      public int hashCode() {
+        return Topic.this.hashCode();
+      }
+
+    };
+  }
+
   public Peer getPeer() {
     return PeerAdapter.toSwtPeer(backing.peer());
   }

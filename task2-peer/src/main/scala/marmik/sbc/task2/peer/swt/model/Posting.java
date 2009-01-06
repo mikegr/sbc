@@ -7,6 +7,10 @@ import org.eclipse.core.databinding.observable.list.WritableList;
 public class Posting extends ModelObject {
   private marmik.sbc.task2.peer.Posting backing;
 
+  Posting() {
+
+  }
+
   public Posting(marmik.sbc.task2.peer.Posting backing) {
     this.backing = backing;
   }

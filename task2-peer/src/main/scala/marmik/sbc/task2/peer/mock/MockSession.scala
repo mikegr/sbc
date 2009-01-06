@@ -27,6 +27,12 @@ class MockSession(url: String, name: String) extends Session {
   t.setDaemon(true)
   t.start
 
+  log.info("Adding Mock Topic with postings to local peer")
+  val topic = new MockTopic("withPostings", List())
+  topic.setPostings(List(new MockPosting(this, "test 1", "martin", "ned viel", null, topic, null, List(new MockPosting(this, "auch ein test", "michael", "mehr", null, topic, null, List())))))
+  topic.setPeer(mockLocalPeer)
+  mockLocalPeer.setTopics(List(topic).union(mockLocalPeer.topics))
+
   def fireTopicCreated(peer: MockPeer, topic: MockTopic) {
     for(listener <- listeners)
       listener.topicCreated(peer, topic)

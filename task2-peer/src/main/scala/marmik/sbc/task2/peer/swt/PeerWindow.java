@@ -1,20 +1,24 @@
 package marmik.sbc.task2.peer.swt;
 
 import marmik.sbc.task2.peer.swt.model.Peer;
+import marmik.sbc.task2.peer.swt.model.Posting;
 import marmik.sbc.task2.peer.swt.model.Session;
 import marmik.sbc.task2.peer.swt.model.SidebarEntry;
 import marmik.sbc.task2.peer.swt.model.Topic;
 
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
+import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
+import org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -142,22 +146,6 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
       private IStructuredSelection previousSelection = null;
 
       public void selectionChanged(SelectionChangedEvent event) {
-        IObservableValue treeViewerSingleSelection = ViewersObservables.observeSingleSelection(treeViewer);
-        //
-        ObservableListContentProvider tableViewerContentProviderList = new ObservableListContentProvider();
-        tableViewer.setContentProvider(tableViewerContentProviderList);
-        //
-        IObservableMap[] tableViewerLabelProviderMaps = BeansObservables.observeMaps(tableViewerContentProviderList
-            .getKnownElements(), Topic.class, new String[] { "name", "class" });
-        tableViewer.setLabelProvider(new ObservableMapLabelProvider(tableViewerLabelProviderMaps));
-        //
-        IObservableList treeViewerTopicsObserveDetailList = BeansObservables.observeDetailList(
-            treeViewerSingleSelection, "postings", marmik.sbc.task2.peer.swt.model.Posting.class);
-        tableViewer.setInput(treeViewerTopicsObserveDetailList);
-        //
-        DataBindingContext bindingContext = new DataBindingContext();
-        //
-
         IStructuredSelection selection = (IStructuredSelection) event.getSelection();
         if (selection.getFirstElement() instanceof Peer)
           tableViewer.setSelection(previousSelection);
@@ -266,13 +254,24 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     //
     ObservableListContentProvider listViewerContentProviderList = new ObservableListContentProvider();
     tableViewer.setContentProvider(listViewerContentProviderList);
-    //
     tableViewer.setLabelProvider(new DelegatingStyledCellLabelProvider(new SidebarLabelProvider()));
-    //
     tableViewer.setInput(session.getSidebarEntries());
+
+    ObservableListTreeContentProvider contentProvider = new ObservableListTreeContentProvider(BeansObservables
+        .listFactory("replies", Posting.class), null);
+    treeViewer.setContentProvider(contentProvider);
+    treeViewer.setLabelProvider(new ObservableMapLabelProvider(new IObservableMap[] {
+        BeansObservables.observeMap(contentProvider.getKnownElements(), Posting.class, "subject"),
+        BeansObservables.observeMap(contentProvider.getKnownElements(), Posting.class, "author") }));
+
+    IObservableValue selection = ViewersObservables.observeSingleSelection(tableViewer);
+    IObservableValue postings = BeansObservables.observeDetailValue(selection, "topLevelPosting", Posting.class);
+    IObservableValue input = ViewersObservables.observeInput(treeViewer);
 
     //
     DataBindingContext bindingContext = new DataBindingContext();
+    bindingContext.bindValue(input, postings, null, null);// new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), null);
+
     //
     //
     return bindingContext;
