@@ -5,11 +5,14 @@ import marmik.sbc.task2.peer.mock.MockSessionFactory
 import marmik.sbc.task2.peer.xvsm.XVSMSessionFactory
 import marmik.sbc.task2.peer.rmi.RmiSessionFactory
 
+import org.eclipse.core.databinding.observable.Realm
 import org.eclipse.swt.widgets.Display
+import org.eclipse.jface.databinding.swt.SWTObservables
 
 import java.lang.Runnable
 
 import marmik.sbc.task2.peer.swt.model.SessionAdapter.toSwtSession
+import marmik.sbc.task2.peer.swt.JFaceHelpers.asRunnable
 
 object Application {
   val log = org.slf4j.LoggerFactory.getLogger(this.getClass);
@@ -18,7 +21,7 @@ object Application {
     log.info("Starting Task2 Peer")
     val display = new Display();
 
-    JFaceHelpers.withRealm( () => {
+    Realm.runWithDefault(SWTObservables.getRealm(Display.getDefault()), () => {
       val factories = List(new MockSessionFactory(), new XVSMSessionFactory(), new RmiSessionFactory())
       val loginAction = new LoginAction()
       loginAction.execute(factories) match {

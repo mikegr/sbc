@@ -18,6 +18,8 @@ object SessionAdapter {
     val topicEntries: List[SidebarEntry] = for(peer <- session.peers; topic <- peer.topics) yield topic
     val sidebarEntries = toSwtPeerList(session.peers).union(topicEntries)
 
+    val swtSession = new SwtSession(session, peers, session.localPeer, new WritableList(sidebarEntries, classOf[SidebarEntry]))
+
     session.registerListener(new Listener() {
       def peerJoins(peer: ScalaPeer) = withRealm(() => peers.add(peer): Unit)
       def peerLeaves(peer: ScalaPeer) = withRealm(() => peers.remove(peer): Unit)
@@ -29,10 +31,11 @@ object SessionAdapter {
 
       }
       def topicCreated(peer: ScalaPeer, topic: ScalaTopic) {
-
+          withRealm(() => swtSession.getSidebarEntries.add(toSwtTopic(topic)): Unit)
       }
     })
-    new SwtSession(session, peers, session.localPeer, new WritableList(sidebarEntries, classOf[SidebarEntry]))
+
+    swtSession
   }
 
   def scalaPeers2WritableList(peers: List[ScalaPeer]): WritableList =
