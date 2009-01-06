@@ -258,14 +258,14 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     tableViewer.setInput(session.getSidebarEntries());
 
     ObservableListTreeContentProvider contentProvider = new ObservableListTreeContentProvider(BeansObservables
-        .listFactory("replies", Posting.class), null);
+        .listFactory(Realm.getDefault(), "replies", Posting.class), null);
     treeViewer.setContentProvider(contentProvider);
     treeViewer.setLabelProvider(new ObservableMapLabelProvider(new IObservableMap[] {
         BeansObservables.observeMap(contentProvider.getKnownElements(), Posting.class, "subject"),
         BeansObservables.observeMap(contentProvider.getKnownElements(), Posting.class, "author") }));
 
     IObservableValue selection = ViewersObservables.observeSingleSelection(tableViewer);
-    IObservableValue postings = BeansObservables.observeDetailValue(selection, "topLevelPosting", Posting.class);
+    IObservableValue postings = BeansObservables.observeDetailValue(Realm.getDefault(), selection, "topLevelPosting", Posting.class);
     IObservableValue input = ViewersObservables.observeInput(treeViewer);
 
     //
