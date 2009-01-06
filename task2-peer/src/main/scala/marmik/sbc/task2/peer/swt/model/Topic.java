@@ -1,5 +1,7 @@
 package marmik.sbc.task2.peer.swt.model;
 
+import org.eclipse.core.databinding.observable.list.WritableList;
+
 public class Topic extends ModelObject implements SidebarEntry {
   private marmik.sbc.task2.peer.Topic backing;
 
@@ -13,6 +15,10 @@ public class Topic extends ModelObject implements SidebarEntry {
 
   public String getName() {
     return backing.name();
+  }
+
+  public WritableList getPostings() {
+    return PostingAdapter.toSwtPostingList(backing.postings());
   }
 
   public Peer getPeer() {

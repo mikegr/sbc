@@ -6,10 +6,17 @@ import marmik.sbc.task2.peer.swt.model.SidebarEntry;
 import marmik.sbc.task2.peer.swt.model.Topic;
 
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.map.IObservableMap;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
+import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
+import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
@@ -64,6 +71,7 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
   private Tree tree;
   private Table table;
   private Session session;
+  private TreeViewer treeViewer;
 
   /**
    * Create the application window
@@ -116,8 +124,8 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
       public void widgetSelected(final SelectionEvent e) {
         if (tableViewer.getSelection() != null) {
           Topic t = (Topic) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
-          InputDialog d = new InputDialog(PeerWindow.this.getShell(), "Add Posting", "Name of Posting to " + t.getName() + ":", null,
-              null);
+          InputDialog d = new InputDialog(PeerWindow.this.getShell(), "Add Posting", "Name of Posting to "
+              + t.getName() + ":", null, null);
           d.open();
           t.createPosting("Autor", d.getValue(), "leer");
         }
@@ -129,6 +137,35 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     sashForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
     tableViewer = new TableViewer(sashForm, SWT.BORDER);
+    tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+      // Disable selection of instanceof Peer
+      private IStructuredSelection previousSelection = null;
+
+      public void selectionChanged(SelectionChangedEvent event) {
+        IObservableValue treeViewerSingleSelection = ViewersObservables.observeSingleSelection(treeViewer);
+        //
+        ObservableListContentProvider tableViewerContentProviderList = new ObservableListContentProvider();
+        tableViewer.setContentProvider(tableViewerContentProviderList);
+        //
+        IObservableMap[] tableViewerLabelProviderMaps = BeansObservables.observeMaps(tableViewerContentProviderList
+            .getKnownElements(), Topic.class, new String[] { "name", "class" });
+        tableViewer.setLabelProvider(new ObservableMapLabelProvider(tableViewerLabelProviderMaps));
+        //
+        IObservableList treeViewerTopicsObserveDetailList = BeansObservables.observeDetailList(
+            treeViewerSingleSelection, "postings", marmik.sbc.task2.peer.swt.model.Posting.class);
+        tableViewer.setInput(treeViewerTopicsObserveDetailList);
+        //
+        DataBindingContext bindingContext = new DataBindingContext();
+        //
+
+        IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+        if (selection.getFirstElement() instanceof Peer)
+          tableViewer.setSelection(previousSelection);
+        else
+          previousSelection = selection;
+      }
+    });
+
     tableViewer.setSorter(new Sorter());
     table = tableViewer.getTable();
     final GridData gd_table = new GridData(SWT.LEFT, SWT.FILL, false, true, 1, 2);
@@ -146,7 +183,7 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     final SashForm sashForm_1 = new SashForm(composite, SWT.VERTICAL);
     sashForm_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-    final TreeViewer treeViewer = new TreeViewer(sashForm_1, SWT.BORDER);
+    treeViewer = new TreeViewer(sashForm_1, SWT.BORDER);
     tree = treeViewer.getTree();
     final GridData gd_tree = new GridData(SWT.FILL, SWT.FILL, true, true);
     gd_tree.minimumHeight = 50;
@@ -231,20 +268,9 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     tableViewer.setContentProvider(listViewerContentProviderList);
     //
     tableViewer.setLabelProvider(new DelegatingStyledCellLabelProvider(new SidebarLabelProvider()));
-    tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-      // Disable selection of instanceof Peer
-      private IStructuredSelection previousSelection = null;
-
-      public void selectionChanged(SelectionChangedEvent event) {
-        IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-        if (selection.getFirstElement() instanceof Peer)
-          tableViewer.setSelection(previousSelection);
-        else
-          previousSelection = selection;
-      }
-    });
     //
     tableViewer.setInput(session.getSidebarEntries());
+
     //
     DataBindingContext bindingContext = new DataBindingContext();
     //
