@@ -6,16 +6,18 @@ import java.util._
 
 import scala.collection.jcl.Conversions._
 import scala.actors.Actor._
+import scalaz.javas.List.ScalaList_JavaList
 
 @SerialVersionUID(-60061789656005512L)
 class RemoteSuperPeerImpl @throws(classOf[java.rmi.RemoteException]) (selfUrl:String) extends UnicastRemoteObject with RemoteSuperPeer   {
 
     val logger = org.slf4j.LoggerFactory.getLogger(classOf[RemoteSuperPeerImpl]);
-    val topics = new ArrayList[TopicInfo]();
+    val ts = new ArrayList[TopicInfo]();
     val peers = new ArrayList[PeerInfo]();
 
     // topics() and peers() automatically definied
 
+    def topics(url: String): List[TopicInfo] = ts.filter(_.url == url).toList
 
     def login(url:String, name:String) {
       logger.debug(name + " logged in from " + url);
@@ -54,9 +56,9 @@ class RemoteSuperPeerImpl @throws(classOf[java.rmi.RemoteException]) (selfUrl:St
     }
 
 
-	def newTopic(url:String, name:String) {
-	  logger.debug("new topic '" + name + "' for " + url);
-	  topics.add(new TopicInfo(url, name));
+  def newTopic(url:String, name:String) {
+    logger.debug("new topic '" + name + "' for " + url);
+    ts.add(new TopicInfo(url, name));
       peers.foreach(peer => { //filter(p=> p.url != url)
           val notifier = actor {
             receive {
@@ -68,6 +70,6 @@ class RemoteSuperPeerImpl @throws(classOf[java.rmi.RemoteException]) (selfUrl:St
           };
           notifier ! peer
       })
-	}
+  }
 
 }

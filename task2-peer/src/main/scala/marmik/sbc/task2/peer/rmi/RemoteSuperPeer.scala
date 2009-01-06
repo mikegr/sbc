@@ -14,8 +14,8 @@ trait RemoteSuperPeer extends java.rmi.Remote {
     def logout(url:String);
 
     @throws (classOf[java.rmi.RemoteException])
-  	def topics():List[TopicInfo];
+    def topics(url: String):List[TopicInfo];
 
     @throws (classOf[java.rmi.RemoteException])
-	def newTopic(url:String, name:String);
+  def newTopic(url:String, name:String);
 }
