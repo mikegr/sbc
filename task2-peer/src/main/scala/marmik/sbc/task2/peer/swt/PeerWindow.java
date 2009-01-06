@@ -15,13 +15,17 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
+import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.OwnerDrawLabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -29,6 +33,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -37,6 +42,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Tree;
 import marmik.sbc.task2.peer.swt.model.Peer;
 
@@ -61,9 +67,9 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
 
   }
   private DataBindingContext bindingContext;
-  private ListViewer listViewer;
+  private TableViewer tableViewer;
   private Tree tree;
-  private List list;
+  private Table table;
   private Session session;
 
   /**
@@ -72,6 +78,7 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
   protected PeerWindow() {
     super(null);
     createActions();
+    JFaceResources.getColorRegistry().put(JFacePreferences.COUNTER_COLOR, new RGB(0,127,174));
     addToolBar(SWT.FLAT | SWT.WRAP);
     addMenuBar();
     addStatusLine();
@@ -94,14 +101,14 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     gridLayout.numColumns = 2;
     container.setLayout(gridLayout);
 
-    listViewer = new ListViewer(container, SWT.BORDER);
-    listViewer.setSorter(new Sorter());
-    list = listViewer.getList();
-    final GridData gd_list = new GridData(SWT.LEFT, SWT.FILL, false, true, 1, 2);
-    gd_list.minimumHeight = 50;
-    gd_list.widthHint = 160;
-    gd_list.minimumWidth = 20;
-    list.setLayoutData(gd_list);
+    tableViewer = new TableViewer(container, SWT.BORDER);
+    tableViewer.setSorter(new Sorter());
+    table = tableViewer.getTable();
+    final GridData gd_table = new GridData(SWT.LEFT, SWT.FILL, false, true, 1, 2);
+    gd_table.minimumHeight = 50;
+    gd_table.widthHint = 160;
+    gd_table.minimumWidth = 20;
+    table.setLayoutData(gd_table);
 
     final TreeViewer treeViewer = new TreeViewer(container, SWT.BORDER);
     tree = treeViewer.getTree();
@@ -170,32 +177,6 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     return statusLineManager;
   }
 
-  /**
-   * Launch the application
-   *
-   * @param args
-   */
-  public static void main(String args[]) {
-    Display display = Display.getDefault();
-    Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
-      public void run() {
-        try {
-          PeerWindow window = new PeerWindow();
-          window.setBlockOnOpen(true);
-          window.open();
-          Display.getCurrent().dispose();
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-      }
-    });
-  }
-
-  /**
-   * Configure the shell
-   *
-   * @param newShell
-   */
   @Override
   protected void configureShell(Shell newShell) {
     super.configureShell(newShell);
@@ -213,13 +194,22 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
   protected DataBindingContext initDataBindings() {
     //
     ObservableListContentProvider listViewerContentProviderList = new ObservableListContentProvider();
-    listViewer.setContentProvider(listViewerContentProviderList);
+    tableViewer.setContentProvider(listViewerContentProviderList);
     //
-    IObservableMap[] listViewerLabelProviderMaps = BeansObservables.observeMaps(listViewerContentProviderList
-         .getKnownElements(), SidebarEntry.class, new String[] { "name" });
-    listViewer.setLabelProvider(new ObservableMapLabelProvider(listViewerLabelProviderMaps));
+    tableViewer.setLabelProvider(new DelegatingStyledCellLabelProvider(new SidebarLabelProvider()));
+    tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+      // Disable selection of instanceof Peer
+      private IStructuredSelection previousSelection = null;
+      public void selectionChanged(SelectionChangedEvent event) {
+        IStructuredSelection selection = (IStructuredSelection)event.getSelection();
+        if(selection.getFirstElement() instanceof Peer)
+          tableViewer.setSelection(previousSelection);
+        else
+          previousSelection = selection;
+      }
+    });
     //
-    listViewer.setInput(session.getSidebarEntries());
+    tableViewer.setInput(session.getSidebarEntries());
     //
     DataBindingContext bindingContext = new DataBindingContext();
     //
