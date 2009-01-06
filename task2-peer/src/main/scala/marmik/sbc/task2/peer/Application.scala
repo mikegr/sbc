@@ -24,7 +24,7 @@ object Application {
     Realm.runWithDefault(SWTObservables.getRealm(Display.getDefault()), () => {
       val factories = List(new MockSessionFactory(), new XVSMSessionFactory(), new RmiSessionFactory())
       val loginAction = new LoginAction()
-      loginAction.execute(factories) match {
+      loginAction.execute(factories, args) match {
         case Some(session) =>
           log.info("Connected")
           val mainWindow = new PeerWindow(session)
