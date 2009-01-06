@@ -25,25 +25,36 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfName:String) extends NotificationL
 
   var session: Session = null
 
-  val selfUrl = postingContainer(null, null).asURI.toString;
+
+
+  val selfUrl = { val tmpURL = postingContainer(null, null).asURI;
+                  "tcpjava://" + tmpURL.getHost() + ":" + tmpURL.getPort();}
+
+  def registerPeerListener() {
+
+  }
+
 
   /** Writes entry within a transaction*/
   def writePeerInfo() {
     log info "writing to " + superPeer;
     val entry = new AtomicEntry[SpacePeer](new SpacePeer(selfUrl, selfName));
-    val coordinators = Array(new KeyCoordinator(new KeyCoordinator.KeyType("Url", classOf[String]) ), new FifoCoordinator());
     entry.addSelectors(new KeySelector[String]("Url", selfUrl));
     val tx = transaction(superPeer);
-    val ct = container(tx, superPeer, CONTAINER_PEERS, coordinators);
+    val ct = peerContainer(tx);
     capi.shift(ct,tx, entry);
     //TODO: clear topics;
     capi.commitTransaction(tx);
-  }
 
+    log info ("Register notification for " + selfUrl);
+
+    capi.createNotification(ct, this, Operation.Write, Operation.Shift);
+    log debug ("Registration finished for " + selfUrl);
+  }
 
   def readPeerInfo():List[XVSMPeer] = {
     val tx = transaction(superPeer);
-    val ct = container(tx, superPeer, CONTAINER_PEERS, Array(new FifoCoordinator()));
+    val ct = peerContainer(tx);
     val entries = capi.read(ct, 0, tx, new FifoSelector(Selector.CNT_ALL));
     capi.commitTransaction(tx);
     entries.map(x => {
@@ -52,6 +63,10 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfName:String) extends NotificationL
                    value.url,
                    value.name)
     }).toList
+  }
+
+  def peerContainer(tx:Transaction):ContainerRef =  {
+    container(tx, superPeer, CONTAINER_PEERS, Array(new KeyCoordinator(new KeyCoordinator.KeyType("Url", classOf[String]) ), new FifoCoordinator()))
   }
 
   def postings(topic:XVSMTopic):List[Posting] = {
