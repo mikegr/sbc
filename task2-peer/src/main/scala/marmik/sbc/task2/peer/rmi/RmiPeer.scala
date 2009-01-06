@@ -1,6 +1,7 @@
 package marmik.sbc.task2.peer.rmi
 
 import marmik.sbc.task2.peer._
+import scala.collection.mutable._
 import scala.collection.jcl.Conversions._
 
 
@@ -10,9 +11,26 @@ class RmiPeer(val session:RmiSession, peerInfo:PeerInfo) extends Peer {
   val name = peerInfo.name;
   val url = peerInfo.url;
 
+  val cachedTopics = new HashMap[String, RmiTopic]();
+
   def topics(): List[Topic] = {
     logger debug("Called topcics() for " + url + " with name '" + name + "'")
-    session.superPeer.topics.map(x => new RmiTopic(session, this, x.name)).toList;
+
+    val result = new ListBuffer[RmiTopic]();
+
+    session.superPeer.topics.foreach(topicInfo => {
+      val rmiTopic = new RmiTopic(session, this, topicInfo.name);
+      cachedTopics += (name -> rmiTopic);
+      result += rmiTopic;
+    });
+
+    result.toList;
+  }
+
+  def addToCache(name:String):RmiTopic = {
+      val rmiTopic = new RmiTopic(session, this, name);
+      cachedTopics += (name -> rmiTopic);
+      return rmiTopic;
   }
 
   /**Usually it's only allowed on own peer a*/

@@ -15,8 +15,12 @@ class RmiPosting(val session:RmiSession, val topic:RmiTopic, val parent:RmiPosti
   def author(): String = internal.author;
   def subject(): String = internal.subject;
   def createdAt(): GregorianCalendar = internal.date;
-  def content(): String = internal.content;
 
+  var content:String = internal.content;
+
+  def setContent(c:String) {
+    content = c;
+  }
   def replies(): List[Posting] = {
     logger debug ("Requested replies for post with id '" + internal.id + "'")
     session.getRemotePeer(url).getReplys(id).map(r => new RmiPosting(session, topic, this, r)).toList;

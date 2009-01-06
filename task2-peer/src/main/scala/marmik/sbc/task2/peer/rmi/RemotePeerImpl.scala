@@ -29,7 +29,7 @@ class RemotePeerImpl @throws(classOf[java.rmi.RemoteException]) (selfUrl:String,
 
   val indexPostings = new HashMap[Int, PostingInfo](); // id to posting
   val reverse = new HashMap[Int, String](); //posting to topic
-  
+
 
   @throws (classOf[java.rmi.RemoteException])
   override def getPostings(name:String):List[PostingInfo] = synchronized {
@@ -45,14 +45,14 @@ class RemotePeerImpl @throws(classOf[java.rmi.RemoteException]) (selfUrl:String,
   override def getReplys(id:Integer):java.util.List[PostingInfo] = synchronized {
     children.getOrElse(id.intValue(), null);
   }
-  
+
  @throws (classOf[java.rmi.RemoteException])
   override def getParents(id:Integer):java.util.List[PostingInfo] = synchronized {
     if (id == null) {
       null;
     }
-    else { 
-      val parent = parents(id.intValue); 
+    else {
+      val parent = parents(id.intValue);
       getParents(parent) ++ Seq(indexPostings(parent));
     }
   }
@@ -120,45 +120,55 @@ class RemotePeerImpl @throws(classOf[java.rmi.RemoteException]) (selfUrl:String,
   @throws (classOf[java.rmi.RemoteException])
   override def postCreated(url:String, topic:String, id:Integer) = synchronized {
     logger info (selfUrl + ": at " + url + " for topic " + topic + " a post with id " + id + "has been created");
-    val rmiTopic = new RmiTopic(session, url, topic);
-    val peer = session.getRemotePeer(url);
-    session.listener.foreach(_.postingCreated(new RmiPosting(session, rmiTopic, getParent(rmiTopic, peer.getParents(id).reverse), peer.getPost(id))));
+    val peer = session.cachedPeers(url);
+    val rmiTopic = peer.cachedTopics(topic);
+    val remotePeer = session.getRemotePeer(url);
+    val post = rmiTopic.addToCache(remotePeer.getPost(id));
+
+    session.listener.foreach(_.postingCreated(post));
   }
 
   @throws (classOf[java.rmi.RemoteException])
   override def postEdited(url:String, topic:String, id:Integer) = synchronized {
     logger info (selfUrl + ": at " + url + " for topic " + topic + " a post with id " + id + "has been edited");
-    val rmiTopic = new RmiTopic(session, url, topic);
-    val peer = session.getRemotePeer(url);
-    session.listener.foreach(_.postingEdited(new RmiPosting(session, rmiTopic, getParent(rmiTopic, peer.getParents(id).reverse), peer.getPost(id))));
+    val peer = session.cachedPeers(url);
+    val rmiTopic = peer.cachedTopics(topic);
+    val post = rmiTopic.cachedPosts(id);
+    val postInfo = session.getRemotePeer(url).getPost(id);
+    post.content = postInfo.content;
+    session.listener.foreach(_.postingEdited(post));
   }
 
   @throws (classOf[java.rmi.RemoteException])
   def peerLoggedIn(url:String, name:String) {
     logger info (selfUrl + ": peer logged in: " + url + " with name " + name)
-    session.listener.foreach(_.peerJoins(new RmiPeer(session, new PeerInfo(url, name))));
+    val newPeer = session.addToCache(url, name);
+    session.listener.foreach(_.peerJoins(newPeer));
   }
 
   @throws (classOf[java.rmi.RemoteException])
   def peerLoggedOut(url:String, name:String) {
     logger info (selfUrl + ": peer logged out: " + url + " with name " + name)
-    session.listener.foreach(_.peerLeaves(new RmiPeer(session, new PeerInfo(url, name))));
+    session.cachedPeers -= url;
+    session.listener.foreach(_.peerLeaves(session.cachedPeers(url)));
   }
 
   @throws (classOf[java.rmi.RemoteException])
   def peerHasNewTopic(url:String, name:String) {
-     logger info (selfUrl + ": peer " + url + " has new topic: " + name)
-     //TODO: Add method to listener interface
-     //session.listener.foreach(_.peerLeaves(new RmiPeer(session, new PeerInfo(url, name))));
+     logger info (selfUrl + ": peer " + url + " has new topic: " + name);
+     val peer = session.cachedPeers(url);
+     val topic = peer.addToCache(name);
+     session.listener.foreach(_.topicCreated(peer, topic));
   }
 
   //parents list has to be in this order: parent, parent of parent, parent of parent of parent,...
+  /*
   def getParent(topic:RmiTopic, parents:Seq[PostingInfo]):RmiPosting = {
     if (parents == null || parents.isEmpty) {
       null
     }
     new RmiPosting(session, topic, getParent(topic, parents.drop(1)), parents.first);
   }
-    
+  */
 }
 

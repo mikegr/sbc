@@ -223,4 +223,9 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     return bindingContext;
   }
 
+  @Override
+	protected void handleShellCloseEvent() {
+		super.handleShellCloseEvent();
+		session.getBacking().logout();
+	}
 }

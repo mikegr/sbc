@@ -18,7 +18,7 @@ class RemoteSuperPeerImpl @throws(classOf[java.rmi.RemoteException]) (selfUrl:St
 
 
     def login(url:String, name:String) {
-      logger.debug(name + " logged from " + url);
+      logger.debug(name + " logged in from " + url);
 
       peers.foreach(peer => {
         val notifier = actor {
@@ -57,10 +57,13 @@ class RemoteSuperPeerImpl @throws(classOf[java.rmi.RemoteException]) (selfUrl:St
 	def newTopic(url:String, name:String) {
 	  logger.debug("new topic '" + name + "' for " + url);
 	  topics.add(new TopicInfo(url, name));
-      peers.filter(p=> p.url != url).foreach(peer => {
+      peers.foreach(peer => { //filter(p=> p.url != url)
           val notifier = actor {
             receive {
-              case peer:PeerInfo => Naming.lookup(peer.url).asInstanceOf[RemotePeer].peerHasNewTopic(url, name);
+              case peer:PeerInfo => {
+                logger.debug("Notify " + peer.url + " of new topic "  + name);
+                Naming.lookup(peer.url).asInstanceOf[RemotePeer].peerHasNewTopic(url, name);
+              }
             }
           };
           notifier ! peer
