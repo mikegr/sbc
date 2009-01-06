@@ -138,7 +138,7 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     final PostingComposite postingComposite = new PostingComposite(scrolledComposite, SWT.NONE);
     postingComposite.setSize(300, 0);
     scrolledComposite.setContent(postingComposite);
-    sashForm.setWeights(new int[] {1, 4});
+    sashForm.setWeights(new int[] {1, 3});
 
     //
     bindingContext = initDataBindings();
