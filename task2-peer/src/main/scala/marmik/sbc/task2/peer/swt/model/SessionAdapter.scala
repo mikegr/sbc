@@ -22,8 +22,14 @@ object SessionAdapter {
     val swtSession = new SwtSession(session, peers, session.localPeer, new WritableList(sidebarEntries, classOf[SidebarEntry]))
 
     session.registerListener(new Listener() {
-      def peerJoins(peer: ScalaPeer) = withRealm(() => peers.add(peer): Unit)
-      def peerLeaves(peer: ScalaPeer) = withRealm(() => peers.remove(peer): Unit)
+      def peerJoins(peer: ScalaPeer) = withRealm(() => {
+        peers.add(peer)
+        swtSession.getSidebarEntries.add(toSwtPeer(peer))
+      }: Unit)
+      def peerLeaves(peer: ScalaPeer) = withRealm(() => {
+        peers.remove(peer)
+        swtSession.getSidebarEntries.remove(toSwtPeer(peer))
+      }: Unit)
 
       def postingCreated(posting: ScalaPosting) {
 
