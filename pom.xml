@@ -9,7 +9,7 @@
   <inceptionYear>2008</inceptionYear>
   <properties>
     <sbc.version>1.0-SNAPSHOT</sbc.version>
-    <scala.version>[2.7.2,2.8)</scala.version>
+    <scala.version>2.7.2</scala.version>
   </properties>
   <repositories>
     <repository>
