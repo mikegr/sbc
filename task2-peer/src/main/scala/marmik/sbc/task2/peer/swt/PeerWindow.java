@@ -10,9 +10,7 @@ import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
-import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
@@ -24,29 +22,31 @@ import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TableTreeViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.custom.TableTree;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Tree;
@@ -174,12 +174,26 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     sashForm_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
     treeViewer = new TreeViewer(sashForm_1, SWT.FULL_SELECTION | SWT.BORDER);
+    TreeViewerColumn column = new TreeViewerColumn(treeViewer, SWT.NONE);
+    column.getColumn().setWidth(200);
+    column.getColumn().setText("Subject");
+    column = new TreeViewerColumn(treeViewer, SWT.NONE);
+    column.getColumn().setWidth(200);
+    column.getColumn().setText("Author");
     tree = treeViewer.getTree();
+    tree.setHeaderVisible(true);
     final GridData gd_tree = new GridData(SWT.FILL, SWT.FILL, true, true);
     gd_tree.minimumHeight = 50;
     gd_tree.widthHint = 400;
     gd_tree.minimumWidth = 100;
     tree.setLayoutData(gd_tree);
+    tree.addListener (SWT.Resize,  new Listener () {
+      public void handleEvent (Event e) {
+        Rectangle rect = tree.getClientArea ();
+        tree.getColumn(0).setWidth(rect.width / 10 * 8);
+        tree.getColumn(1).setWidth(rect.width / 10 * 2);
+      }
+    });
 
     final ScrolledComposite scrolledComposite = new ScrolledComposite(sashForm_1, SWT.BORDER | SWT.H_SCROLL
         | SWT.V_SCROLL);
