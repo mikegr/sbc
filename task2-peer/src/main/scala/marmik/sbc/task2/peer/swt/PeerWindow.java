@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -92,38 +93,7 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
   protected Control createContents(Composite parent) {
     Composite container = new Composite(parent, SWT.NONE);
     final GridLayout gridLayout = new GridLayout();
-    gridLayout.numColumns = 2;
     container.setLayout(gridLayout);
-
-    tableViewer = new TableViewer(container, SWT.BORDER);
-    tableViewer.setSorter(new Sorter());
-    table = tableViewer.getTable();
-    final GridData gd_table = new GridData(SWT.LEFT, SWT.FILL, false, true, 1, 2);
-    gd_table.minimumHeight = 50;
-    gd_table.widthHint = 160;
-    gd_table.minimumWidth = 20;
-    table.setLayoutData(gd_table);
-
-    final TreeViewer treeViewer = new TreeViewer(container, SWT.BORDER);
-    tree = treeViewer.getTree();
-    final GridData gd_tree = new GridData(SWT.FILL, SWT.FILL, true, true);
-    gd_tree.minimumHeight = 50;
-    gd_tree.widthHint = 400;
-    gd_tree.minimumWidth = 100;
-    tree.setLayoutData(gd_tree);
-
-    final ScrolledComposite scrolledComposite = new ScrolledComposite(container, SWT.BORDER | SWT.H_SCROLL
-        | SWT.V_SCROLL);
-    scrolledComposite.setExpandVertical(true);
-    scrolledComposite.setExpandHorizontal(true);
-    final GridData gd_scrolledComposite = new GridData(SWT.FILL, SWT.FILL, true, true);
-    gd_scrolledComposite.widthHint = 400;
-    gd_scrolledComposite.minimumHeight = 80;
-    scrolledComposite.setLayoutData(gd_scrolledComposite);
-
-    final PostingComposite postingComposite = new PostingComposite(scrolledComposite, SWT.NONE);
-    postingComposite.setSize(300, 0);
-    scrolledComposite.setContent(postingComposite);
 
     final Button topicButton = new Button(container, SWT.NONE);
     topicButton.addSelectionListener(new SelectionAdapter() {
@@ -134,7 +104,41 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
       }
     });
     topicButton.setText("Add Topic");
-    new Label(container, SWT.NONE);
+
+    final SashForm sashForm = new SashForm(container, SWT.NONE);
+    sashForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+    tableViewer = new TableViewer(sashForm, SWT.BORDER);
+    tableViewer.setSorter(new Sorter());
+    table = tableViewer.getTable();
+    final GridData gd_table = new GridData(SWT.LEFT, SWT.FILL, false, true, 1, 2);
+    gd_table.minimumHeight = 50;
+    gd_table.widthHint = 160;
+    gd_table.minimumWidth = 20;
+    table.setLayoutData(gd_table);
+
+    final Composite composite = new Composite(sashForm, SWT.NONE);
+    final GridLayout compositeGridLayout = new GridLayout();
+    composite.setLayout(compositeGridLayout);
+
+    final TreeViewer treeViewer = new TreeViewer(composite, SWT.BORDER);
+    tree = treeViewer.getTree();
+    final GridData gd_tree = new GridData(SWT.FILL, SWT.FILL, true, true);
+    gd_tree.minimumHeight = 50;
+    gd_tree.widthHint = 400;
+    gd_tree.minimumWidth = 100;
+    tree.setLayoutData(gd_tree);
+
+    final ScrolledComposite scrolledComposite = new ScrolledComposite(composite, SWT.BORDER | SWT.H_SCROLL
+        | SWT.V_SCROLL);
+    scrolledComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+    scrolledComposite.setExpandVertical(true);
+    scrolledComposite.setExpandHorizontal(true);
+
+    final PostingComposite postingComposite = new PostingComposite(scrolledComposite, SWT.NONE);
+    postingComposite.setSize(300, 0);
+    scrolledComposite.setContent(postingComposite);
+    sashForm.setWeights(new int[] {1, 4});
 
     //
     bindingContext = initDataBindings();
