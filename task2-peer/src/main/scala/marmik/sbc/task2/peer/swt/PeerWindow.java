@@ -123,7 +123,10 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     compositeGridLayout.marginWidth = 0;
     composite.setLayout(compositeGridLayout);
 
-    final TreeViewer treeViewer = new TreeViewer(composite, SWT.BORDER);
+    final SashForm sashForm_1 = new SashForm(composite, SWT.VERTICAL);
+    sashForm_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+    final TreeViewer treeViewer = new TreeViewer(sashForm_1, SWT.BORDER);
     tree = treeViewer.getTree();
     final GridData gd_tree = new GridData(SWT.FILL, SWT.FILL, true, true);
     gd_tree.minimumHeight = 50;
@@ -131,15 +134,15 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     gd_tree.minimumWidth = 100;
     tree.setLayoutData(gd_tree);
 
-    final ScrolledComposite scrolledComposite = new ScrolledComposite(composite, SWT.BORDER | SWT.H_SCROLL
+    final ScrolledComposite scrolledComposite = new ScrolledComposite(sashForm_1, SWT.BORDER | SWT.H_SCROLL
         | SWT.V_SCROLL);
-    scrolledComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
     scrolledComposite.setExpandVertical(true);
     scrolledComposite.setExpandHorizontal(true);
 
     final PostingComposite postingComposite = new PostingComposite(scrolledComposite, SWT.NONE);
     postingComposite.setSize(300, 0);
     scrolledComposite.setContent(postingComposite);
+    sashForm_1.setWeights(new int[] {1, 2 });
     sashForm.setWeights(new int[] {1, 3});
 
     //
@@ -230,8 +233,8 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
   }
 
   @Override
-	protected void handleShellCloseEvent() {
-		super.handleShellCloseEvent();
-		session.getBacking().logout();
-	}
+  protected void handleShellCloseEvent() {
+    super.handleShellCloseEvent();
+    session.getBacking().logout();
+  }
 }
