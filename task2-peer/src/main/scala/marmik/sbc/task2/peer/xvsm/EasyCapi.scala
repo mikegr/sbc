@@ -19,13 +19,15 @@ import scala.Null;
 
 import java.net.URI
 
-class EasyCapi(capi:ICapi, superPeer:URI, selfUrl:String, selfName:String) extends NotificationListenerAdapter {
+class EasyCapi(capi:ICapi, superPeer:URI, selfName:String) extends NotificationListenerAdapter {
 
   val log = org.slf4j.LoggerFactory.getLogger(this.getClass.getName);
 
   var session: Session = null
 
-    /** Writes entry within a transaction*/
+  val selfUrl = postingContainer(null, null).getSite().toString;
+
+  /** Writes entry within a transaction*/
   def writePeerInfo() {
     log info "writing to " + superPeer;
     val entry = new AtomicEntry[SpacePeer](new SpacePeer(selfUrl, selfName));

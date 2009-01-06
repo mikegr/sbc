@@ -15,14 +15,14 @@ class XVSMSessionFactory extends SessionFactory {
     val capi = new Capi();
     val uri = new java.net.URI(superPeerUrl);
 
-    val easyCapi = new EasyCapi(capi, uri, selfUrl, selfName);
+    val easyCapi = new EasyCapi(capi, uri, selfName);
 
     //val tx = capi.createTransaction(uri, ICapi.INFINITE_TIMEOUT);
     //val superpeer = capi.lookupContainer(tx, uri, CONTAINER);
 
     easyCapi.writePeerInfo();
 
-    new XVSMSession(easyCapi, superPeerUrl, selfUrl, selfName);
+    new XVSMSession(easyCapi, superPeerUrl, selfName);
 
   }
 
