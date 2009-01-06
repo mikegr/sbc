@@ -13,7 +13,7 @@ class XVSMSessionFactory extends SessionFactory {
   
   def name() = "XVSM"
 
-  def login(superPeerUrl: String, selfName: String, selfUrl: String):Session =  {
+  def login(superPeerUrl: String, selfName: String):Session =  {
     val capi = new Capi();
     val uri = new java.net.URI(superPeerUrl);
 
@@ -21,8 +21,6 @@ class XVSMSessionFactory extends SessionFactory {
     
     log.info("selfUrl:" + easyCapi.selfUrl);
     
-    easyCapi.registerPeerListener();
-
     //val tx = capi.createTransaction(uri, ICapi.INFINITE_TIMEOUT);
     //val superpeer = capi.lookupContainer(tx, uri, CONTAINER);
 

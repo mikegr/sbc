@@ -7,14 +7,14 @@ import marmik.sbc.task2.peer._
 
 class RmiSessionFactory extends SessionFactory {
 
-  def name() = "RmiSessionFactory"
+  def name() = "RMI"
 
   /**
    * @param url: Url of super pper
    * @param selfName: Name of this peer
    * @param url: Url of this peer
    */
-  def login(superPeerUrl: String, selfName: String, ignore: String):Session = {
+  def login(superPeerUrl: String, selfName: String):Session = {
     val selfUrl = "rmi://localhost/" + selfName;
     //Expect created registry
     //LocateRegistry.createRegistry(Registry.REGISTRY_PORT);

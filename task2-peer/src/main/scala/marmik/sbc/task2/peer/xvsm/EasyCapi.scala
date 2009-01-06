@@ -25,15 +25,8 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfName:String) extends NotificationL
 
   var session: Session = null
 
-
-
   val selfUrl = { val tmpURL = postingContainer(null, null).asURI;
                   "tcpjava://" + tmpURL.getHost() + ":" + tmpURL.getPort();}
-
-  def registerPeerListener() {
-
-  }
-
 
   /** Writes entry within a transaction*/
   def writePeerInfo() {
@@ -42,13 +35,15 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfName:String) extends NotificationL
     entry.addSelectors(new KeySelector[String]("Url", selfUrl));
     val tx = transaction(superPeer);
     val ct = peerContainer(tx);
-    capi.shift(ct,tx, entry);
+    capi.write(ct, 0, tx, entry);
     //TODO: clear topics;
     capi.commitTransaction(tx);
 
     log info ("Register notification for " + selfUrl);
 
     capi.createNotification(ct, this, Operation.Write, Operation.Shift);
+    capi.createNotification(peerContainer(null), this, Operation.Write, Operation.Shift);
+
     log debug ("Registration finished for " + selfUrl);
   }
 
@@ -65,9 +60,6 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfName:String) extends NotificationL
     }).toList
   }
 
-  def peerContainer(tx:Transaction):ContainerRef =  {
-    container(tx, superPeer, CONTAINER_PEERS, Array(new KeyCoordinator(new KeyCoordinator.KeyType("Url", classOf[String]) ), new FifoCoordinator()))
-  }
 
   def postings(topic:XVSMTopic):List[Posting] = {
     postingsInternal(topic, null);
@@ -88,22 +80,6 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfName:String) extends NotificationL
     entries.map(x => entry2Posting(topic, posting, x)).toList;
   }
 
-  def dumpPostings(url:String) {
-    val uri = getUri(url);
-    val tx = transaction(uri);
-    val ct = postingContainer(tx, uri);
-    val template = constructReadingPostingTuple(null, null, null, null);
-    val entries = capi.read(ct, 0, tx, new LindaSelector(Selector.CNT_ALL, template))
-    capi.commitTransaction(tx);
-    entries.foreach{x =>
-      val tuple = x.asInstanceOf[Tuple];
-      val output:String = tuple.getEntryAt(0).asInstanceOf[AtomicEntry[Long]].getValue +
-        tuple.getEntryAt(1).asInstanceOf[AtomicEntry[String]].getValue +
-        //tuple.getEntryAt(2).asInstanceOf[AtomicEntry[Long]].getValue +
-        tuple.getEntryAt(3).asInstanceOf[AtomicEntry[SpacePosting]].getValue;
-      Console.println(output);
-    }
-  }
 
   def entry2Posting(topic:XVSMTopic, parent:XVSMPosting, x:Entry):XVSMPosting = {
     val tuple = x.asInstanceOf[Tuple]
@@ -115,6 +91,13 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfName:String) extends NotificationL
 
   def postingContainer(tx:Transaction, uri:URI):ContainerRef =  {
     container(tx, uri, CONTAINER_POSTINGS, Array(new LindaCoordinator(), new LifoCoordinator()));
+  }
+
+  def peerContainer(tx:Transaction):ContainerRef =  {
+    container(tx, superPeer, CONTAINER_PEERS, Array(new KeyCoordinator(new KeyCoordinator.KeyType("Url", classOf[String]) ), new FifoCoordinator()))
+  }
+  def topicContainer(tx:Transaction):ContainerRef = {
+    container(tx, superPeer, CONTAINER_TOPICS, Array(new LindaCoordinator()));
   }
 
   def createPosting(topic:XVSMTopic, author:String, subject:String, content:String):Posting =
@@ -184,7 +167,7 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfName:String) extends NotificationL
   def topics(peer:XVSMPeer):List[Topic] = {
     val url = peer.url;
     val tx = transaction(superPeer);
-    val ct = container(tx, superPeer, CONTAINER_TOPICS, Array(new LindaCoordinator()));
+    val ct = topicContainer(tx);
     val template = new Tuple(new AtomicEntry[java.lang.String](url), null);
 
     val entries = capi.read(ct, 0, tx, new LindaSelector(Selector.CNT_ALL, template));
@@ -196,12 +179,11 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfName:String) extends NotificationL
     }.toList
   }
 
-  def dumpTopics(){
+  def dumpPeers(){
     val tx = transaction(superPeer);
-    val ct = container(tx, superPeer, CONTAINER_TOPICS, Array(new LindaCoordinator()));
-    val template = new Tuple(null, null);
+    val ct = peerContainer(tx);
 
-    val entries = capi.read(ct, 0, tx, new LindaSelector(Selector.CNT_ALL, template));
+    val entries = capi.read(ct, 0, tx, new FifoSelector(Selector.CNT_ALL));
     capi.commitTransaction(tx);
     entries.foreach{ x =>
       val tuple = x.asInstanceOf[Tuple]
@@ -211,13 +193,47 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfName:String) extends NotificationL
     }
   }
 
+
+  def dumpTopics(){
+    val tx = transaction(superPeer);
+    val ct = topicContainer(tx);
+    val template = new Tuple(null, null);
+
+    val entries = capi.read(ct, 0, tx, new FifoSelector(Selector.CNT_ALL));
+    capi.commitTransaction(tx);
+    entries.foreach{ x =>
+      val tuple = x.asInstanceOf[Tuple]
+      val url = tuple.getEntryAt(0).asInstanceOf[AtomicEntry[String]].getValue;
+      val name = tuple.getEntryAt(1).asInstanceOf[AtomicEntry[String]].getValue;
+      Console println(url + " - " + name);
+    }
+  }
+
+  def dumpPostings(url:String) {
+    val uri = getUri(url);
+    val tx = transaction(uri);
+    val ct = postingContainer(tx, uri);
+    val template = constructReadingPostingTuple(null, null, null, null);
+    val entries = capi.read(ct, 0, tx, new LindaSelector(Selector.CNT_ALL, template))
+    capi.commitTransaction(tx);
+    entries.foreach{x =>
+      val tuple = x.asInstanceOf[Tuple];
+      val output:String = tuple.getEntryAt(0).asInstanceOf[AtomicEntry[Long]].getValue +
+        tuple.getEntryAt(1).asInstanceOf[AtomicEntry[String]].getValue +
+        //tuple.getEntryAt(2).asInstanceOf[AtomicEntry[Long]].getValue +
+        tuple.getEntryAt(3).asInstanceOf[AtomicEntry[SpacePosting]].getValue;
+      Console.println(output);
+    }
+  }
+
+
   /** @param url URL for new Topic. Should be null for local Topic.
    */
 
   def newTopic(peer:XVSMPeer, name:String):Topic = {
     val url = peer.url;
     val tx = transaction(superPeer);
-    val ct = container(tx, superPeer, CONTAINER_TOPICS, Array(new LindaCoordinator()));
+    val ct = topicContainer(tx);
     val st = new org.xvsm.core.Tuple(new AtomicEntry[String](selfUrl), new AtomicEntry[String](name));
 
     capi.write(ct, 0, tx, st);
