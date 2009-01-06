@@ -3,6 +3,7 @@ package marmik.sbc.task2.peer
 import marmik.sbc.task2.peer.swt.{JFaceHelpers, LoginAction, PeerWindow}
 import marmik.sbc.task2.peer.mock.MockSessionFactory
 import marmik.sbc.task2.peer.xvsm.XVSMSessionFactory
+import marmik.sbc.task2.peer.xvsm2.{XVSMSessionFactory => XVSM2SessionFactory}
 import marmik.sbc.task2.peer.rmi.RmiSessionFactory
 
 import org.eclipse.core.databinding.observable.Realm
@@ -22,7 +23,7 @@ object Application {
     val display = new Display();
 
     Realm.runWithDefault(SWTObservables.getRealm(Display.getDefault()), () => {
-      val factories = List(new MockSessionFactory(), new XVSMSessionFactory(), new RmiSessionFactory())
+      val factories = List(new MockSessionFactory(), new XVSM2SessionFactory(), new XVSMSessionFactory(), new RmiSessionFactory())
       val loginAction = new LoginAction()
       loginAction.execute(factories, args) match {
         case Some(session) =>
