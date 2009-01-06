@@ -12,6 +12,8 @@ import scalaz.javas.List.ScalaList_JavaList
 import marmik.sbc.task2.peer.swt.JFaceHelpers.{asRunnable, withRealm}
 
 object SessionAdapter {
+  val log = org.slf4j.LoggerFactory.getLogger(this.getClass);
+
   implicit def toSwtSession(session: ScalaSession): SwtSession = {
     val sessionPeers = session.peers();
     val peers = scalaPeers2WritableList(sessionPeers);
@@ -23,12 +25,14 @@ object SessionAdapter {
 
     session.registerListener(new Listener() {
       def peerJoins(peer: ScalaPeer) = withRealm(() => {
+        log debug "Got notification that peer " + peer.name  + " joined"
         peers.add(peer)
         swtSession.getSidebarEntries.add(toSwtPeer(peer))
       }: Unit)
       def peerLeaves(peer: ScalaPeer) = withRealm(() => {
+        log debug "Got notification that peer " + peer.name + " leaves"
         peers.remove(peer)
-        swtSession.getSidebarEntries.remove(toSwtPeer(peer))
+        swtSession.getSidebarEntries.add(toSwtPeer(peer))
       }: Unit)
 
       def postingCreated(posting: ScalaPosting) {
@@ -38,7 +42,8 @@ object SessionAdapter {
 
       }
       def topicCreated(peer: ScalaPeer, topic: ScalaTopic) {
-          withRealm(() => swtSession.getSidebarEntries.add(toSwtTopic(topic)): Unit)
+        log debug "Got notification that topic " + topic.name + " was created on " + peer.name
+        withRealm(() => swtSession.getSidebarEntries.add(toSwtTopic(topic)): Unit)
       }
     })
 
