@@ -4,6 +4,8 @@ import marmik.sbc.task2.peer._
 
 class XVSMPeer(ec:EasyCapi, val url:String, val name:String) extends Peer {
 
+  def session(): Session = ec.session
+
   def newTopic(name:String):Topic  = {
     throw new UnsupportedOperationException("Not allowed on foreign peer");
   }
@@ -17,7 +19,7 @@ class XVSMPeer(ec:EasyCapi, val url:String, val name:String) extends Peer {
     else if (o.asInstanceOf[XVSMPeer].url != this.url) false
     else true;
   }
-  
+
   def dumpPostings() {
     ec.dumpPostings(url);
   }

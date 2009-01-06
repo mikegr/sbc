@@ -2,10 +2,11 @@ package marmik.sbc.task2.peer.mock
 
 import marmik.sbc.task2.peer._
 
-class MockPeer(name: String, topics: List[MockTopic]) extends Peer {
+class MockPeer(s: Session, name: String, topics: List[MockTopic]) extends Peer {
   for(topic <- topics)
     topic.setPeer(this)
 
+  def session(): Session = s
   def name(): String = name
 
   def topics(): List[Topic] = topics

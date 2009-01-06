@@ -23,6 +23,8 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfUrl:String, selfName:String) exten
 
   val log = org.slf4j.LoggerFactory.getLogger(this.getClass.getName);
 
+  var session: Session = null
+
     /** Writes entry within a transaction*/
   def writePeerInfo() {
     log info "writing to " + superPeer;
@@ -264,5 +266,4 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfUrl:String, selfName:String) exten
   def handleNotificationScala(op:Operation, entries:Array[Entry]):Unit = {
      log debug "handleNotification called"
   }
-
 }

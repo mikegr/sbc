@@ -29,6 +29,7 @@ object SessionAdapter {
 
       }
       def topicCreated(peer: ScalaPeer, topic: ScalaTopic) {
+
       }
     })
     new SwtSession(session, peers, session.localPeer, new WritableList(sidebarEntries, classOf[SidebarEntry]))

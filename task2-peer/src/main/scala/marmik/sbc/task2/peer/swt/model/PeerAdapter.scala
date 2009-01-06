@@ -2,14 +2,28 @@ package marmik.sbc.task2.peer.swt.model
 
 import org.eclipse.core.databinding.observable.list.WritableList;
 
-import marmik.sbc.task2.peer.{Peer => ScalaPeer, Topic => ScalaTopic}
+import marmik.sbc.task2.peer.{Peer => ScalaPeer, Posting => ScalaPosting, Topic => ScalaTopic}
 import marmik.sbc.task2.peer.swt.model.{Peer => SwtPeer, Topic => SwtTopic}
 
 import scalaz.javas.List.ScalaList_JavaList
-import marmik.sbc.task2.peer.swt.model.TopicAdapter.toSwtTopicList
+import marmik.sbc.task2.peer.swt.model.TopicAdapter.{toSwtTopic, toSwtTopicList}
 
 object PeerAdapter {
-  implicit def toSwtPeer(peer: ScalaPeer): SwtPeer = new SwtPeer(peer, scalaTopics2WritableList(peer.topics))
+  implicit def toSwtPeer(peer: ScalaPeer): SwtPeer = {
+    val swtPeer = new SwtPeer(peer, scalaTopics2WritableList(peer.topics))
+    peer.session.registerListener(new Listener() {
+      def peerJoins(peer: ScalaPeer) = {}
+      def peerLeaves(peer: ScalaPeer) = {}
+      def postingCreated(posting: ScalaPosting) = {}
+      def postingEdited(posting: ScalaPosting) = {}
+      def topicCreated(eventPeer: ScalaPeer, topic: ScalaTopic) {
+        if(peer==eventPeer) {
+          swtPeer.getTopics.add(toSwtTopic(topic))
+        }
+      }
+    })
+    swtPeer
+  }
 
   implicit def toSwtPeerList(peers: List[ScalaPeer]): List[SwtPeer] = peers.map(toSwtPeer(_))
 
