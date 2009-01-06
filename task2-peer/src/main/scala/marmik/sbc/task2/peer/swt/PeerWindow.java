@@ -48,11 +48,11 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     public int category(Object element) {
       if(element instanceof SidebarEntry) {
         SidebarEntry e = (SidebarEntry) element;
-        if(e.hasTopic()) {
-          Topic t = e.getTopic();
+        if(e instanceof Topic) {
+          Topic t = (Topic)e;
           return t.getPeer().hashCode();
         } else {
-          Peer p = e.getPeer();
+          Peer p = (Peer)e;
           return p.hashCode();
         }
       } else

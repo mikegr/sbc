@@ -1,6 +1,6 @@
 package marmik.sbc.task2.peer.swt.model;
 
-public class Topic extends ModelObject {
+public class Topic extends ModelObject implements SidebarEntry {
   private marmik.sbc.task2.peer.Topic backing;
 
   public Topic(marmik.sbc.task2.peer.Topic backing) {

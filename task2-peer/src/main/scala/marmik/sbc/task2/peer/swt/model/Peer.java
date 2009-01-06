@@ -2,7 +2,7 @@ package marmik.sbc.task2.peer.swt.model;
 
 import org.eclipse.core.databinding.observable.list.WritableList;
 
-public class Peer extends ModelObject {
+public class Peer extends ModelObject implements SidebarEntry {
   private marmik.sbc.task2.peer.Peer backing;
   private WritableList topics;
 
