@@ -24,7 +24,10 @@ class LoginAction {
     val url = model.getUrl()
     val name = model.getName()
     log.info("Creating " + factory.name + " session named '" + name + "' (" + url + ")")
-    Some(factory.login(url, name, null))
+    val session = factory.login(url, name, null);
+    session.localPeer.newTopic("Common Topic");
+    Some(session);
+
   }
 
 }

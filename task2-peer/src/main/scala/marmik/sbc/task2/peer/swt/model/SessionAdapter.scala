@@ -13,10 +13,11 @@ import marmik.sbc.task2.peer.swt.JFaceHelpers.{asRunnable, withRealm}
 
 object SessionAdapter {
   implicit def toSwtSession(session: ScalaSession): SwtSession = {
-    val peers = scalaPeers2WritableList(session.peers)
+    val sessionPeers = session.peers();
+    val peers = scalaPeers2WritableList(sessionPeers);
 
-    val topicEntries: List[SidebarEntry] = for(peer <- session.peers; topic <- peer.topics) yield topic
-    val sidebarEntries = toSwtPeerList(session.peers).union(topicEntries)
+    val topicEntries: List[SidebarEntry] = for(peer <- sessionPeers; topic <- peer.topics) yield topic
+    val sidebarEntries = toSwtPeerList(sessionPeers).union(topicEntries)
 
     val swtSession = new SwtSession(session, peers, session.localPeer, new WritableList(sidebarEntries, classOf[SidebarEntry]))
 

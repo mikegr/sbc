@@ -14,8 +14,8 @@ class RmiSessionFactory extends SessionFactory {
    * @param selfName: Name of this peer
    * @param url: Url of this peer
    */
-  def login(superPeerUrl: String, selfName: String, selfUrl: String):Session = {
-
+  def login(superPeerUrl: String, selfName: String, ignore: String):Session = {
+    val selfUrl = "rmi://localhost/" + selfName;
     //Expect created registry
     //LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
 
@@ -24,6 +24,8 @@ class RmiSessionFactory extends SessionFactory {
     //add existing topics...
     val session = new RmiSession(superPeer, selfName, selfUrl);
     val remotePeer = new RemotePeerImpl(selfUrl, session);
+
+
 
     Naming.rebind(selfUrl, remotePeer);
 

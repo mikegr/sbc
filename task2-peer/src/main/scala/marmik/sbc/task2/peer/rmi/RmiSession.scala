@@ -30,6 +30,7 @@ class RmiSession(val superPeer:RemoteSuperPeer, val selfName:String, val selfUrl
 
   def logout() {
     superPeer.logout(selfUrl);
+    Naming.unbind(selfUrl);
   }
 
   val remotePeers = new HashMap[String, RemotePeer]();
@@ -49,4 +50,8 @@ class RmiSession(val superPeer:RemoteSuperPeer, val selfName:String, val selfUrl
     }
     false
   }
+  override
+    def hashCode():Int = {
+      superPeer.hashCode + selfName.hashCode + selfUrl.hashCode
+    }
 }

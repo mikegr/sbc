@@ -3,15 +3,11 @@ package marmik.sbc.task2.peer.rmi
 import marmik.sbc.task2.peer._
 import scala.collection.jcl.Conversions._
 
-class RmiTopic(session:RmiSession, val url:String, val name:String) extends Topic {
+class RmiTopic(val session:RmiSession, val peer:RmiPeer, val name:String) extends Topic {
 
+  val url = peer.url;
   val logger = org.slf4j.LoggerFactory.getLogger(classOf[RmiTopic])
 
-  def peer(): Peer = {
-    logger debug ("Peer requested:" + url + "|" + name)
-    // TODO: Implement this!
-    throw new UnsupportedOperationException("Not implemented");
-  }
   def postings(): List[Posting] = {
     logger debug ("Postings requested:" + url + "|" + name);
     session.getRemotePeer(url).getPostings(name).map(p=> new RmiPosting(session, this, null, p)).toList;
@@ -40,5 +36,9 @@ class RmiTopic(session:RmiSession, val url:String, val name:String) extends Topi
       ) true
     }
     false
+  }
+  override
+  def hashCode():Int = {
+    peer.hashCode + name.hashCode
   }
 }

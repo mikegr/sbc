@@ -48,4 +48,8 @@ class RmiPosting(val session:RmiSession, val topic:RmiTopic, val parent:RmiPosti
     }
     false;
   }
+  override
+    def hashCode():Int = {
+      topic.hashCode + id.hashCode
+    }
 }
