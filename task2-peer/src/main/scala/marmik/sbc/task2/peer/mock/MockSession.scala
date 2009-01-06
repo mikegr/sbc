@@ -20,13 +20,17 @@ class MockSession(url: String, name: String) extends Session {
         val topic = new MockTopic("asdasd", List())
         topic.setPeer(mockLocalPeer)
         mockLocalPeer.setTopics(List(topic).union(mockLocalPeer.topics))
-        for(listener <- listeners)
-          listener.topicCreated(mockLocalPeer, topic)
+        fireTopicCreated(mockLocalPeer, topic)
       }
     }
   });
   t.setDaemon(true)
   t.start
+
+  def fireTopicCreated(peer: MockPeer, topic: MockTopic) {
+    for(listener <- listeners)
+      listener.topicCreated(peer, topic)
+  }
 
   def registerListener(l: Listener) {
     if(!loggedIn)

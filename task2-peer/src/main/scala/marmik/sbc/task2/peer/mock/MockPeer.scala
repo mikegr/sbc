@@ -13,7 +13,11 @@ class MockPeer(s: Session, name: String, var ts: List[Topic]) extends Peer {
   def setTopics(t: List[Topic]): Unit = { ts = t}
 
   def newTopic(name:String): Topic = {
-    throw new UnsupportedOperationException("That's what you get for using mock objects")
+    val t = new MockTopic(name, List())
+    t.setPeer(this)
+    ts += t
+    s.asInstanceOf[MockSession].fireTopicCreated(this, t)
+    t
   }
 
   override def hashCode(): Int = {
