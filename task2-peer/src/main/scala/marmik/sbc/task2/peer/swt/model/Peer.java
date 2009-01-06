@@ -23,6 +23,10 @@ public class Peer extends ModelObject implements SidebarEntry {
     return topics;
   }
 
+  public boolean isLocal() {
+    return backing.isLocal();
+  }
+
   @Override
   public boolean equals(Object obj) {
     if(obj instanceof Peer)

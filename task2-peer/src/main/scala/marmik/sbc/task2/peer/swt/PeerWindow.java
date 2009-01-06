@@ -79,6 +79,7 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     super(null);
     createActions();
     JFaceResources.getColorRegistry().put(JFacePreferences.COUNTER_COLOR, new RGB(0,127,174));
+    JFaceResources.getColorRegistry().put("sidebar.local_peer", Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN).getRGB());
     addToolBar(SWT.FLAT | SWT.WRAP);
     addMenuBar();
     addStatusLine();

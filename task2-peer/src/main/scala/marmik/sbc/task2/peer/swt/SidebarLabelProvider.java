@@ -40,7 +40,10 @@ public class SidebarLabelProvider extends ColumnLabelProvider implements IStyled
       styledString.append(" (5)", StyledString.COUNTER_STYLER);
     } else if (element instanceof Peer) {
       Peer peer = (Peer) element;
-      styledString.append(peer.getName());
+      if(peer.isLocal())
+        styledString.append(peer.getName(), StyledString.createColorRegistryStyler("sidebar.local_peer", null));
+      else
+        styledString.append(peer.getName());
     }
     return styledString;
   }
