@@ -56,6 +56,9 @@ class RmiSession(val superPeer:RemoteSuperPeer, val selfName:String, val selfUrl
     remotePeers.getOrElseUpdate(url, Naming.lookup(url).asInstanceOf[RemotePeer]);
   }
 
+  def url(): String = {
+    selfUrl
+  }
 
   override
   def equals(o:Any):Boolean = {

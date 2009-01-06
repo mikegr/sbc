@@ -19,9 +19,11 @@ class RmiPeer(val session:RmiSession, peerInfo:PeerInfo) extends Peer {
     val result = new ListBuffer[RmiTopic]();
 
     session.superPeer.topics.foreach(topicInfo => {
-      val rmiTopic = new RmiTopic(session, this, topicInfo.name);
-      cachedTopics += (name -> rmiTopic);
-      result += rmiTopic;
+      if(topicInfo.url == url) {
+        val rmiTopic = new RmiTopic(session, this, topicInfo.name);
+        cachedTopics += (name -> rmiTopic);
+        result += rmiTopic;
+      }
     });
 
     result.toList;
