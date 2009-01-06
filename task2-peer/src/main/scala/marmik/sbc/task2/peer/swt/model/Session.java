@@ -31,4 +31,17 @@ public class Session extends ModelObject {
   public Peer getLocalPeer() {
     return localPeer;
   }
+
+  @Override
+  public boolean equals(Object obj) {
+    if(obj instanceof Session)
+      return ((Session)obj).backing == backing;
+    else
+      return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return backing.hashCode();
+  }
 }

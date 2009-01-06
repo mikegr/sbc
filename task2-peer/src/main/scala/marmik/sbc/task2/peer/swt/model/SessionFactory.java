@@ -14,4 +14,17 @@ public class SessionFactory extends ModelObject {
   public String getName() {
     return backing.name();
   }
+
+  @Override
+  public boolean equals(Object obj) {
+    if(obj instanceof SessionFactory)
+      return ((SessionFactory)obj).backing == backing;
+    else
+      return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return backing.hashCode();
+  }
 }

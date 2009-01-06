@@ -28,13 +28,11 @@ public class Peer extends ModelObject {
     if(obj instanceof Peer)
       return ((Peer)obj).backing == backing;
     else
-      return super.equals(obj);
+      return false;
   }
 
   @Override
   public int hashCode() {
     return backing.hashCode();
   }
-
-
 }

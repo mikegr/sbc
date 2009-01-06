@@ -18,4 +18,17 @@ public class Topic extends ModelObject {
   public Peer getPeer() {
     return PeerAdapter.toSwtPeer(backing.peer());
   }
+
+  @Override
+  public boolean equals(Object obj) {
+    if(obj instanceof Topic)
+      return ((Topic)obj).backing == backing;
+    else
+      return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return backing.hashCode();
+  }
 }
