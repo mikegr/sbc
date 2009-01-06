@@ -95,7 +95,13 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     final GridLayout gridLayout = new GridLayout();
     container.setLayout(gridLayout);
 
-    final Button topicButton = new Button(container, SWT.NONE);
+    final Composite composite_1 = new Composite(container, SWT.NONE);
+    composite_1.setLayoutData(new GridData());
+    final GridLayout gridLayout_1 = new GridLayout();
+    gridLayout_1.numColumns = 2;
+    composite_1.setLayout(gridLayout_1);
+
+    final Button topicButton = new Button(composite_1, SWT.NONE);
     topicButton.addSelectionListener(new SelectionAdapter() {
       public void widgetSelected(final SelectionEvent e) {
         InputDialog d = new InputDialog(PeerWindow.this.getShell(), "Add Thema", "Name:", null, null);
@@ -104,6 +110,20 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
       }
     });
     topicButton.setText("Add Topic");
+
+    final Button addPostingButton = new Button(composite_1, SWT.NONE);
+    addPostingButton.addSelectionListener(new SelectionAdapter() {
+      public void widgetSelected(final SelectionEvent e) {
+        if (tableViewer.getSelection() != null) {
+          Topic t = (Topic) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
+          InputDialog d = new InputDialog(PeerWindow.this.getShell(), "Add Posting", "Name of Posting to " + t.getName() + ":", null,
+              null);
+          d.open();
+          t.createPosting("Autor", d.getValue(), "leer");
+        }
+      }
+    });
+    addPostingButton.setText("Add Posting");
 
     final SashForm sashForm = new SashForm(container, SWT.NONE);
     sashForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -142,8 +162,8 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     final PostingComposite postingComposite = new PostingComposite(scrolledComposite, SWT.NONE);
     postingComposite.setSize(300, 0);
     scrolledComposite.setContent(postingComposite);
-    sashForm_1.setWeights(new int[] {1, 2 });
-    sashForm.setWeights(new int[] {1, 3});
+    sashForm_1.setWeights(new int[] { 1, 2 });
+    sashForm.setWeights(new int[] { 1, 3 });
 
     //
     bindingContext = initDataBindings();

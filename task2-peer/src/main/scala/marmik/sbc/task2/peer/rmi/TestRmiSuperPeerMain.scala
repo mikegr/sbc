@@ -16,7 +16,7 @@ object TestRmiSuperPeerMain {
   def main(args:Array[String]) {
     LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
     val rsp:RemoteSuperPeer = new RemoteSuperPeerImpl("TestRMI");
-	Naming.rebind(superPeerUrl, rsp);
+    Naming.rebind(superPeerUrl, rsp);
 
     0 until 2 foreach { x => check(x) };
     System.exit(0);
@@ -27,7 +27,7 @@ object TestRmiSuperPeerMain {
     val superPeer:RemoteSuperPeer = java.rmi.Naming.lookup(superPeerUrl).asInstanceOf[RemoteSuperPeer];
     superPeer.newTopic(selfUrl + x, "Topic OOP");
     superPeer.newTopic(selfUrl + x, "Topic Complang");
-    val list:Seq[TopicInfo] = superPeer.topics();
+    val list:Seq[TopicInfo] = superPeer.topics("TODO FIX ME");
     list.foreach {
       println
     }
