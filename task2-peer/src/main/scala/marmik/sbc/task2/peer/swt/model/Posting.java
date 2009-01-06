@@ -31,6 +31,10 @@ public class Posting extends ModelObject {
     return backing.content();
   }
 
+  public Topic getTopic() {
+    return TopicAdapter.toSwtTopic(backing.topic());
+  }
+
   public Posting getParent() {
     return PostingAdapter.toSwtPosting(backing.parent());
   }

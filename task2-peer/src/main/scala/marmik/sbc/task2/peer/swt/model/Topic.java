@@ -7,9 +7,12 @@ import org.eclipse.core.databinding.observable.list.WritableList;
 
 public class Topic extends ModelObject implements SidebarEntry {
   private marmik.sbc.task2.peer.Topic backing;
+  private WritableList postings;
 
   public Topic(marmik.sbc.task2.peer.Topic backing) {
     this.backing = backing;
+    this.postings = new WritableList(
+        scalaz.javas.List.ScalaList_JavaList(PostingAdapter.toSwtPostingList(backing.postings())), Posting.class);
   }
 
   public marmik.sbc.task2.peer.Topic getBacking() {
@@ -20,8 +23,8 @@ public class Topic extends ModelObject implements SidebarEntry {
     return backing.name();
   }
 
-  public List<Posting> getPostings() {
-    return scalaz.javas.List.ScalaList_JavaList(PostingAdapter.toSwtPostingList(backing.postings()));
+  public WritableList getPostings() {
+    return postings;
   }
 
   public Posting getTopLevelPosting() {
@@ -84,5 +87,9 @@ public class Topic extends ModelObject implements SidebarEntry {
   @Override
   public int hashCode() {
     return backing.hashCode();
+  }
+
+  public void fireTopLevelPostingChanged(Posting previous) {
+    firePropertyChange("topLevelPosting", previous, getTopLevelPosting());
   }
 }

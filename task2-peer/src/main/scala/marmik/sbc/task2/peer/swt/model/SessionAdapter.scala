@@ -7,8 +7,10 @@ import marmik.sbc.task2.peer.swt.model.{Peer => SwtPeer, Posting => SwtPosting}
 import marmik.sbc.task2.peer.swt.model.{Session => SwtSession, Topic => SwtTopic}
 import marmik.sbc.task2.peer.swt.model.PeerAdapter.{toSwtPeer, toSwtPeerList}
 import marmik.sbc.task2.peer.swt.model.TopicAdapter.toSwtTopic
+import marmik.sbc.task2.peer.swt.model.PostingAdapter.toSwtPosting
 
 import scalaz.javas.List.ScalaList_JavaList
+import scalaz.javas.List.JavaList_ScalaList
 import marmik.sbc.task2.peer.swt.JFaceHelpers.{asRunnable, withRealm}
 
 object SessionAdapter {
@@ -35,9 +37,10 @@ object SessionAdapter {
         swtSession.getSidebarEntries.add(toSwtPeer(peer))
       }: Unit)
 
-      def postingCreated(posting: ScalaPosting) {
-
-      }
+      def postingCreated(posting: ScalaPosting) =
+        withRealm(() => {
+          swtSession.firePostingCreated(posting)
+        }: Unit)
       def postingEdited(posting: ScalaPosting) {
 
       }

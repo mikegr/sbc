@@ -38,6 +38,11 @@ class MockSession(url: String, name: String) extends Session {
       listener.topicCreated(peer, topic)
   }
 
+  def firePostingCreated(posting: Posting) {
+    for(listener <- listeners)
+      listener.postingCreated(posting)
+  }
+
   def registerListener(l: Listener) {
     if(!loggedIn)
       throw new IllegalStateException("Not logged in")

@@ -32,10 +32,34 @@ public class Session extends ModelObject {
     return localPeer;
   }
 
+  public void firePostingCreated(Posting posting) {
+    for (Object e : sidebar) {
+      if (e instanceof Topic) {
+        Topic t = (Topic) e;
+        if (t.equals(posting.getTopic())) {
+          Posting previous = t.getTopLevelPosting();
+          t.getPostings().add(posting);
+          t.fireTopLevelPostingChanged(previous);
+        }
+      }
+    }
+    for (Object p : peers) {
+      Peer peer = (Peer) p;
+      for (Object t : peer.getTopics()) {
+        Topic topic = (Topic) t;
+        if (topic.equals(posting.getTopic())) {
+          Posting previous = topic.getTopLevelPosting();
+          topic.getPostings().add(posting);
+          topic.fireTopLevelPostingChanged(previous);
+        }
+      }
+    }
+  }
+
   @Override
   public boolean equals(Object obj) {
-    if(obj instanceof Session)
-      return ((Session)obj).backing == backing;
+    if (obj instanceof Session)
+      return ((Session) obj).backing == backing;
     else
       return false;
   }
