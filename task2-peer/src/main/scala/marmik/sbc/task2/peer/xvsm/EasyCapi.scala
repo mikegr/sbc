@@ -25,7 +25,7 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfName:String) extends NotificationL
 
   var session: Session = null
 
-  val selfUrl = postingContainer(null, null).getSite().toString;
+  val selfUrl = postingContainer(null, null).asURI.toString;
 
   /** Writes entry within a transaction*/
   def writePeerInfo() {
@@ -166,7 +166,8 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfName:String) extends NotificationL
   /** Fetch list of topics from super peer
    * @param url URL for XVSMTopic. Should be null for local topic.
    */
-  def topics(url:String):List[Topic] = {
+  def topics(peer:XVSMPeer):List[Topic] = {
+    val url = peer.url;
     val tx = transaction(superPeer);
     val ct = container(tx, superPeer, CONTAINER_TOPICS, Array(new LindaCoordinator()));
     val template = new Tuple(new AtomicEntry[java.lang.String](url), null);
@@ -176,7 +177,7 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfName:String) extends NotificationL
     entries.map{ x =>
       val tuple = x.asInstanceOf[Tuple];
       val name = tuple.getEntryAt(1).asInstanceOf[AtomicEntry[String]].getValue;
-      new XVSMTopic(this, url, name)
+      new XVSMTopic(this, peer, name)
     }.toList
   }
 
@@ -198,7 +199,8 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfName:String) extends NotificationL
   /** @param url URL for new Topic. Should be null for local Topic.
    */
 
-  def newTopic(url:String, name:String):Topic = {
+  def newTopic(peer:XVSMPeer, name:String):Topic = {
+    val url = peer.url;
     val tx = transaction(superPeer);
     val ct = container(tx, superPeer, CONTAINER_TOPICS, Array(new LindaCoordinator()));
     val st = new org.xvsm.core.Tuple(new AtomicEntry[String](selfUrl), new AtomicEntry[String](name));
@@ -207,7 +209,7 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfName:String) extends NotificationL
 
     capi.commitTransaction(tx);
 
-    new XVSMTopic(this, url, name);
+    new XVSMTopic(this, peer, name);
 
   }
 

@@ -8,15 +8,14 @@ import org.xvsm.core.aspect._
 
 
 
-class XVSMTopic(ec:EasyCapi, val url:String, val name:String) extends Topic {
+class XVSMTopic(ec:EasyCapi, val peer:XVSMPeer, val name:String) extends Topic {
+
+  val url = peer.url;
 
   def postings(): List[Posting] = {
     ec.postings(this);
   }
-  def peer(): Peer = {
-    // TODO: Implement
-    throw new UnsupportedOperationException("Not implemented");
-  }
+
   def subscribe() = {
     ec.subscribe(this);
   }
@@ -31,7 +30,7 @@ class XVSMTopic(ec:EasyCapi, val url:String, val name:String) extends Topic {
   def equals(o:Any):Boolean = {
     if (o.isInstanceOf[XVSMTopic]) {
       val that = o.asInstanceOf[XVSMTopic];
-      if (that.url == this.url && that.name == this.name) true
+      if (that.peer == this.peer && that.name == this.name) true
     }
     false
   }

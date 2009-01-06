@@ -11,7 +11,7 @@ class XVSMPeer(ec:EasyCapi, val url:String, val name:String) extends Peer {
   }
 
   def topics():List[Topic] = {
-    ec.topics(url);
+    ec.topics(this);
   }
 
   override def equals(o:Any):Boolean = {
