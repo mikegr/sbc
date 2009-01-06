@@ -13,7 +13,11 @@ import org.xvsm.transactions._
 import org.xvsm.internal.exceptions._
 import org.xvsm.coordinators._
 import org.xvsm.selectors._
+import org.xvsm.interfaces._
+import org.xvsm.interfaces.container._
+
 import marmik.sbc.task2.peer.xvsm.XVSMContants._
+
 
 import scala.Null;
 
@@ -30,9 +34,12 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfName:String) extends NotificationL
 
   /** Writes entry within a transaction*/
   def writePeerInfo() {
+    dumpPeers()
+    dumpTopics()
     log info "writing to " + superPeer;
     val entry = new AtomicEntry[SpacePeer](new SpacePeer(selfUrl, selfName));
     entry.addSelectors(new KeySelector[String]("Url", selfUrl));
+
     val tx = transaction(superPeer);
     val ct = peerContainer(tx);
     capi.write(ct, 0, tx, entry);
@@ -41,8 +48,8 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfName:String) extends NotificationL
 
     log info ("Register notification for " + selfUrl);
 
-    capi.createNotification(ct, this, Operation.Write, Operation.Shift);
-    capi.createNotification(peerContainer(null), this, Operation.Write, Operation.Shift);
+    //capi.createNotification(ct, this, Operation.Write, Operation.Shift);
+    //capi.createNotification(peerContainer(null), this, Operation.Write, Operation.Shift);
 
     log debug ("Registration finished for " + selfUrl);
   }
@@ -180,26 +187,26 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfName:String) extends NotificationL
   }
 
   def dumpPeers(){
+    Console println ("dumpPeers");
     val tx = transaction(superPeer);
     val ct = peerContainer(tx);
 
     val entries = capi.read(ct, 0, tx, new FifoSelector(Selector.CNT_ALL));
     capi.commitTransaction(tx);
-    entries.foreach{ x =>
-      val tuple = x.asInstanceOf[Tuple]
-      val url = tuple.getEntryAt(0).asInstanceOf[AtomicEntry[String]].getValue;
-      val name = tuple.getEntryAt(1).asInstanceOf[AtomicEntry[String]].getValue;
-      Console println(url + " - " + name);
+    entries.foreach{ x:Entry =>
+      val value:SpacePeer = x.asInstanceOf[AtomicEntry[SpacePeer]].getValue();
+      Console println(value.url + " - " + value.name);
     }
   }
 
 
   def dumpTopics(){
+    Console println ("dumpTopics");
     val tx = transaction(superPeer);
     val ct = topicContainer(tx);
     val template = new Tuple(null, null);
 
-    val entries = capi.read(ct, 0, tx, new FifoSelector(Selector.CNT_ALL));
+    val entries = capi.read(ct, 0, tx, new LindaSelector(Selector.CNT_ALL, template));
     capi.commitTransaction(tx);
     entries.foreach{ x =>
       val tuple = x.asInstanceOf[Tuple]
@@ -255,7 +262,7 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfName:String) extends NotificationL
     catch {
       case e:InvalidContainerException => { //ContainerNameOccupiedException
         //e.printStackTrace();
-        capi.createContainer(tx, uri, container, -1, coodinators: _*);
+        capi.createContainer(tx, uri, container, IContainer.INFINITE_SIZE, coodinators: _*);
       };
     }
   )
