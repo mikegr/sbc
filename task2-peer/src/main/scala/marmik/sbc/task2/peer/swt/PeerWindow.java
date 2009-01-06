@@ -119,6 +119,8 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
 
     final Composite composite = new Composite(sashForm, SWT.NONE);
     final GridLayout compositeGridLayout = new GridLayout();
+    compositeGridLayout.marginHeight = 0;
+    compositeGridLayout.marginWidth = 0;
     composite.setLayout(compositeGridLayout);
 
     final TreeViewer treeViewer = new TreeViewer(composite, SWT.BORDER);
