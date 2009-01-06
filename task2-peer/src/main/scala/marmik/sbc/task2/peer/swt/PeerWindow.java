@@ -1,37 +1,26 @@
 package marmik.sbc.task2.peer.swt;
 
+import marmik.sbc.task2.peer.swt.model.Peer;
 import marmik.sbc.task2.peer.swt.model.Session;
 import marmik.sbc.task2.peer.swt.model.SidebarEntry;
 import marmik.sbc.task2.peer.swt.model.Topic;
 
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.beans.BeansObservables;
-import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
-import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
-import org.eclipse.jface.viewers.IBaseLabelProvider;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ListViewer;
-import org.eclipse.jface.viewers.OwnerDrawLabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
@@ -39,12 +28,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Tree;
-import marmik.sbc.task2.peer.swt.model.Peer;
 
 public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
 
@@ -52,13 +38,13 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
 
     @Override
     public int category(Object element) {
-      if(element instanceof SidebarEntry) {
+      if (element instanceof SidebarEntry) {
         SidebarEntry e = (SidebarEntry) element;
-        if(e instanceof Topic) {
-          Topic t = (Topic)e;
+        if (e instanceof Topic) {
+          Topic t = (Topic) e;
           return t.getPeer().hashCode();
         } else {
-          Peer p = (Peer)e;
+          Peer p = (Peer) e;
           return p.hashCode();
         }
       } else
@@ -66,6 +52,7 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     }
 
   }
+
   private DataBindingContext bindingContext;
   private TableViewer tableViewer;
   private Tree tree;
@@ -78,8 +65,9 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
   protected PeerWindow() {
     super(null);
     createActions();
-    JFaceResources.getColorRegistry().put(JFacePreferences.COUNTER_COLOR, new RGB(0,127,174));
-    JFaceResources.getColorRegistry().put("sidebar.local_peer", Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN).getRGB());
+    JFaceResources.getColorRegistry().put(JFacePreferences.COUNTER_COLOR, new RGB(0, 127, 174));
+    JFaceResources.getColorRegistry().put("sidebar.local_peer",
+        Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN).getRGB());
     addToolBar(SWT.FLAT | SWT.WRAP);
     addMenuBar();
     addStatusLine();
@@ -201,9 +189,10 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
       // Disable selection of instanceof Peer
       private IStructuredSelection previousSelection = null;
+
       public void selectionChanged(SelectionChangedEvent event) {
-        IStructuredSelection selection = (IStructuredSelection)event.getSelection();
-        if(selection.getFirstElement() instanceof Peer)
+        IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+        if (selection.getFirstElement() instanceof Peer)
           tableViewer.setSelection(previousSelection);
         else
           previousSelection = selection;
