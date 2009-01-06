@@ -28,12 +28,14 @@ import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TableTreeViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.custom.TableTree;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
@@ -72,10 +74,10 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
 
   private DataBindingContext bindingContext;
   private TableViewer tableViewer;
-  private Tree tree;
+  private TableTree tree;
   private Table table;
   private Session session;
-  private TreeViewer treeViewer;
+  private TableTreeViewer treeViewer;
 
   /**
    * Create the application window
@@ -171,8 +173,8 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     final SashForm sashForm_1 = new SashForm(composite, SWT.VERTICAL);
     sashForm_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-    treeViewer = new TreeViewer(sashForm_1, SWT.BORDER);
-    tree = treeViewer.getTree();
+    treeViewer = new TableTreeViewer(sashForm_1, SWT.BORDER);
+    tree = treeViewer.getTableTree();
     final GridData gd_tree = new GridData(SWT.FILL, SWT.FILL, true, true);
     gd_tree.minimumHeight = 50;
     gd_tree.widthHint = 400;
