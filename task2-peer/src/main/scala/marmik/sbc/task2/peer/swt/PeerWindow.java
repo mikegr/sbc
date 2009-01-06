@@ -270,7 +270,7 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
 
     //
     DataBindingContext bindingContext = new DataBindingContext();
-    bindingContext.bindValue(input, postings, null, null);// new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), null);
+    bindingContext.bindValue(input, postings, new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), null);
 
     //
     //
