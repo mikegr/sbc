@@ -1,5 +1,9 @@
 package marmik.sbc.task2.peer.swt.model;
 
+import java.util.List;
+
+import org.eclipse.core.databinding.observable.list.WritableList;
+
 public class Posting extends ModelObject {
   private marmik.sbc.task2.peer.Posting backing;
 
@@ -9,6 +13,26 @@ public class Posting extends ModelObject {
 
   public marmik.sbc.task2.peer.Posting getBacking() {
     return backing;
+  }
+
+  public String getAuthor() {
+    return backing.author();
+  }
+
+  public String getSubject() {
+    return backing.subject();
+  }
+
+  public String getContent() {
+    return backing.content();
+  }
+
+  public Posting getParent() {
+    return PostingAdapter.toSwtPosting(backing.parent());
+  }
+
+  public List<Posting> getReplies() {
+    return scalaz.javas.List.ScalaList_JavaList(PostingAdapter.toSwtPostingList(backing.replies()));
   }
 
   @Override
