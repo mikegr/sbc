@@ -25,6 +25,7 @@ object TestElevator {
     println(marmik.xvsm.Container.toXVSMEntry(List(1)).toString)
     println(marmik.xvsm.Container.toXVSMEntry(List(1, 2)).toString)
     println(marmik.xvsm.Container.toXVSMEntry(List(1, 2, 3)).toString)
+
     val elevator = new marmik.xvsm.SpaceElevator()
     log info elevator.url.toString
     val tx = elevator.localSpace.implicitTransaction
@@ -53,14 +54,15 @@ object TestElevator {
     }
 
     val remoteSpace = elevator.remoteSpace(new java.net.URI("tcpjava://localhost:56473"))
-    val remoteTx = remoteSpace.transaction
-    val remoteC = remoteTx.container("TestElevatorFifo", new FifoCoordinator())
-    val newI = remoteC.takeOne[Int](0, new FifoSelector()) match {
-      case Some(x: Int) => x + 1
-      case None => 1
-    }
-    println("Write " + newI)
-    remoteC.write(0, newI)
-    remoteTx.commit
+    remoteSpace.transaction.withTransaction( tx => {
+      val remoteC = remoteTx.container("TestElevatorFifo", new FifoCoordinator())
+      val newI = remoteC.takeOne[Int](0, new FifoSelector()) match {
+        case Some(x: Int) => x + 1
+        case None => 1
+      }
+      println("Write " + newI)
+      remoteC.write(0, newI)
+      // tx.commit ist implizit, bei einer exception passiert rollback
+    })
   }
 }
