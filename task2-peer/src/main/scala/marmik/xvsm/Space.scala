@@ -3,6 +3,10 @@ package marmik.xvsm
 import java.net.URI
 
 import org.xvsm.interfaces.ICapi
+import org.xvsm.interfaces.NotificationListener
+import org.xvsm.core.ContainerRef
+import org.xvsm.core.Entry
+import org.xvsm.core.notifications.Operation
 
 import marmik.xvsm.Conversions._
 
@@ -13,6 +17,16 @@ class Space(val elevator: SpaceElevator, val url: URI) {
 
   def implicitTransaction() = {
     new Transaction(elevator, this, null)
+  }
+
+  def registerNotification(container: String, operations: Seq[Operation])(func: Seq[Any] => Any) = {
+    val listener = new NotificationListenerAdapter() {
+      def handleNotificationScala(operation: Operation, entries: Array[Entry]) {
+        println("NOTIFICAITON")
+      }
+    }
+    val cref = elevator.capi.lookupContainer(null, url, container);
+    elevator.capi.createNotification(cref, listener, operations.toArray: _*)
   }
 
   override def equals(that: Any) = {

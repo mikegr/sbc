@@ -55,9 +55,19 @@ object TestElevator {
     log info c2.read[String](0, new RandomSelector(Selector.CNT_ALL)).mkString
 
     val remoteSpace = elevator.remoteSpace(new java.net.URI("tcpjava://localhost:56473"))
+
+    remoteSpace.transaction()( tx => {
+      tx.container("TestElevatorFifo", new FifoCoordinator())
+      log info "Created container"
+    })
+
     remoteSpace.transaction()( tx => {
       val remoteC = tx.container("TestElevatorFifo", new FifoCoordinator())
-      val newI = remoteC.takeOne[Int](0, new FifoSelector()) match {
+      println("ASD")
+      remoteSpace.registerNotification("TestElevatorFifo", List(org.xvsm.core.notifications.Operation.Write))( entries => {
+        println("NOTIFICATION")
+      })
+      val newI = remoteC.readOne[Int](0, new FifoSelector()) match {
         case Some(x: Int) => x + 1
         case None => 1
       }
@@ -65,6 +75,5 @@ object TestElevator {
       remoteC.write(0, newI)
       // tx.commit ist implizit, bei einer exception passiert rollback
     })
-    elevator.shutdown
   }
 }
