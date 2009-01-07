@@ -30,7 +30,6 @@ object Application {
       val loginAction = new LoginAction()
       loginAction.execute(factories, args) match {
         case Some(session) =>
-          log.info("Connected")
           val mainWindow = new PeerWindow(session)
           mainWindow.setBlockOnOpen(true)
           mainWindow.open()

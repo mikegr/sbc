@@ -4,14 +4,12 @@ import marmik.xvsm._
 import marmik.sbc.task2.peer._
 import org.xvsm.selectors._
 
-class XVSMSession(val elevator: SpaceElevator, val superPeer: Space) extends Session {
-  var localPeer: XVSMPeer = null
+class XVSMSession(val elevator: SpaceElevator, val superPeer: Space, val name: String) extends Session {
+  val log = org.slf4j.LoggerFactory.getLogger(this.getClass);
+  var localPeer: XVSMPeer = new XVSMPeer(elevator, this, (name, elevator.localSpace.url))
+  log info "Connected"
 
   def registerListener(l: Listener) { }
-
-  def setLocalPeer(lPeer: XVSMPeer) {
-    localPeer = lPeer
-  }
 
   def peers(): Seq[XVSMPeer] = {
     superPeer.transaction()( tx => {

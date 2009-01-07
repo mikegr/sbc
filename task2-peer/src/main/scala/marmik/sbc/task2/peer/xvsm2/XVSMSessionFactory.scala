@@ -17,9 +17,6 @@ class XVSMSessionFactory extends SessionFactory {
       peers.write(0, ((name, elevator.localSpace.url), new KeySelector("name", name)))
     })
 
-    log info "Connected"
-    val session = new XVSMSession(elevator, superPeer)
-    session.setLocalPeer(new XVSMPeer(elevator, session, (name, elevator.localSpace.url)))
-    session
+    new XVSMSession(elevator, superPeer, name)
   }
 }
