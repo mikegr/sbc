@@ -15,6 +15,9 @@ import java.lang.Runnable
 import marmik.sbc.task2.peer.swt.model.SessionAdapter.toSwtSession
 import marmik.sbc.task2.peer.swt.JFaceHelpers.asRunnable
 
+import org.xvsm.coordinators._
+import org.xvsm.selectors._
+
 object Application {
   val log = org.slf4j.LoggerFactory.getLogger(this.getClass);
 

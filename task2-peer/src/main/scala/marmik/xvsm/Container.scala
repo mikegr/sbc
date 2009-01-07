@@ -5,6 +5,9 @@ import scala.collection.mutable.ListBuffer
 import scalaz.javas.{List => ListZ}
 import marmik.xvsm.Conversions._
 
+import org.xvsm.selectors.Selector
+import org.xvsm.core.Entry
+
 object Container {
   def toXVSMEntry(entry: Any): org.xvsm.core.Entry = {
     entry match {
@@ -26,6 +29,17 @@ object Container {
       case e: org.xvsm.core.Tuple if e.size == 4 => (fromXVSMEntry[Serializable](e.getEntryAt(0)), fromXVSMEntry[Serializable](e.getEntryAt(1)), fromXVSMEntry[Serializable](e.getEntryAt(2)), fromXVSMEntry[Serializable](e.getEntryAt(3))).asInstanceOf[T]
     }
   }
+  def toXVSMEntryWithSelector(rawEntry: Any, selector: Selector): org.xvsm.core.Entry = {
+    val entry = toXVSMEntry(rawEntry)
+    entry.setSelectors(ListZ.ScalaList_JavaList(List(selector)))
+    entry
+  }
+  def dynamicToXVSMEntry(entry: Any): Entry = {
+    entry match {
+      case (value: Any, selector: org.xvsm.selectors.Selector) => toXVSMEntryWithSelector(value, selector)
+      case value: Any => toXVSMEntry(value)
+    }
+  }
 }
 
 class Container(val elevator: SpaceElevator, val backing: org.xvsm.core.ContainerRef) {
@@ -41,8 +55,13 @@ class Container(val elevator: SpaceElevator, val backing: org.xvsm.core.Containe
     elevator.capi.take(backing, timeout, tx, selectors: _*).toSeq
   }
 
+  /**
+   * entries:
+   *   Either one or more instances of Serializable
+   *   Or one or more (Serializable, Selector)
+   */
   def write(tx: Transaction, timeout: Int, entries: Any*) {
-    writeRaw(tx, timeout, entries.map(Container.toXVSMEntry(_)): _*)
+    writeRaw(tx, timeout, entries.map(Container.dynamicToXVSMEntry(_)): _*)
   }
 
   def read[T](tx: Transaction, timeout: Int, selectors: org.xvsm.selectors.Selector*): Seq[T] = {

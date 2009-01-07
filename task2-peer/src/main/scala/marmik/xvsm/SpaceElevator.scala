@@ -47,6 +47,10 @@ sealed class SpaceElevator(private val initialPort: Int) {
   def port = url.getPort
   val mySpace = new Space(this, url)
 
+  def remoteSpace(url: URI) = {
+    new Space(this, url)
+  }
+
   // lookup or create container
   def container(tx: marmik.xvsm.Transaction, space: Space, name: String, coordinators: ICoordinator*) = {
     new Container(this,
