@@ -11,6 +11,8 @@ import org.xvsm.core.notifications.Operation
 import marmik.xvsm.Conversions._
 
 class Space(val elevator: SpaceElevator, val url: URI) {
+  val log = org.slf4j.LoggerFactory.getLogger(this.getClass);
+
   def transaction() = {
     new Transaction(elevator, this, elevator.capi.createTransaction(this, ICapi.INFINITE_TIMEOUT))
   }
