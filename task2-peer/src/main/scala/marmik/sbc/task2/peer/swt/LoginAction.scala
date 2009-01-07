@@ -11,11 +11,20 @@ class LoginAction {
   val log = org.slf4j.LoggerFactory.getLogger(this.getClass);
 
   def execute(factories: List[SessionFactory], args: Array[String]): Option[Session] = {
-    if(args.isEmpty) {
+    if(args.size != 3) {
       val dialog = new LoginDialog(null, scalaSessionFactories2SwtFactories(factories))
+
+      val model = dialog.getModel
+      if(args.size==2) {
+        factories.find(_.name == args(0)) match {
+          case Some(factory) => model.setFactory(new SwtSessionFactory(factory))
+          case None => throw new IllegalArgumentException("Unknown factory" + args(0))
+        }
+        model.setUrl(args(1))
+      }
+
       dialog.setBlockOnOpen(true)
       dialog.open
-      val model = dialog.getModel
 
       if(model.getFactory == null || model.getUrl == null || model.getName == null || model.getName == "")
         return None
