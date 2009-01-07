@@ -56,14 +56,11 @@ sealed class SpaceElevator(private val initialPort: Int) {
   def container(tx: marmik.xvsm.Transaction, space: Space, name: String, coordinators: ICoordinator*) = {
     new Container(this,
       try {
-        log.debug("Looking up container " + name + " on " + space)
         capi.lookupContainer(tx, space, name);
       }
       catch {
-        case e: InvalidContainerException => {
-          log.info("Couldn't find container " + name + " on " + space + ", creating")
+        case e: InvalidContainerException =>
           capi.createContainer(tx, space, name, IContainer.INFINITE_SIZE, coordinators: _*)
-        }
       })
   }
 
