@@ -4,12 +4,24 @@ import marmik.xvsm._
 import marmik.sbc.task2.peer._
 import org.xvsm.selectors._
 
-class XVSMPeer(elevator: SpaceElevator, session: XVSMSession, nameUrl: (String, java.net.URI)) extends Peer {
-  val url = nameUrl._2.toString
-  def session(): Session = session
-  def name():  String = nameUrl._1
-  def topics(): List[Topic] = List()
-  def newTopic(name:String): Topic = null
+class XVSMPeer(elevator: SpaceElevator, val session: XVSMSession, nameUrl: (String, java.net.URI)) extends Peer {
+  val log = org.slf4j.LoggerFactory.getLogger(this.getClass);
+  val url = nameUrl._2
+  val name = nameUrl._1
+  val space = elevator.remoteSpace(url)
+  log debug "new Peer: " + url
+
+  def topics(): List[Topic] = space.transaction()( tx => {
+    log debug "topics" + url
+    val c = tx.container("topics", Coordinators.topics: _*)
+    c.read[Topic](0, new RandomSelector(Selector.CNT_ALL)).toList
+  })
+  def newTopic(name:String): Topic = space.transaction()( tx => {
+    log debug "newTopic" + url
+    val c = tx.container("topics", Coordinators.topics: _*)
+    c.write(0, name, new KeySelector("name", name))
+    new XVSMTopic(elevator, session, this, name, List())
+  })
 
   override def hashCode() = url.hashCode
 

@@ -46,8 +46,8 @@ object TestElevator {
     }
 
     val c2 = tx.container("keys", new RandomCoordinator(), new KeyCoordinator(new KeyCoordinator.KeyType("Name", classOf[String])))
-    c2.write(0, ("Aha?", new KeySelector("Name", "u")))
-    c2.write(0, ("Böse!", new KeySelector("Name", "z")))
+    c2.write(0, "Aha?", new KeySelector("Name", "u"))
+    c2.write(0, "Böse!", new KeySelector("Name", "z"))
     c2.readOne[String](0, new KeySelector("Name", "u")) match {
       case Some(x) => println(x)
       case None => println("FAIL")

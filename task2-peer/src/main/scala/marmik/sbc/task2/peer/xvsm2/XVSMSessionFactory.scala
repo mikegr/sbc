@@ -14,7 +14,7 @@ class XVSMSessionFactory extends SessionFactory {
     val superPeer = elevator.remoteSpace(new java.net.URI(superPeerUrl))
     superPeer.transaction()( tx => {
       val peers = tx.container("peers", Coordinators.peers.toArray: _*)
-      peers.write(0, ((name, elevator.localSpace.url), new KeySelector("name", name)))
+      peers.write(0, (name, elevator.localSpace.url), new KeySelector("name", name))
     })
 
     new XVSMSession(elevator, superPeer, name)

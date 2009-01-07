@@ -12,6 +12,7 @@ class XVSMSession(val elevator: SpaceElevator, val superPeer: Space, val name: S
   def registerListener(l: Listener) { }
 
   def peers(): Seq[XVSMPeer] = {
+    log debug "Read peers"
     superPeer.transaction()( tx => {
       val peers = tx.container("peers", Coordinators.peers: _*)
       peers.read[(String, java.net.URI)](0, new RandomSelector(Selector.CNT_ALL)).map(new XVSMPeer(elevator, this, _))
@@ -19,6 +20,7 @@ class XVSMSession(val elevator: SpaceElevator, val superPeer: Space, val name: S
   }
 
   def logout() {
+    log debug "Logout"
     superPeer.transaction()( tx => {
       val peers = tx.container("peers", Coordinators.peers: _*)
       peers.takeOne[(String, java.net.URI)](0, new KeySelector("name", localPeer.name))
