@@ -43,7 +43,11 @@ object Container {
 }
 
 class Container(val elevator: SpaceElevator, val tx: Transaction, val backing: org.xvsm.core.ContainerRef) {
+  val log = org.slf4j.LoggerFactory.getLogger(this.getClass);
+
   def writeRaw(timeout: Int, entry: org.xvsm.core.Entry) {
+    log debug "Write to" + backing.getSite + " " + backing.getId + " --> " + entry.toString
+    log.debug((tx: org.xvsm.transactions.Transaction).toString)
     elevator.capi.write(backing, timeout, tx, entry)
   }
 

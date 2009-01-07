@@ -5,11 +5,16 @@ import scala.collection.mutable.ListBuffer
 import marmik.xvsm._
 import marmik.sbc.task2.peer._
 import org.xvsm.selectors._
+import org.xvsm.core.notifications.Operation
 
 class XVSMSession(val elevator: SpaceElevator, val superPeer: Space, val name: String) extends Session {
   val log = org.slf4j.LoggerFactory.getLogger(this.getClass);
   var localPeer: XVSMPeer = new XVSMPeer(elevator, this, (name, elevator.localSpace.url))
   var listeners: ListBuffer[Listener] = new ListBuffer()
+  superPeer.registerNotification("peers", List(Operation.Write))( entry => {
+    log info "Peer joins" + entry
+    fire( l => l.peerJoins(new XVSMPeer(elevator, this, entry.asInstanceOf[(String, java.net.URI)])) )
+  })
   log info "Connected"
 
   def registerListener(l: Listener) { listeners += l }
@@ -38,7 +43,7 @@ class XVSMSession(val elevator: SpaceElevator, val superPeer: Space, val name: S
       case _ => false
     }
 
-  private def fire(func: Listener => Any) {
+  private[xvsm2] def fire(func: Listener => Any) {
     for(listener <- listeners)
       func(listener)
   }

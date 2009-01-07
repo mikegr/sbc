@@ -7,8 +7,8 @@ import org.xvsm.internal.exceptions.InvalidContainerException
 import marmik.xvsm.Conversions._
 
 class Transaction(val elevator: SpaceElevator, val space: Space, val backing: org.xvsm.transactions.Transaction) {
-  def commit() = elevator.capi.commitTransaction(backing)
-  def rollback() = elevator.capi.rollbackTransaction(backing)
+  def commit() = if(backing!=null) elevator.capi.commitTransaction(backing)
+  def rollback() = if(backing!=null) elevator.capi.rollbackTransaction(backing)
 
   // lookup or create container
   def container(name: String, coordinators: ICoordinator*) = {
