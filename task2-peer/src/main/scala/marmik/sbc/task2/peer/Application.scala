@@ -34,9 +34,11 @@ object Application {
           val mainWindow = new PeerWindow(session)
           mainWindow.setBlockOnOpen(true)
           mainWindow.open()
+          session.logout
         case None => log.info("User aborted")
       }
       log.info("Terminating Task2 Peer")
+      System.exit(0)
     })
   }
 }

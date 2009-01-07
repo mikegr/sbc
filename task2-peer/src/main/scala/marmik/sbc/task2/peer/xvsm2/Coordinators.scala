@@ -4,5 +4,6 @@ import org.xvsm.coordinators._
 import org.xvsm.selectors._
 
 object Coordinators {
-  def peers = { Array(new KeyCoordinator(new KeyCoordinator.KeyType("Name", classOf[String])), new FifoCoordinator()) }
+  def peers: Seq[org.xvsm.interfaces.ICoordinator] =
+    List(new RandomCoordinator, new KeyCoordinator(new KeyCoordinator.KeyType("name", classOf[String])))
 }

@@ -16,9 +16,14 @@ class XVSMSession(val elevator: SpaceElevator, val superPeer: Space) extends Ses
   def peers(): Seq[XVSMPeer] = {
     superPeer.transaction()( tx => {
       val peers = tx.container("peers", Coordinators.peers: _*)
-      peers.read[(String, java.net.URI)](0, new FifoSelector()).map(new XVSMPeer(elevator, this, _))
+      peers.read[(String, java.net.URI)](0, new RandomSelector(Selector.CNT_ALL)).map(new XVSMPeer(elevator, this, _))
     })
   }
 
-  def logout() { }
+  def logout() {
+    superPeer.transaction()( tx => {
+      val peers = tx.container("peers", Coordinators.peers: _*)
+      peers.takeOne[(String, java.net.URI)](0, new KeySelector("name", localPeer.name))
+    })
+  }
 }
