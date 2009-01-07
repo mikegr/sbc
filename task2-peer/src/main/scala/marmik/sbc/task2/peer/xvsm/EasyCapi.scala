@@ -192,8 +192,10 @@ class EasyCapi(capi:ICapi, superPeer:URI, selfName:String) extends NotificationL
     val ct = peerContainer(tx);
 
     val entries = capi.read(ct, 0, tx, new FifoSelector(Selector.CNT_ALL));
+
     capi.commitTransaction(tx);
     entries.foreach{ x:Entry =>
+      log debug (x.getClass.toString + x.toString);
       val value:SpacePeer = x.asInstanceOf[AtomicEntry[SpacePeer]].getValue();
       Console println(value.url + " - " + value.name);
     }
