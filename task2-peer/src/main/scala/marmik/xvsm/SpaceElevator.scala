@@ -51,4 +51,12 @@ sealed class SpaceElevator(private val initialPort: Int) {
   def remoteSpace(url: URI) = {
     new Space(this, url)
   }
+
+  def shutdown() = {
+    // copied from org.xvsm.internal.tasks.ShutdownTask
+    org.xvsm.internal.EventProcessingPool.getInstance.shutdown
+    org.xvsm.internal.TimeoutSchedulerPool.shutdown
+    org.xvsm.internal.ReplySenderPool.shutdown
+    TransportHandler.getInstance().shutdown();
+  }
 }

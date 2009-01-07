@@ -52,6 +52,7 @@ object TestElevator {
       case Some(x) => println(x)
       case None => println("FAIL")
     }
+    log info c2.read[String](0, new RandomSelector(Selector.CNT_ALL)).mkString
 
     val remoteSpace = elevator.remoteSpace(new java.net.URI("tcpjava://localhost:56473"))
     remoteSpace.transaction()( tx => {
@@ -64,5 +65,6 @@ object TestElevator {
       remoteC.write(0, newI)
       // tx.commit ist implizit, bei einer exception passiert rollback
     })
+    elevator.shutdown
   }
 }
