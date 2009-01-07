@@ -25,6 +25,8 @@ class XVSMSession(val elevator: SpaceElevator, val superPeer: Space, val name: S
     })
   }
 
+  override def hashCode = elevator.hashCode
+
   override def equals(other: Any) =
     other match {
       case s: XVSMSession => this.name==s.name && this.elevator==s.elevator
