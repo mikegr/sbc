@@ -48,6 +48,16 @@ object TestElevator {
     c2.readOne[String](null, 0, new KeySelector("Name", "u")) match {
       case Some(x) => println(x)
     }
-    System.exit(0)
+
+    val remoteSpace = elevator.remoteSpace(new java.net.URI("tcpjava://localhost:56473"))
+    val tx = elevator.createTransaction(remoteSpace)
+    val remoteC = elevator.container(tx, remoteSpace, "TestElevatorFifo", new FifoCoordinator())
+    val newI = remoteC.takeOne[Int](tx, 0, new FifoSelector()) match {
+      case Some(x: Int) => x + 1
+      case None => 1
+    }
+    println("Write " + newI)
+    remoteC.write(tx, 0, newI)
+    tx.commit
   }
 }

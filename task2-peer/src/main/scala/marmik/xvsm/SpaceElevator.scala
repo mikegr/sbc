@@ -6,6 +6,7 @@ import org.xvsm.core.aspect._
 import org.xvsm.transactions._
 import org.xvsm.internal.exceptions._
 import org.xvsm.coordinators._
+
 import org.xvsm.selectors._
 import org.xvsm.interfaces._
 import org.xvsm.interfaces.container._
@@ -45,7 +46,7 @@ sealed class SpaceElevator(private val initialPort: Int) {
 
   def url = transportHandler.getListener("TcpJava").getUri
   def port = url.getPort
-  val mySpace = new Space(this, url)
+  val localSpace = new Space(this, url)
 
   def remoteSpace(url: URI) = {
     new Space(this, url)
@@ -55,15 +56,19 @@ sealed class SpaceElevator(private val initialPort: Int) {
   def container(tx: marmik.xvsm.Transaction, space: Space, name: String, coordinators: ICoordinator*) = {
     new Container(this,
       try {
-        capi.lookupContainer(tx, url, name);
+        log.debug("Looking up container " + name + " on " + space)
+        capi.lookupContainer(tx, space, name);
       }
       catch {
-        case e: InvalidContainerException =>
-           capi.createContainer(tx, url, name, IContainer.INFINITE_SIZE, coordinators: _*)
+        case e: InvalidContainerException => {
+          log.info("Couldn't find container " + name + " on " + space + ", creating")
+          capi.createContainer(tx, space, name, IContainer.INFINITE_SIZE, coordinators: _*)
+        }
       })
   }
 
   def createTransaction(space: Space) = {
-    new Transaction(this, capi.createTransaction(space, ICapi.INFINITE_TIMEOUT))
+    val newSpace = if (space==null) {localSpace} else space
+    new Transaction(this, newSpace, capi.createTransaction(space, ICapi.INFINITE_TIMEOUT))
   }
 }
