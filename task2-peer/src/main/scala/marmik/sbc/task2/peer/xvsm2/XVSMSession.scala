@@ -24,4 +24,10 @@ class XVSMSession(val elevator: SpaceElevator, val superPeer: Space, val name: S
       peers.takeOne[(String, java.net.URI)](0, new KeySelector("name", localPeer.name))
     })
   }
+
+  override def equals(other: Any) =
+    other match {
+      case s: XVSMSession => this.name==s.name && this.elevator==s.elevator
+      case _ => false
+    }
 }

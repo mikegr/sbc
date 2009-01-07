@@ -10,4 +10,10 @@ class XVSMPeer(elevator: SpaceElevator, session: XVSMSession, nameUrl: (String, 
   def name():  String = nameUrl._1
   def topics(): List[Topic] = List()
   def newTopic(name:String): Topic = null
+
+  override def equals(other: Any) =
+    other match {
+      case p: XVSMPeer => p.url==this.url && p.session==this.session
+      case _ => false
+    }
 }
