@@ -22,7 +22,7 @@ class Space(val elevator: SpaceElevator, val url: URI) {
   def registerNotification(container: String, operations: Seq[Operation])(func: Seq[Any] => Any) = {
     val listener = new NotificationListenerAdapter() {
       def handleNotificationScala(operation: Operation, entries: Array[Entry]) {
-        println("NOTIFICAITON")
+        func(entries)
       }
     }
     val cref = elevator.capi.lookupContainer(null, url, container);

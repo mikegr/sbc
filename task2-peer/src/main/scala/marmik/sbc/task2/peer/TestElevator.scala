@@ -63,11 +63,11 @@ object TestElevator {
 
     remoteSpace.transaction()( tx => {
       val remoteC = tx.container("TestElevatorFifo", new FifoCoordinator())
-      println("ASD")
       remoteSpace.registerNotification("TestElevatorFifo", List(org.xvsm.core.notifications.Operation.Write))( entries => {
+        println("N" + entries.mkString)
         println("NOTIFICATION")
       })
-      val newI = remoteC.readOne[Int](0, new FifoSelector()) match {
+      val newI = remoteC.takeOne[Int](0, new FifoSelector()) match {
         case Some(x: Int) => x + 1
         case None => 1
       }
