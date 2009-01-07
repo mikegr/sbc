@@ -8,6 +8,6 @@ import scalaz.javas.List.ScalaList_JavaList
 object TopicAdapter {
   implicit def toSwtTopic(topic: ScalaTopic): SwtTopic = new SwtTopic(topic)
 
-  implicit def toSwtTopicList(topics: List[ScalaTopic]): List[SwtTopic] = topics.map(new SwtTopic(_))
+  implicit def toSwtTopicList(topics: Seq[ScalaTopic]): Seq[SwtTopic] = topics.map(new SwtTopic(_))
 
 }

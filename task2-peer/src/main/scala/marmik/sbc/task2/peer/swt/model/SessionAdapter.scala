@@ -20,10 +20,10 @@ object SessionAdapter {
     val sessionPeers = session.peers();
     val peers = scalaPeers2WritableList(sessionPeers);
 
-    val topicEntries: List[SidebarEntry] = for(peer <- sessionPeers; topic <- peer.topics) yield topic
-    val sidebarEntries = toSwtPeerList(sessionPeers).union(topicEntries)
+    val topicEntries: Seq[SidebarEntry] = for(peer <- sessionPeers; topic <- peer.topics) yield topic
+    val sidebarEntries = toSwtPeerList(sessionPeers) ++ (topicEntries)
 
-    val swtSession = new SwtSession(session, peers, session.localPeer, new WritableList(sidebarEntries, classOf[SidebarEntry]))
+    val swtSession = new SwtSession(session, peers, session.localPeer, new WritableList(sidebarEntries.toList, classOf[SidebarEntry]))
 
     session.registerListener(new Listener() {
       def peerJoins(peer: ScalaPeer) = withRealm(() => {
@@ -53,9 +53,9 @@ object SessionAdapter {
     swtSession
   }
 
-  def scalaPeers2WritableList(peers: List[ScalaPeer]): WritableList =
-    new WritableList(toSwtPeerList(peers), classOf[SwtPeer])
+  def scalaPeers2WritableList(peers: Seq[ScalaPeer]): WritableList =
+    new WritableList(toSwtPeerList(peers).toList, classOf[SwtPeer])
 
-  def swtPeers2WritableList(peers: List[SwtPeer]): WritableList =
-    new WritableList(peers, classOf[SwtPeer])
+  def swtPeers2WritableList(peers: Seq[SwtPeer]): WritableList =
+    new WritableList(peers.toList, classOf[SwtPeer])
 }

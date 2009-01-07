@@ -4,7 +4,7 @@ trait Topic {
   def name(): String;
   def peer(): Peer;
 
-  def postings(): List[Posting];
+  def postings(): Seq[Posting];
   def subscribe();
   def unsubscribe();
 

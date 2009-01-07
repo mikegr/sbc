@@ -27,37 +27,40 @@ object TestElevator {
     println(marmik.xvsm.Container.toXVSMEntry(List(1, 2, 3)).toString)
     val elevator = new marmik.xvsm.SpaceElevator()
     log info elevator.url.toString
-    val c = elevator.container(null, null, "test", new FifoCoordinator(), new LifoCoordinator())
-    c.write(null, 0, "Hallo")
-    c.take[String](null, 0, new FifoSelector(1)).firstOption match {
+    val tx = elevator.localSpace.implicitTransaction
+    val c = tx.container("test", new FifoCoordinator(), new LifoCoordinator())
+    c.write(0, "Hallo")
+    c.take[String](0, new FifoSelector(1)).firstOption match {
       case Some(x) => println(x)
       case None => println("Nix")
     }
-    c.takeOne[String](null, 0, new FifoSelector(1)) match {
+    c.takeOne[String](0, new FifoSelector(1)) match {
       case Some(x) => println(x)
       case None => println("Nix")
     }
-    c.write(null, 0, ("Martin", "bin ich"))
-    c.takeOne[(String, String)](null, 0, new RandomSelector(1)) match {
+    c.write(0, ("Martin", "bin ich"))
+    c.takeOne[(String, String)](0, new RandomSelector(1)) match {
       case Some((x, y)) => println("ES GEHT" + x + " " + y)
+      case None => println("FAIL")
     }
 
-    val c2 = elevator.container(null, null, "keys", new RandomCoordinator(), new KeyCoordinator(new KeyCoordinator.KeyType("Name", classOf[String])))
-    c2.write(null, 0, ("Aha?", new KeySelector("Name", "u")))
-    c2.write(null, 0, ("Böse!", new KeySelector("Name", "z")))
-    c2.readOne[String](null, 0, new KeySelector("Name", "u")) match {
+    val c2 = tx.container("keys", new RandomCoordinator(), new KeyCoordinator(new KeyCoordinator.KeyType("Name", classOf[String])))
+    c2.write(0, ("Aha?", new KeySelector("Name", "u")))
+    c2.write(0, ("Böse!", new KeySelector("Name", "z")))
+    c2.readOne[String](0, new KeySelector("Name", "u")) match {
       case Some(x) => println(x)
+      case None => println("FAIL")
     }
 
     val remoteSpace = elevator.remoteSpace(new java.net.URI("tcpjava://localhost:56473"))
-    val tx = elevator.createTransaction(remoteSpace)
-    val remoteC = elevator.container(tx, remoteSpace, "TestElevatorFifo", new FifoCoordinator())
-    val newI = remoteC.takeOne[Int](tx, 0, new FifoSelector()) match {
+    val remoteTx = remoteSpace.transaction
+    val remoteC = remoteTx.container("TestElevatorFifo", new FifoCoordinator())
+    val newI = remoteC.takeOne[Int](0, new FifoSelector()) match {
       case Some(x: Int) => x + 1
       case None => 1
     }
     println("Write " + newI)
-    remoteC.write(tx, 0, newI)
-    tx.commit
+    remoteC.write(0, newI)
+    remoteTx.commit
   }
 }

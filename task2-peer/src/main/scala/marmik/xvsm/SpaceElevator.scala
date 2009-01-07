@@ -46,26 +46,9 @@ sealed class SpaceElevator(private val initialPort: Int) {
 
   def url = transportHandler.getListener("TcpJava").getUri
   def port = url.getPort
-  val localSpace = new Space(this, url)
+  def localSpace() = new Space(this, url)
 
   def remoteSpace(url: URI) = {
     new Space(this, url)
-  }
-
-  // lookup or create container
-  def container(tx: marmik.xvsm.Transaction, space: Space, name: String, coordinators: ICoordinator*) = {
-    new Container(this,
-      try {
-        capi.lookupContainer(tx, space, name);
-      }
-      catch {
-        case e: InvalidContainerException =>
-          capi.createContainer(tx, space, name, IContainer.INFINITE_SIZE, coordinators: _*)
-      })
-  }
-
-  def createTransaction(space: Space) = {
-    val newSpace = if (space==null) {localSpace} else space
-    new Transaction(this, newSpace, capi.createTransaction(space, ICapi.INFINITE_TIMEOUT))
   }
 }

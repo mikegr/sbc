@@ -12,7 +12,7 @@ public class Topic extends ModelObject implements SidebarEntry {
   public Topic(marmik.sbc.task2.peer.Topic backing) {
     this.backing = backing;
     this.postings = new WritableList(
-        scalaz.javas.List.ScalaList_JavaList(PostingAdapter.toSwtPostingList(backing.postings())), Posting.class);
+        scalaz.javas.List.ScalaList_JavaList(PostingAdapter.toSwtPostingList(backing.postings()).toList()), Posting.class);
   }
 
   public marmik.sbc.task2.peer.Topic getBacking() {

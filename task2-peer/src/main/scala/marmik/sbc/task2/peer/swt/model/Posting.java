@@ -40,7 +40,7 @@ public class Posting extends ModelObject {
   }
 
   public List<Posting> getReplies() {
-    return scalaz.javas.List.ScalaList_JavaList(PostingAdapter.toSwtPostingList(backing.replies()));
+    return scalaz.javas.List.ScalaList_JavaList(PostingAdapter.toSwtPostingList(backing.replies()).toList());
   }
 
   @Override

@@ -42,17 +42,17 @@ object Container {
   }
 }
 
-class Container(val elevator: SpaceElevator, val backing: org.xvsm.core.ContainerRef) {
-  def writeRaw(tx: Transaction, timeout: Int, entries: org.xvsm.core.Entry*) {
-    elevator.capi.write(backing, timeout, tx, entries: _*)
+class Container(val elevator: SpaceElevator, val tx: Transaction, val backing: org.xvsm.core.ContainerRef) {
+  def writeRaw(timeout: Int, entries: org.xvsm.core.Entry*) {
+    elevator.capi.write(backing, timeout, tx, entries.toArray: _*)
   }
 
-  def readRaw(tx: Transaction, timeout: Int, selectors: org.xvsm.selectors.Selector*): Seq[org.xvsm.core.Entry] = {
-    elevator.capi.read(backing, timeout, tx, selectors: _*).toSeq
+  def readRaw(timeout: Int, selectors: org.xvsm.selectors.Selector*): Seq[org.xvsm.core.Entry] = {
+    elevator.capi.read(backing, timeout, tx, selectors.toArray: _*).toSeq
   }
 
-  def takeRaw(tx: Transaction, timeout: Int, selectors: org.xvsm.selectors.Selector*): Seq[org.xvsm.core.Entry] = {
-    elevator.capi.take(backing, timeout, tx, selectors: _*).toSeq
+  def takeRaw(timeout: Int, selectors: org.xvsm.selectors.Selector*): Seq[org.xvsm.core.Entry] = {
+    elevator.capi.take(backing, timeout, tx, selectors.toArray: _*).toSeq
   }
 
   /**
@@ -60,29 +60,29 @@ class Container(val elevator: SpaceElevator, val backing: org.xvsm.core.Containe
    *   Either one or more instances of Serializable
    *   Or one or more (Serializable, Selector)
    */
-  def write(tx: Transaction, timeout: Int, entries: Any*) {
-    writeRaw(tx, timeout, entries.map(Container.dynamicToXVSMEntry(_)): _*)
+  def write(timeout: Int, entries: Any*) {
+    writeRaw(timeout, entries.map(Container.dynamicToXVSMEntry(_)): _*)
   }
 
-  def read[T](tx: Transaction, timeout: Int, selectors: org.xvsm.selectors.Selector*): Seq[T] = {
-    readRaw(tx, timeout, selectors: _*).map(Container.fromXVSMEntry[T](_))
+  def read[T](timeout: Int, selectors: org.xvsm.selectors.Selector*): Seq[T] = {
+    readRaw(timeout, selectors.toArray: _*).map(Container.fromXVSMEntry[T](_))
   }
 
-  def readOne[T](tx: Transaction, timeout: Int, selectors: org.xvsm.selectors.Selector*): Option[T] = {
+  def readOne[T](timeout: Int, selectors: org.xvsm.selectors.Selector*): Option[T] = {
     try {
-      read[T](tx, timeout, selectors: _*).firstOption
+      read[T](timeout, selectors.toArray: _*).firstOption
     } catch {
       case e: org.xvsm.internal.exceptions.CountNotMetException => None
     }
   }
 
-  def take[T](tx: Transaction, timeout: Int, selectors: org.xvsm.selectors.Selector*): Seq[T] = {
-    takeRaw(tx, timeout, selectors: _*).map(Container.fromXVSMEntry[T](_))
+  def take[T](timeout: Int, selectors: org.xvsm.selectors.Selector*): Seq[T] = {
+    takeRaw(timeout, selectors.toArray: _*).map(Container.fromXVSMEntry[T](_))
   }
 
-   def takeOne[T](tx: Transaction, timeout: Int, selectors: org.xvsm.selectors.Selector*): Option[T] = {
+   def takeOne[T](timeout: Int, selectors: org.xvsm.selectors.Selector*): Option[T] = {
     try {
-      take[T](tx, timeout, selectors: _*).firstOption
+      take[T](timeout, selectors: _*).firstOption
     } catch {
       case e: org.xvsm.internal.exceptions.CountNotMetException => None
     }

@@ -12,7 +12,7 @@ trait Posting {
   def createdAt(): GregorianCalendar;
   def content(): String;
 
-  def replies(): List[Posting];
+  def replies(): Seq[Posting];
   def reply(author:String, subject:String, content:String):Posting;
 
   def edit(newContent: String);

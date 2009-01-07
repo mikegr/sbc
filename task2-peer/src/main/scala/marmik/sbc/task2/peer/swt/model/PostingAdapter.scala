@@ -8,5 +8,5 @@ import scalaz.javas.List.ScalaList_JavaList
 object PostingAdapter {
   implicit def toSwtPosting(posting: ScalaPosting): SwtPosting = new SwtPosting(posting)
 
-  implicit def toSwtPostingList(postings: List[ScalaPosting]): List[SwtPosting] = postings.map(new SwtPosting(_))
+  implicit def toSwtPostingList(postings: Seq[ScalaPosting]): Seq[SwtPosting] = postings.map(new SwtPosting(_))
 }

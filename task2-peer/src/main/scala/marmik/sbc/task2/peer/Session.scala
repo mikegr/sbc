@@ -9,7 +9,7 @@ trait Session {
 
   /** Returns list of available peers
    */
-  def peers(): List[Peer];
+  def peers(): Seq[Peer];
 
   /** Returns local peer */
   def localPeer(): Peer;

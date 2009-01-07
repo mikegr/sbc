@@ -29,10 +29,10 @@ object PeerAdapter {
     swtPeer
   }
 
-  implicit def toSwtPeerList(peers: List[ScalaPeer]): List[SwtPeer] = peers.map(toSwtPeer(_))
+  implicit def toSwtPeerList(peers: Seq[ScalaPeer]): Seq[SwtPeer] = peers.map(toSwtPeer(_))
 
   def scalaTopics2WritableList(topics: List[ScalaTopic]): WritableList =
-    new WritableList(toSwtTopicList(topics), classOf[ScalaTopic])
+    new WritableList(toSwtTopicList(topics).toList, classOf[ScalaTopic])
 
   def swtTopics2WritableList(topics: List[SwtTopic]): WritableList =
     new WritableList(topics, classOf[SwtTopic])
