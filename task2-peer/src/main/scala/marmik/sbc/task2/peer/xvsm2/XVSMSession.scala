@@ -14,7 +14,7 @@ class XVSMSession(val elevator: SpaceElevator, val superPeer: Space) extends Ses
   }
 
   def peers(): Seq[XVSMPeer] = {
-    superPeer.transaction.withTransaction( tx => {
+    superPeer.transaction()( tx => {
       val peers = tx.container("peers", Coordinators.peers: _*)
       peers.read[(String, java.net.URI)](0, new FifoSelector()).map(new XVSMPeer(elevator, this, _))
     })

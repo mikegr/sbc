@@ -54,8 +54,8 @@ object TestElevator {
     }
 
     val remoteSpace = elevator.remoteSpace(new java.net.URI("tcpjava://localhost:56473"))
-    remoteSpace.transaction.withTransaction( tx => {
-      val remoteC = remoteTx.container("TestElevatorFifo", new FifoCoordinator())
+    remoteSpace.transaction()( tx => {
+      val remoteC = tx.container("TestElevatorFifo", new FifoCoordinator())
       val newI = remoteC.takeOne[Int](0, new FifoSelector()) match {
         case Some(x: Int) => x + 1
         case None => 1

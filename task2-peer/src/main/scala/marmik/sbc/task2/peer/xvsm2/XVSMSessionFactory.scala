@@ -10,7 +10,7 @@ class XVSMSessionFactory extends SessionFactory {
   def login(superPeerUrl: String, name: String): Session = {
     val elevator = new SpaceElevator()
     val superPeer = elevator.remoteSpace(new java.net.URI(superPeerUrl))
-    superPeer.transaction.withTransaction( tx => {
+    superPeer.transaction()( tx => {
       val peers = tx.container("peers", Coordinators.peers.toArray: _*)
       peers.write(0, (name, elevator.localSpace.url))
     })

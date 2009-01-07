@@ -22,7 +22,7 @@ class Transaction(val elevator: SpaceElevator, val space: Space, val backing: or
       })
   }
 
-  def withTransaction[T](func: Transaction => T): T = {
+  def apply[T](func: Transaction => T): T = {
     try {
       val returnValue = func(this)
       this.commit
