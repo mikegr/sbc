@@ -25,7 +25,7 @@ class RmiSession(val superPeer:RemoteSuperPeer, val selfName:String, val selfUrl
 
   /** Returns list of available peers
    */
-  def peers(): List[Peer] = {
+  def peers(): Seq[Peer] = {
     val result = new ListBuffer[RmiPeer];
 
     superPeer.peers.foreach(peerInfo => {
@@ -33,7 +33,7 @@ class RmiSession(val superPeer:RemoteSuperPeer, val selfName:String, val selfUrl
       cachedPeers += (peerInfo.url -> rmiPeer);
       result += rmiPeer;
     });
-    result.toList;
+    result.toSeq;
   }
 
   def addToCache(url:String, name:String):RmiPeer= {
@@ -45,6 +45,7 @@ class RmiSession(val superPeer:RemoteSuperPeer, val selfName:String, val selfUrl
   /** Returns local peer */
 
   def logout() {
+    logger.debug("Logging out: " + selfUrl);
     superPeer.logout(selfUrl);
     Naming.unbind(selfUrl);
   }

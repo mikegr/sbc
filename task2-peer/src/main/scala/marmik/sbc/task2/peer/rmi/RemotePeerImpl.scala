@@ -33,7 +33,7 @@ class RemotePeerImpl @throws(classOf[java.rmi.RemoteException]) (selfUrl:String,
 
   @throws (classOf[java.rmi.RemoteException])
   override def getPostings(name:String):List[PostingInfo] = synchronized {
-     postings.getOrElse(name, null);
+     postings.getOrElse(name, new ArrayList[PostingInfo]());
   }
 
   @throws (classOf[java.rmi.RemoteException])
@@ -43,7 +43,7 @@ class RemotePeerImpl @throws(classOf[java.rmi.RemoteException]) (selfUrl:String,
 
   @throws (classOf[java.rmi.RemoteException])
   override def getReplys(id:Integer):java.util.List[PostingInfo] = synchronized {
-    children.getOrElse(id.intValue(), null);
+    children.getOrElse(id.intValue(), new ArrayList[PostingInfo]());
   }
 
  @throws (classOf[java.rmi.RemoteException])

@@ -15,7 +15,7 @@ class RmiSessionFactory extends SessionFactory {
    * @param url: Url of this peer
    */
   def login(superPeerUrl: String, selfName: String):Session = {
-    val selfUrl = "rmi://localhost/" + selfName;
+    val selfUrl = "rmi://localhost/" + selfName + new java.util.Random().nextLong;
     //Expect created registry
     //LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
 
