@@ -17,12 +17,18 @@ public class PostingComposite extends Composite {
   private Text authorText;
   private Text subjectText;
   private Posting posting;
+
   /**
    * Create the composite
+   *
    * @param parent
    * @param style
    */
   public PostingComposite(Composite parent, int style) {
+    this(parent, style, false);
+  }
+
+  public PostingComposite(Composite parent, int style, boolean subjectEditable) {
     super(parent, style);
     final GridLayout gridLayout = new GridLayout();
     gridLayout.numColumns = 4;
@@ -47,7 +53,12 @@ public class PostingComposite extends Composite {
     final Label subjectLabel = new Label(this, SWT.NONE);
     subjectLabel.setText("Subject:");
 
-    subjectText = new Text(this, SWT.READ_ONLY | SWT.BORDER);
+    if (subjectEditable) {
+      subjectText = new Text(this, SWT.BORDER);
+    } else {
+      subjectText = new Text(this, SWT.READ_ONLY);
+      subjectText.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+    }
     final GridData gd_subjectText = new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1);
     subjectText.setLayoutData(gd_subjectText);
 
@@ -64,7 +75,6 @@ public class PostingComposite extends Composite {
   }
 
   public void setEditable(boolean editable) {
-    this.subjectText.setEditable(true);
     this.contentText.setEditable(true);
   }
 
@@ -85,11 +95,19 @@ public class PostingComposite extends Composite {
   }
 
   public void setInput(Posting posting) {
-    this.posting = posting;
-    this.authorText.setText(posting.getAuthor());
-    this.subjectText.setText(posting.getSubject());
-    this.peerText.setText(posting.getTopic().getPeer().getName());
-    this.contentText.setText(posting.getContent());
+    if (posting != null) {
+      this.posting = posting;
+      this.authorText.setText(posting.getAuthor());
+      this.subjectText.setText(posting.getSubject());
+      this.peerText.setText(posting.getTopic().getPeer().getName());
+      this.contentText.setText(posting.getContent());
+    } else {
+      this.posting = null;
+      this.authorText.setText("");
+      this.subjectText.setText("");
+      this.peerText.setText("");
+      this.contentText.setText("");
+    }
   }
 
 }

@@ -72,8 +72,8 @@ public class Topic extends ModelObject implements SidebarEntry {
     return PeerAdapter.toSwtPeer(backing.peer());
   }
 
-  public Posting createPosting(String author, String subject, String content) {
-    return PostingAdapter.toSwtPosting(backing.createPosting(author, subject, content));
+  public Posting createPosting(String subject, String content) {
+    return PostingAdapter.toSwtPosting(backing.createPosting(backing.peer().name(), subject, content));
   }
 
   @Override

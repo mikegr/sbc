@@ -29,6 +29,7 @@ import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
@@ -138,12 +139,13 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     addPostingButton = new Button(composite_1, SWT.NONE);
     addPostingButton.addSelectionListener(new SelectionAdapter() {
       public void widgetSelected(final SelectionEvent e) {
-        if (tableViewer.getSelection() != null) {
-          Topic t = (Topic) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
-          InputDialog d = new InputDialog(PeerWindow.this.getShell(), "Add Posting", "Name of Posting to "
-              + t.getName() + ":", null, null);
-          d.open();
-          t.createPosting("Autor", d.getValue(), "leer");
+        PostingDialog d = new PostingDialog(PeerWindow.this.getShell(), true);
+        d.create();
+        d.setContentEditable(true);
+        d.open();
+        if(d.isModified()) {
+          Topic t = (Topic) topicSelection.getValue();
+          t.createPosting(d.getSubject(), d.getContent());
         }
       }
     });
@@ -166,7 +168,8 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
         d.setInput(p);
         d.open();
         if(d.isModified()) {
-          // TODO: Implement
+          p.setContent(d.getContent());
+          postingComposite.setInput(p);
         }
       }
     });
@@ -176,12 +179,13 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     replyButton.addSelectionListener(new SelectionAdapter() {
       public void widgetSelected(final SelectionEvent e) {
         Posting p = (Posting)postingSelection.getValue();
-        PostingDialog d = new PostingDialog(PeerWindow.this.getShell());
+        PostingDialog d = new PostingDialog(PeerWindow.this.getShell(), true);
         d.create();
-        d.setInput(p);
+        d.setContentEditable(true);
         d.open();
         if(d.isModified()) {
-          // TODO: Implement
+          Posting reply = p.reply(d.getSubject(), d.getContent());
+          treeViewer.setSelection(new StructuredSelection(reply));
         }
       }
     });
@@ -200,8 +204,10 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
         IStructuredSelection selection = (IStructuredSelection) event.getSelection();
         if (selection.getFirstElement() instanceof Peer)
           tableViewer.setSelection(previousSelection);
-        else
+        else {
           previousSelection = selection;
+          postingComposite.setInput(null); // TODO: Delegate that to databinding
+        }
       }
     });
 

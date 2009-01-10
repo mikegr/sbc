@@ -22,15 +22,25 @@ public class PostingDialog extends Dialog {
   private String content;
   private String subject;
   private boolean modified;
+  private boolean subjectEditable;
 
   public PostingDialog(Shell parentShell) {
+    this(parentShell, false);
+  }
+
+  public PostingDialog(Shell parentShell, boolean subjectEditable) {
     super(parentShell);
+    this.subjectEditable = subjectEditable;
   }
 
   public void setInput(Posting posting) {
     this.posting = posting;
     this.postingComposite.setInput(posting);
     this.postingComposite.setEditable(true);
+  }
+
+  public void setContentEditable(boolean editable) {
+    this.postingComposite.setEditable(editable);
   }
 
   public String getSubject() {
@@ -53,7 +63,7 @@ public class PostingDialog extends Dialog {
     gridLayout.marginHeight = 0;
     container.setLayout(gridLayout);
 
-    postingComposite = new PostingComposite(container, SWT.NONE);
+    postingComposite = new PostingComposite(container, SWT.NONE, subjectEditable);
     postingComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
     //
     return container;
@@ -61,10 +71,8 @@ public class PostingDialog extends Dialog {
 
   @Override
   protected void createButtonsForButtonBar(Composite parent) {
-    createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
-        true);
-    createButton(parent, IDialogConstants.CANCEL_ID,
-        IDialogConstants.CANCEL_LABEL, false);
+    createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+    createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
   }
 
   @Override
@@ -81,9 +89,13 @@ public class PostingDialog extends Dialog {
     if (buttonId == IDialogConstants.OK_ID) {
       this.subject = postingComposite.getSubject();
       this.content = postingComposite.getContent();
-      boolean subjectModified = !(this.subject.equals(posting.getSubject()));
-      boolean contentModified = !(this.content.equals(posting.getContent()));
-      modified = subjectModified || contentModified;
+      if (posting != null) {
+        boolean subjectModified = !(this.subject.equals(posting.getSubject()));
+        boolean contentModified = !(this.content.equals(posting.getContent()));
+        modified = subjectModified || contentModified;
+      } else {
+        modified = true;
+      }
     }
     super.buttonPressed(buttonId);
   }

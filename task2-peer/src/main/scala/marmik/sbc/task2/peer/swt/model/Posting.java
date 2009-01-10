@@ -17,6 +17,13 @@ public class Posting extends ModelObject {
     return backing;
   }
 
+  public Posting reply(String subject, String content) {
+    List<Posting> oldReplies = getReplies();
+    Posting p = new Posting(backing.reply("autor", subject, content));
+    firePropertyChange("replies", oldReplies, getReplies());
+    return p;
+  }
+
   public String getAuthor() {
     return backing.author();
   }
@@ -27,6 +34,10 @@ public class Posting extends ModelObject {
 
   public String getContent() {
     return backing.content();
+  }
+
+  public void setContent(String content) {
+    backing.edit(content);
   }
 
   public Topic getTopic() {
