@@ -57,6 +57,7 @@ import org.eclipse.swt.widgets.Tree;
 
 public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
 
+  private PostingComposite postingComposite;
   private Button topicButton;
   private Button addPostingButton;
   private Button subscribeButton;
@@ -215,7 +216,7 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     scrolledComposite.setExpandVertical(true);
     scrolledComposite.setExpandHorizontal(true);
 
-    final PostingComposite postingComposite = new PostingComposite(scrolledComposite, SWT.NONE);
+    postingComposite = new PostingComposite(scrolledComposite, SWT.NONE);
     postingComposite.setSize(300, 0);
     scrolledComposite.setContent(postingComposite);
     sashForm_1.setWeights(new int[] { 1, 2 });
@@ -296,8 +297,8 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
         BeansObservables.observeMap(contentProvider.getKnownElements(), Posting.class, "author") }));
 
     final IObservableValue topicSelection = ViewersObservables.observeSingleSelection(tableViewer);
+    IObservableValue postingSelection = ViewersObservables.observeSingleSelection(treeViewer);
     IObservableValue postings = BeansObservables.observeDetailValue(Realm.getDefault(), topicSelection, "topLevelPosting", Posting.class);
-    IObservableValue input = ViewersObservables.observeInput(treeViewer);
 
     IObservableValue topicSelected = new ComputedValue(Boolean.TYPE) {
       protected Object calculate() {
@@ -307,7 +308,8 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
 
     //
     DataBindingContext bindingContext = new DataBindingContext();
-    bindingContext.bindValue(input, postings, new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), null);
+    bindingContext.bindValue(ViewersObservables.observeInput(treeViewer), postings, new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), null);
+    bindingContext.bindValue(BeansObservables.observeValue(postingComposite, "input"), postingSelection, new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), null);
     bindingContext.bindValue(SWTObservables.observeEnabled(topicButton), topicSelected, null, null);
     bindingContext.bindValue(SWTObservables.observeEnabled(subscribeButton), topicSelected, null, null);
     bindingContext.bindValue(SWTObservables.observeEnabled(addPostingButton), topicSelected, null, null);

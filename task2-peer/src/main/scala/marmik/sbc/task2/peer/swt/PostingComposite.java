@@ -1,5 +1,7 @@
 package marmik.sbc.task2.peer.swt;
 
+import marmik.sbc.task2.peer.swt.model.Posting;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -10,51 +12,63 @@ import org.eclipse.swt.widgets.Text;
 
 public class PostingComposite extends Composite {
 
-	private Text text_3;
-	private Text text_2;
-	private Text text_1;
-	private Text text;
-	/**
-	 * Create the composite
-	 * @param parent
-	 * @param style
-	 */
-	public PostingComposite(Composite parent, int style) {
-		super(parent, style);
-		final GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 4;
-		setLayout(gridLayout);
+  private Text contentText;
+  private Text peerText;
+  private Text authorText;
+  private Text subjectText;
+  private Posting posting;
+  /**
+   * Create the composite
+   * @param parent
+   * @param style
+   */
+  public PostingComposite(Composite parent, int style) {
+    super(parent, style);
+    final GridLayout gridLayout = new GridLayout();
+    gridLayout.numColumns = 4;
+    setLayout(gridLayout);
 
-		final Label titelLabel = new Label(this, SWT.NONE);
-		titelLabel.setText("Autor:");
+    final Label authorLabel = new Label(this, SWT.NONE);
+    authorLabel.setText("Autor:");
 
-		text_1 = new Text(this, SWT.READ_ONLY);
-		text_1.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
-		text_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+    authorText = new Text(this, SWT.READ_ONLY);
+    authorText.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+    final GridData gd_authorText = new GridData(SWT.FILL, SWT.CENTER, true, false);
+    authorText.setLayoutData(gd_authorText);
 
-		final Label peerlLabel = new Label(this, SWT.NONE);
-		peerlLabel.setText("Peer:");
+    final Label peerlLabel = new Label(this, SWT.NONE);
+    peerlLabel.setText("Peer:");
 
-		text_2 = new Text(this, SWT.READ_ONLY);
-		text_2.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
-		text_2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+    peerText = new Text(this, SWT.READ_ONLY);
+    peerText.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+    final GridData gd_peerTexxt = new GridData(SWT.FILL, SWT.CENTER, true, false);
+    peerText.setLayoutData(gd_peerTexxt);
 
-		final Label titelLabel_1 = new Label(this, SWT.NONE);
-		titelLabel_1.setText("Titel:");
+    final Label subjectLabel = new Label(this, SWT.NONE);
+    subjectLabel.setText("Subject:");
 
-		text = new Text(this, SWT.BORDER);
-		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
+    subjectText = new Text(this, SWT.BORDER);
+    final GridData gd_subjectText = new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1);
+    subjectText.setLayoutData(gd_subjectText);
 
-		text_3 = new Text(this, SWT.MULTI | SWT.BORDER);
-		final GridData gd_text_3 = new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1);
-		gd_text_3.minimumWidth = 50;
-		text_3.setLayoutData(gd_text_3);
-		//
-	}
+    contentText = new Text(this, SWT.MULTI | SWT.BORDER);
+    final GridData gd_contentText = new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1);
+    gd_contentText.minimumWidth = 50;
+    contentText.setLayoutData(gd_contentText);
+    //
+  }
 
-	@Override
-	protected void checkSubclass() {
-		// Disable the check that prevents subclassing of SWT components
-	}
+  @Override
+  protected void checkSubclass() {
+    // Disable the check that prevents subclassing of SWT components
+  }
+
+  public void setInput(Posting posting) {
+    this.posting = posting;
+    this.authorText.setText(posting.getAuthor());
+    this.subjectText.setText(posting.getSubject());
+    this.peerText.setText(posting.getTopic().getPeer().getName());
+    this.contentText.setText(posting.getContent());
+  }
 
 }
