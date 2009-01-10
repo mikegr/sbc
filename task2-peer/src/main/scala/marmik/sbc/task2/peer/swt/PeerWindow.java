@@ -11,15 +11,18 @@ import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
+import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
@@ -46,6 +49,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -53,6 +57,9 @@ import org.eclipse.swt.widgets.Tree;
 
 public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
 
+  private Button topicButton;
+  private Button addPostingButton;
+  private Button subscribeButton;
   class Sorter extends ViewerSorter {
 
     @Override
@@ -112,10 +119,10 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     final Composite composite_1 = new Composite(container, SWT.NONE);
     composite_1.setLayoutData(new GridData());
     final GridLayout gridLayout_1 = new GridLayout();
-    gridLayout_1.numColumns = 2;
+    gridLayout_1.numColumns = 3;
     composite_1.setLayout(gridLayout_1);
 
-    final Button topicButton = new Button(composite_1, SWT.NONE);
+    topicButton = new Button(composite_1, SWT.NONE);
     topicButton.addSelectionListener(new SelectionAdapter() {
       public void widgetSelected(final SelectionEvent e) {
         InputDialog d = new InputDialog(PeerWindow.this.getShell(), "Add Thema", "Name:", null, null);
@@ -125,7 +132,7 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     });
     topicButton.setText("Add Topic");
 
-    final Button addPostingButton = new Button(composite_1, SWT.NONE);
+    addPostingButton = new Button(composite_1, SWT.NONE);
     addPostingButton.addSelectionListener(new SelectionAdapter() {
       public void widgetSelected(final SelectionEvent e) {
         if (tableViewer.getSelection() != null) {
@@ -138,6 +145,14 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
       }
     });
     addPostingButton.setText("Add Posting");
+
+    subscribeButton = new Button(composite_1, SWT.NONE);
+    subscribeButton.addSelectionListener(new SelectionAdapter() {
+      public void widgetSelected(final SelectionEvent e) {
+        MessageDialog m;
+      }
+    });
+    subscribeButton.setText("Subscribe");
 
     final SashForm sashForm = new SashForm(container, SWT.NONE);
     sashForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -280,13 +295,22 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
         BeansObservables.observeMap(contentProvider.getKnownElements(), Posting.class, "subject"),
         BeansObservables.observeMap(contentProvider.getKnownElements(), Posting.class, "author") }));
 
-    IObservableValue selection = ViewersObservables.observeSingleSelection(tableViewer);
-    IObservableValue postings = BeansObservables.observeDetailValue(Realm.getDefault(), selection, "topLevelPosting", Posting.class);
+    final IObservableValue topicSelection = ViewersObservables.observeSingleSelection(tableViewer);
+    IObservableValue postings = BeansObservables.observeDetailValue(Realm.getDefault(), topicSelection, "topLevelPosting", Posting.class);
     IObservableValue input = ViewersObservables.observeInput(treeViewer);
+
+    IObservableValue topicSelected = new ComputedValue(Boolean.TYPE) {
+      protected Object calculate() {
+        return Boolean.valueOf(topicSelection.getValue() != null);
+      }
+    };
 
     //
     DataBindingContext bindingContext = new DataBindingContext();
     bindingContext.bindValue(input, postings, new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), null);
+    bindingContext.bindValue(SWTObservables.observeEnabled(topicButton), topicSelected, null, null);
+    bindingContext.bindValue(SWTObservables.observeEnabled(subscribeButton), topicSelected, null, null);
+    bindingContext.bindValue(SWTObservables.observeEnabled(addPostingButton), topicSelected, null, null);
 
     //
     //
