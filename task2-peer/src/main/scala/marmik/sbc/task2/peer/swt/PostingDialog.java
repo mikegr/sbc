@@ -82,8 +82,10 @@ public class PostingDialog extends Dialog {
 
   protected void buttonPressed(int buttonId) {
     if (buttonId == IDialogConstants.CANCEL_ID) {
-      this.subject = posting.getSubject();
-      this.content = posting.getContent();
+      if (posting != null) {
+        this.subject = posting.getSubject();
+        this.content = posting.getContent();
+      }
       modified = false;
     }
     if (buttonId == IDialogConstants.OK_ID) {
