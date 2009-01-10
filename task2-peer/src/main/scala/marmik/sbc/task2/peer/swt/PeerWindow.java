@@ -379,7 +379,6 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     bindingContext.bindValue(ViewersObservables.observeInput(treeViewer), postings, new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), null);
     bindingContext.bindValue(BeansObservables.observeValue(postingComposite, "input"), postingSelection, new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), null);
 
-    bindingContext.bindValue(SWTObservables.observeEnabled(topicButton), topicSelected, null, null);
     bindingContext.bindValue(SWTObservables.observeEnabled(subscribeButton), topicSelected, null, null);
     bindingContext.bindValue(SWTObservables.observeEnabled(addPostingButton), topicSelected, null, null);
     bindingContext.bindValue(SWTObservables.observeEnabled(editButton), postingSelected, null, null);
