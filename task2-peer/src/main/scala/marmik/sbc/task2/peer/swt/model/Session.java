@@ -1,7 +1,7 @@
 package marmik.sbc.task2.peer.swt.model;
 
-import java.util.List;
 import org.eclipse.core.databinding.observable.list.WritableList;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 
 public class Session extends ModelObject {
@@ -47,8 +47,12 @@ public class Session extends ModelObject {
           Posting previous = t.getTopLevelPosting();
           t.getPostings().add(posting);
           t.fireTopLevelPostingChanged(previous);
-          if(sidebarViewer!=null)
+          if(sidebarViewer!=null) {
+            Topic selected = (Topic) ((IStructuredSelection)sidebarViewer.getSelection()).getFirstElement();
+            if(selected!=null)
+              selected.resetNewPostings();
             sidebarViewer.refresh(true);
+          }
         }
       }
     }
