@@ -47,7 +47,8 @@ class Container(val elevator: SpaceElevator, val tx: Transaction, val backing: o
 
   def writeRaw(timeout: Int, entry: org.xvsm.core.Entry) {
     log debug "Write to" + backing.getSite + " " + backing.getId + " --> " + entry.toString
-    log.debug((tx: org.xvsm.transactions.Transaction).toString)
+    if(tx.backing!=null)
+      log.debug((tx: org.xvsm.transactions.Transaction).toString)
     elevator.capi.write(backing, timeout, tx, entry)
   }
 
