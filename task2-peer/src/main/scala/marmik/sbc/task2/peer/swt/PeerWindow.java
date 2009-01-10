@@ -57,6 +57,7 @@ import org.eclipse.swt.widgets.Tree;
 
 public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
 
+  private Button replyButton;
   private PostingComposite postingComposite;
   private Button topicButton;
   private Button addPostingButton;
@@ -120,7 +121,7 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     final Composite composite_1 = new Composite(container, SWT.NONE);
     composite_1.setLayoutData(new GridData());
     final GridLayout gridLayout_1 = new GridLayout();
-    gridLayout_1.numColumns = 3;
+    gridLayout_1.numColumns = 4;
     composite_1.setLayout(gridLayout_1);
 
     topicButton = new Button(composite_1, SWT.NONE);
@@ -154,6 +155,9 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
       }
     });
     subscribeButton.setText("Subscribe");
+
+    replyButton = new Button(composite_1, SWT.NONE);
+    replyButton.setText("Reply");
 
     final SashForm sashForm = new SashForm(container, SWT.NONE);
     sashForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -297,7 +301,7 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
         BeansObservables.observeMap(contentProvider.getKnownElements(), Posting.class, "author") }));
 
     final IObservableValue topicSelection = ViewersObservables.observeSingleSelection(tableViewer);
-    IObservableValue postingSelection = ViewersObservables.observeSingleSelection(treeViewer);
+    final IObservableValue postingSelection = ViewersObservables.observeSingleSelection(treeViewer);
     IObservableValue postings = BeansObservables.observeDetailValue(Realm.getDefault(), topicSelection, "topLevelPosting", Posting.class);
 
     IObservableValue topicSelected = new ComputedValue(Boolean.TYPE) {
@@ -306,13 +310,21 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
       }
     };
 
+    IObservableValue postingSelected = new ComputedValue(Boolean.TYPE) {
+      protected Object calculate() {
+        return Boolean.valueOf(postingSelection.getValue() != null);
+      }
+    };
+
     //
     DataBindingContext bindingContext = new DataBindingContext();
     bindingContext.bindValue(ViewersObservables.observeInput(treeViewer), postings, new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), null);
     bindingContext.bindValue(BeansObservables.observeValue(postingComposite, "input"), postingSelection, new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), null);
+
     bindingContext.bindValue(SWTObservables.observeEnabled(topicButton), topicSelected, null, null);
     bindingContext.bindValue(SWTObservables.observeEnabled(subscribeButton), topicSelected, null, null);
     bindingContext.bindValue(SWTObservables.observeEnabled(addPostingButton), topicSelected, null, null);
+    bindingContext.bindValue(SWTObservables.observeEnabled(replyButton), postingSelected, null, null);
 
     //
     //
