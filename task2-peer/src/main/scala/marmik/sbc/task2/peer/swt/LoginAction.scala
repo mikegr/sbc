@@ -11,16 +11,17 @@ class LoginAction {
   val log = org.slf4j.LoggerFactory.getLogger(this.getClass);
 
   def execute(factories: List[SessionFactory], args: Array[String]): Option[Session] = {
-    if(args.size != 3) {
+    if(args.size == 2) {
+      val r = new java.util.Random()
+      factories.find(_.name == args(0)) match {
+        case Some(factory) => Some(factory.login(args(1), r.nextLong.toString))
+        case None => throw new IllegalArgumentException("Unknown factory" + args(0))
+      }
+    } else if(args.size != 3) {
       val dialog = new LoginDialog(null, scalaSessionFactories2SwtFactories(factories))
 
       val model = dialog.getModel
       if(args.size==2) {
-        factories.find(_.name == args(0)) match {
-          case Some(factory) => model.setFactory(new SwtSessionFactory(factory))
-          case None => throw new IllegalArgumentException("Unknown factory" + args(0))
-        }
-        model.setUrl(args(1))
       }
 
       dialog.setBlockOnOpen(true)
@@ -36,17 +37,14 @@ class LoginAction {
       log.info("Creating " + factory.name + " session named '" + name + "' (" + url + ")")
       Some(factory.login(url, name))
     } else {
-      log info ("Trying argumests")
+      log info ("Trying arguments")
       log debug ("type: " + args(0))
       log debug ("superpeer: " + args(1))
       log debug ("name: " + args(2))
 
-
       factories.find(_.name == args(0)) match {
-        case Some(factory) => {
-          Some(factory.login(args(1), args(2)))
-        }
-        case None => return None
+        case Some(factory) => Some(factory.login(args(1), args(2)))
+        case None => throw new IllegalArgumentException("Unknown factory" + args(0))
       }
     }
   }
