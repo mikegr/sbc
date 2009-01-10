@@ -77,7 +77,7 @@ public class SidebarLabelProvider extends ColumnLabelProvider implements IStyled
       Topic topic = (Topic) element;
       styledString.append(topic.getName());
       if(topic.isSubscribed()) {
-        styledString.append(" (5)", StyledString.COUNTER_STYLER);
+        styledString.append(" (" + topic.getNewPostings() + ")", StyledString.COUNTER_STYLER);
       }
     } else if (element instanceof Peer) {
       Peer peer = (Peer) element;

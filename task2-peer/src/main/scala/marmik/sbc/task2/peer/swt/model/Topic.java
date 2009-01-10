@@ -9,6 +9,7 @@ public class Topic extends ModelObject implements SidebarEntry {
   private marmik.sbc.task2.peer.Topic backing;
   private WritableList postings;
   private boolean subscribed;
+  int newPostings;
 
   public Topic(marmik.sbc.task2.peer.Topic backing) {
     this.backing = backing;
@@ -26,6 +27,14 @@ public class Topic extends ModelObject implements SidebarEntry {
 
   public boolean isSubscribed() {
     return subscribed;
+  }
+
+  public int getNewPostings() {
+    return newPostings;
+  }
+
+  public void resetNewPostings() {
+    newPostings = 0;
   }
 
   public void setSubscribed(boolean subscribed) {

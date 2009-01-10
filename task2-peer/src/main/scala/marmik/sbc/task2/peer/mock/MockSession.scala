@@ -8,19 +8,17 @@ class MockSession(url: String, name: String) extends Session {
   val log = org.slf4j.LoggerFactory.getLogger(this.getClass);
 
   var loggedIn = true
-  var mockLocalPeer = new MockPeer(this, "peer l", List(new MockTopic("Bosheit", List()), new MockTopic("Freundlichkeit", List())))
-  var mockPeers = List(mockLocalPeer, new MockPeer(this, "peer a", List(new MockTopic("Pure Lust am Leben", List()))), new MockPeer(this, "peer b", List()))
+  val sbcTopic = new MockTopic("SBC", List())
+  var mockLocalPeer = new MockPeer(this, "Complang", List(sbcTopic, new MockTopic("GMA", List())))
+  var mockPeers = List(mockLocalPeer, new MockPeer(this, "PRIP", List(new MockTopic("EPROG", List()))))
   val listeners = new ListBuffer[Listener]();
 
   val t = new Thread(new Runnable() {
     def run {
       while(true) {
         Thread.sleep(4000);
-        log.info("Adding Mock Topic to local peer")
-        val topic = new MockTopic("asdasd", List())
-        topic.setPeer(mockLocalPeer)
-        mockLocalPeer.setTopics(List(topic).union(mockLocalPeer.topics))
-        fireTopicCreated(mockLocalPeer, topic)
+        log.info("Adding Mock Posting to local peer")
+        sbcTopic.createPosting("SBC", "qwe", "qweqwewq")
       }
     }
   });

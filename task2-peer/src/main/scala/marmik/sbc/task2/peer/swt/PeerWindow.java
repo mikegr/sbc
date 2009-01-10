@@ -121,13 +121,13 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     container.setLayout(gridLayout);
 
     final Composite composite_1 = new Composite(container, SWT.NONE);
-    composite_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+    composite_1.setLayoutData(new GridData());
     final GridLayout gridLayout_1 = new GridLayout();
     gridLayout_1.numColumns = 5;
     composite_1.setLayout(gridLayout_1);
 
     topicButton = new Button(composite_1, SWT.NONE);
-    final GridData gd_topicButton = new GridData(80, SWT.DEFAULT);
+    final GridData gd_topicButton = new GridData(100, SWT.DEFAULT);
     topicButton.setLayoutData(gd_topicButton);
     topicButton.addSelectionListener(new SelectionAdapter() {
       public void widgetSelected(final SelectionEvent e) {
@@ -139,7 +139,8 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     topicButton.setText("Add Topic");
 
     addPostingButton = new Button(composite_1, SWT.NONE);
-    addPostingButton.setLayoutData(new GridData(80, SWT.DEFAULT));
+    final GridData gd_addPostingButton = new GridData(100, SWT.DEFAULT);
+    addPostingButton.setLayoutData(gd_addPostingButton);
     addPostingButton.addSelectionListener(new SelectionAdapter() {
       public void widgetSelected(final SelectionEvent e) {
         PostingDialog d = new PostingDialog(PeerWindow.this.getShell(), true);
@@ -155,7 +156,8 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     addPostingButton.setText("Add Posting");
 
     subscribeButton = new Button(composite_1, SWT.NONE);
-    subscribeButton.setLayoutData(new GridData(80, SWT.DEFAULT));
+    final GridData gd_subscribeButton = new GridData(100, SWT.DEFAULT);
+    subscribeButton.setLayoutData(gd_subscribeButton);
     subscribeButton.addSelectionListener(new SelectionAdapter() {
       public void widgetSelected(final SelectionEvent e) {
         Topic t = (Topic) topicSelection.getValue();
@@ -167,7 +169,8 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     subscribeButton.setText("Subscribe");
 
     editButton = new Button(composite_1, SWT.NONE);
-    editButton.setLayoutData(new GridData(80, SWT.DEFAULT));
+    final GridData gd_editButton = new GridData(100, SWT.DEFAULT);
+    editButton.setLayoutData(gd_editButton);
     editButton.addSelectionListener(new SelectionAdapter() {
       public void widgetSelected(final SelectionEvent e) {
         Posting p = (Posting)postingSelection.getValue();
@@ -184,7 +187,8 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     editButton.setText("Edit");
 
     replyButton = new Button(composite_1, SWT.NONE);
-    replyButton.setLayoutData(new GridData(80, SWT.DEFAULT));
+    final GridData gd_replyButton = new GridData(100, SWT.DEFAULT);
+    replyButton.setLayoutData(gd_replyButton);
     replyButton.addSelectionListener(new SelectionAdapter() {
       public void widgetSelected(final SelectionEvent e) {
         Posting p = (Posting)postingSelection.getValue();
@@ -218,6 +222,8 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
           postingComposite.setInput(null); // TODO: Delegate that to databinding
           Topic t = (Topic) selection.getFirstElement();
           if (t!=null) {
+            t.resetNewPostings();
+            tableViewer.refresh(true);
             subscribeButton.setText(t.isSubscribed() ? "Unsubscribe" : "Subscribe");
           }
         }
@@ -343,6 +349,7 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     tableViewer.setContentProvider(listViewerContentProviderList);
     tableViewer.setLabelProvider(new DelegatingStyledCellLabelProvider(new SidebarLabelProvider()));
     tableViewer.setInput(session.getSidebarEntries());
+    session.setSidebarViewer(tableViewer);
 
     ObservableListTreeContentProvider contentProvider = new ObservableListTreeContentProvider(BeansObservables
         .listFactory(Realm.getDefault(), "replies", Posting.class), null);

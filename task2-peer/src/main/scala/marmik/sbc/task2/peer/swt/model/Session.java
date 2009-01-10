@@ -2,12 +2,14 @@ package marmik.sbc.task2.peer.swt.model;
 
 import java.util.List;
 import org.eclipse.core.databinding.observable.list.WritableList;
+import org.eclipse.jface.viewers.TableViewer;
 
 public class Session extends ModelObject {
   private marmik.sbc.task2.peer.Session backing;
   private WritableList peers;
   private WritableList sidebar;
   private Peer localPeer;
+  private TableViewer sidebarViewer;
 
   public Session(marmik.sbc.task2.peer.Session backing, WritableList peers, Peer localPeer, WritableList sidebar) {
     this.backing = backing;
@@ -32,14 +34,21 @@ public class Session extends ModelObject {
     return localPeer;
   }
 
+  public void setSidebarViewer(TableViewer viewer) {
+    this.sidebarViewer = viewer;
+  }
+
   public void firePostingCreated(Posting posting) {
     for (Object e : sidebar) {
       if (e instanceof Topic) {
         Topic t = (Topic) e;
         if (t.equals(posting.getTopic())) {
+          t.newPostings += 1;
           Posting previous = t.getTopLevelPosting();
           t.getPostings().add(posting);
           t.fireTopLevelPostingChanged(previous);
+          if(sidebarViewer!=null)
+            sidebarViewer.refresh(true);
         }
       }
     }
