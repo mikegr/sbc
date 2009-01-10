@@ -7,11 +7,24 @@ import java.rmi._
 import scala.collection.jcl.Conversions._
 import scala.collection.mutable._
 
-class RmiSession(val superPeer:RemoteSuperPeer, val selfName:String, val selfUrl:String) extends Session {
+class RmiSession(val superPeerUrl:String, val selfName:String, val selfUrl:String) extends Session {
+
+  val superPeer:RemoteSuperPeer = {
+    val superPeer = Naming.lookup(superPeerUrl).asInstanceOf[RemoteSuperPeer];
+    superPeer.login(selfUrl, selfName);
+    superPeer;
+  }
 
   val logger = org.slf4j.LoggerFactory.getLogger(classOf[RmiSession]);
 
   val listener = new ListBuffer[Listener]();
+
+  val selfPeer:RemotePeerImpl = {
+    val remotePeer = new RemotePeerImpl(selfUrl, this);
+    Naming.rebind(selfUrl, remotePeer);
+    remotePeer;
+  }
+
   /**
    Registers a listener to get notification about new posts or edits.
    */
@@ -74,4 +87,5 @@ class RmiSession(val superPeer:RemoteSuperPeer, val selfName:String, val selfUrl
     def hashCode():Int = {
       superPeer.hashCode + selfName.hashCode + selfUrl.hashCode
     }
+
 }

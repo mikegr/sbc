@@ -30,6 +30,7 @@ class RemotePeerImpl @throws(classOf[java.rmi.RemoteException]) (selfUrl:String,
   val indexPostings = new HashMap[Int, PostingInfo](); // id to posting
   val reverse = new HashMap[Int, String](); //posting to topic
 
+  val badWords = new HashSet[String];
 
   @throws (classOf[java.rmi.RemoteException])
   override def getPostings(name:String):List[PostingInfo] = synchronized {
@@ -140,21 +141,21 @@ class RemotePeerImpl @throws(classOf[java.rmi.RemoteException]) (selfUrl:String,
   }
 
   @throws (classOf[java.rmi.RemoteException])
-  def peerLoggedIn(url:String, name:String) {
+  def peerLoggedIn(url:String, name:String) = synchronized {
     logger info (selfUrl + ": peer logged in: " + url + " with name " + name)
     val newPeer = session.addToCache(url, name);
     session.listener.foreach(_.peerJoins(newPeer));
   }
 
   @throws (classOf[java.rmi.RemoteException])
-  def peerLoggedOut(url:String, name:String) {
+  def peerLoggedOut(url:String, name:String) = synchronized {
     logger info (selfUrl + ": peer logged out: " + url + " with name " + name)
     session.cachedPeers -= url;
     session.listener.foreach(_.peerLeaves(session.cachedPeers(url)));
   }
 
   @throws (classOf[java.rmi.RemoteException])
-  def peerHasNewTopic(url:String, name:String) {
+  def peerHasNewTopic(url:String, name:String) = synchronized {
      logger info (selfUrl + ": peer " + url + " has new topic: " + name);
      val peer = session.cachedPeers(url);
      val topic = peer.addToCache(name);
@@ -170,5 +171,14 @@ class RemotePeerImpl @throws(classOf[java.rmi.RemoteException]) (selfUrl:String,
     new RmiPosting(session, topic, getParent(topic, parents.drop(1)), parents.first);
   }
   */
+
+  def setBadWord(words:Seq[String]) {
+    badWords.clear;
+    badWords addAll words;
+  }
+  def getBadWords():Seq[String] = {
+    badWords.toSeq
+  }
+
 }
 

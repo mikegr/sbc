@@ -18,21 +18,8 @@ class RmiSessionFactory extends SessionFactory {
     val selfUrl = "rmi://localhost/" + selfName + new java.util.Random().nextLong;
     //Expect created registry
     //LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
-
-    val superPeer = Naming.lookup(superPeerUrl).asInstanceOf[RemoteSuperPeer];
-
     //add existing topics...
-    val session = new RmiSession(superPeer, selfName, selfUrl);
-    val remotePeer = new RemotePeerImpl(selfUrl, session);
-
-
-
-    Naming.rebind(selfUrl, remotePeer);
-
-    superPeer.login(selfUrl, selfName);
-
-    session;
+    new RmiSession(superPeerUrl, selfName, selfUrl);
   }
-
 
 }
