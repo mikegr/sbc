@@ -22,7 +22,6 @@ import org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
@@ -123,7 +122,7 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     final Composite composite_1 = new Composite(container, SWT.NONE);
     composite_1.setLayoutData(new GridData());
     final GridLayout gridLayout_1 = new GridLayout();
-    gridLayout_1.numColumns = 5;
+    gridLayout_1.numColumns = 6;
     composite_1.setLayout(gridLayout_1);
 
     topicButton = new Button(composite_1, SWT.NONE);
@@ -203,6 +202,18 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
       }
     });
     replyButton.setText("Reply");
+
+    final Button wordfilterButton = new Button(composite_1, SWT.NONE);
+    wordfilterButton.addSelectionListener(new SelectionAdapter() {
+      public void widgetSelected(final SelectionEvent e) {
+        WordFilterDialog d = new WordFilterDialog(PeerWindow.this.getShell());
+        d.open();
+      }
+    });
+    final GridData gd_wordfilterButton = new GridData(SWT.FILL, SWT.CENTER, false, false);
+    gd_wordfilterButton.widthHint = 100;
+    wordfilterButton.setLayoutData(gd_wordfilterButton);
+    wordfilterButton.setText("Wordfilter");
 
 
     final SashForm sashForm = new SashForm(container, SWT.NONE);
@@ -337,7 +348,7 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
    */
   @Override
   protected Point getInitialSize() {
-    return new Point(500, 375);
+    return new Point(585, 362);
   }
 
   IObservableValue postingSelection;
