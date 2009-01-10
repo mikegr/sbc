@@ -63,6 +63,10 @@ public class PostingComposite extends Composite {
     // Disable the check that prevents subclassing of SWT components
   }
 
+  public Posting getInput() {
+    return posting;
+  }
+
   public void setInput(Posting posting) {
     this.posting = posting;
     this.authorText.setText(posting.getAuthor());
