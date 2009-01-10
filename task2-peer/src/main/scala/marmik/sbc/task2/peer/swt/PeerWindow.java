@@ -121,12 +121,14 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     container.setLayout(gridLayout);
 
     final Composite composite_1 = new Composite(container, SWT.NONE);
-    composite_1.setLayoutData(new GridData());
+    composite_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
     final GridLayout gridLayout_1 = new GridLayout();
     gridLayout_1.numColumns = 5;
     composite_1.setLayout(gridLayout_1);
 
     topicButton = new Button(composite_1, SWT.NONE);
+    final GridData gd_topicButton = new GridData(80, SWT.DEFAULT);
+    topicButton.setLayoutData(gd_topicButton);
     topicButton.addSelectionListener(new SelectionAdapter() {
       public void widgetSelected(final SelectionEvent e) {
         InputDialog d = new InputDialog(PeerWindow.this.getShell(), "Add Thema", "Name:", null, null);
@@ -137,6 +139,7 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     topicButton.setText("Add Topic");
 
     addPostingButton = new Button(composite_1, SWT.NONE);
+    addPostingButton.setLayoutData(new GridData(80, SWT.DEFAULT));
     addPostingButton.addSelectionListener(new SelectionAdapter() {
       public void widgetSelected(final SelectionEvent e) {
         PostingDialog d = new PostingDialog(PeerWindow.this.getShell(), true);
@@ -152,14 +155,19 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     addPostingButton.setText("Add Posting");
 
     subscribeButton = new Button(composite_1, SWT.NONE);
+    subscribeButton.setLayoutData(new GridData(80, SWT.DEFAULT));
     subscribeButton.addSelectionListener(new SelectionAdapter() {
       public void widgetSelected(final SelectionEvent e) {
-        MessageDialog m;
+        Topic t = (Topic) topicSelection.getValue();
+        t.setSubscribed(!t.isSubscribed());
+        subscribeButton.setText(t.isSubscribed() ? "Unsubscribe" : "Subscribe");
+        tableViewer.refresh(true);
       }
     });
     subscribeButton.setText("Subscribe");
 
     editButton = new Button(composite_1, SWT.NONE);
+    editButton.setLayoutData(new GridData(80, SWT.DEFAULT));
     editButton.addSelectionListener(new SelectionAdapter() {
       public void widgetSelected(final SelectionEvent e) {
         Posting p = (Posting)postingSelection.getValue();
@@ -176,6 +184,7 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     editButton.setText("Edit");
 
     replyButton = new Button(composite_1, SWT.NONE);
+    replyButton.setLayoutData(new GridData(80, SWT.DEFAULT));
     replyButton.addSelectionListener(new SelectionAdapter() {
       public void widgetSelected(final SelectionEvent e) {
         Posting p = (Posting)postingSelection.getValue();
@@ -207,6 +216,10 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
         else {
           previousSelection = selection;
           postingComposite.setInput(null); // TODO: Delegate that to databinding
+          Topic t = (Topic) selection.getFirstElement();
+          if (t!=null) {
+            subscribeButton.setText(t.isSubscribed() ? "Unsubscribe" : "Subscribe");
+          }
         }
       }
     });
@@ -364,7 +377,6 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     bindingContext.bindValue(SWTObservables.observeEnabled(addPostingButton), topicSelected, null, null);
     bindingContext.bindValue(SWTObservables.observeEnabled(editButton), postingSelected, null, null);
     bindingContext.bindValue(SWTObservables.observeEnabled(replyButton), postingSelected, null, null);
-
     //
     //
     return bindingContext;
