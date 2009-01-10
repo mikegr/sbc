@@ -2,8 +2,6 @@ package marmik.sbc.task2.peer.swt.model;
 
 import java.util.List;
 
-import org.eclipse.core.databinding.observable.list.WritableList;
-
 public class Posting extends ModelObject {
   private marmik.sbc.task2.peer.Posting backing;
 

@@ -47,11 +47,11 @@ public class PostingComposite extends Composite {
     final Label subjectLabel = new Label(this, SWT.NONE);
     subjectLabel.setText("Subject:");
 
-    subjectText = new Text(this, SWT.BORDER);
+    subjectText = new Text(this, SWT.READ_ONLY | SWT.BORDER);
     final GridData gd_subjectText = new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1);
     subjectText.setLayoutData(gd_subjectText);
 
-    contentText = new Text(this, SWT.MULTI | SWT.BORDER);
+    contentText = new Text(this, SWT.READ_ONLY | SWT.MULTI | SWT.BORDER);
     final GridData gd_contentText = new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1);
     gd_contentText.minimumWidth = 50;
     contentText.setLayoutData(gd_contentText);
@@ -61,6 +61,23 @@ public class PostingComposite extends Composite {
   @Override
   protected void checkSubclass() {
     // Disable the check that prevents subclassing of SWT components
+  }
+
+  public void setEditable(boolean editable) {
+    this.subjectText.setEditable(true);
+    this.contentText.setEditable(true);
+  }
+
+  public boolean getEditable() {
+    return this.contentText.getEditable();
+  }
+
+  public String getSubject() {
+    return this.subjectText.getText();
+  }
+
+  public String getContent() {
+    return this.contentText.getText();
   }
 
   public Posting getInput() {
