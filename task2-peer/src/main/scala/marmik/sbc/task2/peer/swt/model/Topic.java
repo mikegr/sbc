@@ -8,6 +8,7 @@ import org.eclipse.core.databinding.observable.list.WritableList;
 public class Topic extends ModelObject implements SidebarEntry {
   private marmik.sbc.task2.peer.Topic backing;
   private WritableList postings;
+  private boolean subscribed;
 
   public Topic(marmik.sbc.task2.peer.Topic backing) {
     this.backing = backing;
@@ -21,6 +22,22 @@ public class Topic extends ModelObject implements SidebarEntry {
 
   public String getName() {
     return backing.name();
+  }
+
+  public boolean isSubscribed() {
+    return subscribed;
+  }
+
+  public void setSubscribed(boolean subscribed) {
+    if(subscribed!=this.subscribed) {
+      boolean oldValue = this.subscribed;
+      this.subscribed = subscribed;
+      firePropertyChange("subscribed", oldValue, subscribed);
+      if(subscribed)
+        backing.subscribe();
+      else
+        backing.unsubscribe();
+    }
   }
 
   public WritableList getPostings() {
