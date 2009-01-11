@@ -159,7 +159,7 @@ class RemotePeerImpl @throws(classOf[java.rmi.RemoteException]) (selfUrl:String,
      logger info (selfUrl + ": peer " + url + " has new topic: " + name);
      val peer = session.cachedPeers(url);
      val topic = peer.addToCache(name);
-     session.listener.foreach(_.topicCreated(peer, topic));
+     session.listener.foreach(_.topicCreated(topic));
   }
 
   //parents list has to be in this order: parent, parent of parent, parent of parent of parent,...

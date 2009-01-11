@@ -22,7 +22,7 @@ public class TestNotification implements NotificationListener {
 	public static void main(String[] args) throws Exception {
 		TestNotification tn = new TestNotification();
 		Capi capi = new Capi();
-		URI uri = new java.net.URI("tcpjava://localhost:9876");
+		URI uri = new java.net.URI("tcpjava://localhost:56473");
 
         Transaction tx = capi.createTransaction(uri, ICapi.INFINITE_TIMEOUT);
 

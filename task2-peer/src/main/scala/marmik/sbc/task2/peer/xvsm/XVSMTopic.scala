@@ -6,6 +6,7 @@ import org.xvsm.core._
 import org.xvsm.core.notifications._
 import org.xvsm.core.aspect._
 
+import scala.collection.mutable._
 
 
 class XVSMTopic(ec:EasyCapi, val peer:XVSMPeer, val name:String) extends Topic {
@@ -13,9 +14,16 @@ class XVSMTopic(ec:EasyCapi, val peer:XVSMPeer, val name:String) extends Topic {
   val logger = org.slf4j.LoggerFactory.getLogger(this.getClass);
   val url = peer.url;
 
+  val cachedPosts = new HashMap[Long, XVSMPosting]();
+
   def postings(): List[Posting] = {
     logger debug ("read postings() from " + name)
-    ec.postings(this);
+    val posts = ec.postings(this);
+
+    posts.foreach(p =>
+       cachedPosts += (p.id -> p)
+    );
+    posts
   }
 
   def subscribe() = {
@@ -40,6 +48,6 @@ class XVSMTopic(ec:EasyCapi, val peer:XVSMPeer, val name:String) extends Topic {
     false
   }
 
-  var listener:URI = _;
+  var listener:TopicListener = _;
 
 }

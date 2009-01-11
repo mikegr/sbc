@@ -10,4 +10,5 @@ class XVSMTopic(val elevator: SpaceElevator, val session: XVSMSession, val peer:
   def unsubscribe() { }
 
   def createPosting(author:String, subject:String, content:String): Posting = null
+
 }

@@ -11,7 +11,7 @@ class XVSMPeer(elevator: SpaceElevator, val session: XVSMSession, nameUrl: (Stri
   val name = nameUrl._1
   val space = elevator.remoteSpace(url)
   space.registerNotification("topics", List(Operation.Write))( entry => {
-    session.fire( l => l.topicCreated(this, new XVSMTopic(elevator, session, this, entry.toString, List())))
+    session.fire( l => l.topicCreated(new XVSMTopic(elevator, session, this, entry.toString, List())))
   })
   log debug "new Peer: " + url
 

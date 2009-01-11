@@ -44,7 +44,8 @@ object SessionAdapter {
       def postingEdited(posting: ScalaPosting) {
 
       }
-      def topicCreated(peer: ScalaPeer, topic: ScalaTopic) {
+      def topicCreated(topic: ScalaTopic) {
+        val peer:ScalaPeer = topic.peer;
         log debug "Got notification that topic " + topic.name + " was created on " + peer.name
         withRealm(() => swtSession.getSidebarEntries.add(toSwtTopic(topic)): Unit)
       }

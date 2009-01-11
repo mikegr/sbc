@@ -10,23 +10,13 @@ import marmik.sbc.task2.peer.xvsm.XVSMContants._
 class XVSMSessionFactory extends SessionFactory {
 
   val log = org.slf4j.LoggerFactory.getLogger(this.getClass.getName);
-  
+
   def name() = "XVSM"
 
   def login(superPeerUrl: String, selfName: String):Session =  {
-    val capi = new Capi();
-    val uri = new java.net.URI(superPeerUrl);
 
-    val easyCapi = new EasyCapi(capi, uri, selfName);
-    
-    log.info("selfUrl:" + easyCapi.selfUrl);
-    
-    //val tx = capi.createTransaction(uri, ICapi.INFINITE_TIMEOUT);
-    //val superpeer = capi.lookupContainer(tx, uri, CONTAINER);
 
-    easyCapi.writePeerInfo();
-
-    new XVSMSession(easyCapi, superPeerUrl, selfName);
+    new XVSMSession(superPeerUrl, selfName).login
 
   }
 

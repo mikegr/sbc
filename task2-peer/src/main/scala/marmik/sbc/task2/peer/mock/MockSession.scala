@@ -33,7 +33,7 @@ class MockSession(url: String, name: String) extends Session {
 
   def fireTopicCreated(peer: MockPeer, topic: MockTopic) {
     for(listener <- listeners)
-      listener.topicCreated(peer, topic)
+      listener.topicCreated(topic)
   }
 
   def firePostingCreated(posting: Posting) {

@@ -10,19 +10,32 @@ import marmik.sbc.task2.peer.xvsm.XVSMContants._
 
 import marmik.sbc.task2.peer._
 
-class XVSMSession(capi:EasyCapi, superpeer:String, selfName:String) extends Session {
+class XVSMSession(superPeerUrl:String, selfName:String) extends Session {
 
-  capi.session = this
+	val uri = new java.net.URI(superPeerUrl);
+	val capi = new EasyCapi(new Capi(), this, uri, selfName);
 
-  val localPeer = new XVSMLocalPeer(capi, capi.selfUrl, selfName); //setting url to null, because of embedded space
+	def login():XVSMSession = {
+	  capi.writePeerInfo();
+      this
+	}
+
+  val localPeer = new XVSMLocalPeer(capi, this, capi.selfUrl, selfName); //setting url to null, because of embedded space
 
   val listener = new ListBuffer[Listener]();
 
   def registerListener(l:Listener) = {
     listener + l;
   }
+
+  val cachedPeers = new HashMap[String, XVSMPeer]();
+
   def peers():List[Peer] = {
-    capi.readPeerInfo();
+    val peers = capi.readPeerInfo();
+    peers.foreach(p=>
+      cachedPeers += (p.url -> p)
+    );
+    peers;
   }
 
   def logout() {
@@ -31,5 +44,7 @@ class XVSMSession(capi:EasyCapi, superpeer:String, selfName:String) extends Sess
   def dumpTopics() {
      capi.dumpTopics();
   }
+
+
 
 }

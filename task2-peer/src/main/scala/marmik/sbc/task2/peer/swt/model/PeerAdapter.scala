@@ -20,8 +20,9 @@ object PeerAdapter {
       def peerLeaves(peer: ScalaPeer) = {}
       def postingCreated(posting: ScalaPosting) = {}
       def postingEdited(posting: ScalaPosting) = {}
-      def topicCreated(eventPeer: ScalaPeer, topic: ScalaTopic) {
-        if(peer==eventPeer)
+      def topicCreated(topic: ScalaTopic) {
+        val eventPeer:ScalaPeer = topic.peer;
+        if (peer==eventPeer)
           withRealm(() => swtPeer.getTopics.add(toSwtTopic(topic)): Unit)
       }
     })
