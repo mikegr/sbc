@@ -32,6 +32,12 @@
     <repository>
       <id>MozartSpaces_Repository</id>
       <url>http://www.mozartspaces.org/maven</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
     </repository>
   </repositories>
   
