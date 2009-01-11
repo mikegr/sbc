@@ -47,6 +47,7 @@ class EasyCapi(val capi:ICapi, val session:XVSMSession, superPeer:URI, selfName:
     log info ("Register notification for " + selfUrl);
 
     capi.createNotification(peerContainer(null), this, Operation.Write, Operation.Shift, Operation.Take, Operation.Destroy);
+    capi.createNotification(topicContainer(null), this, Operation.Write, Operation.Shift);
 
     log debug ("Registration finished for " + selfUrl);
   }
@@ -64,6 +65,14 @@ class EasyCapi(val capi:ICapi, val session:XVSMSession, superPeer:URI, selfName:
     }).toList
   }
 
+  def logout() {
+    val tx = transaction(superPeer);
+    val ct = peerContainer(tx);
+    capi.destroy(ct, 0, tx, new KeySelector("Url", selfUrl));
+    capi.commitTransaction(tx);
+
+    capi.shutdown(null, false)
+  }
 
   def postings(topic:XVSMTopic):List[XVSMPosting] = {
     postingsInternal(topic, null);
@@ -161,9 +170,7 @@ class EasyCapi(val capi:ICapi, val session:XVSMSession, superPeer:URI, selfName:
       new AtomicEntry[A](value)
   }
 
-  def logout() {
-    capi.shutdown(null, false)
-  }
+
 
   /** Fetch list of topics from super peer
    * @param url URL for XVSMTopic. Should be null for local topic.

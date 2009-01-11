@@ -28,7 +28,7 @@ class XVSMSession(superPeerUrl:String, selfName:String) extends Session {
     listener + l;
   }
 
-  val cachedPeers = new HashMap[String, XVSMPeer]();
+  val cachedPeers = HashMap[String, XVSMPeer] (capi.selfUrl -> localPeer);
 
   def peers():List[Peer] = {
     val peers = capi.readPeerInfo();
