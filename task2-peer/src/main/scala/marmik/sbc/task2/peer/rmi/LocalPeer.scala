@@ -16,7 +16,9 @@ class LocalPeer(s:RmiSession, p:PeerInfo) extends RmiPeer(s, p) {
   override
   def newTopic(name:String): Topic = {
     s.superPeer.newTopic(url, name);
-    new RmiTopic(s, this, name);
+    val newTopic = new RmiTopic(s, this, name);
+    cachedTopics += (name -> newTopic);
+    newTopic
   }
 
 }

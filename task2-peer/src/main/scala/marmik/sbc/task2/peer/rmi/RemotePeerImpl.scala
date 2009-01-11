@@ -4,6 +4,7 @@ import java.util.List
 import java.lang.Integer
 import java.util.ArrayList
 import java.util.GregorianCalendar
+import java.util.regex._
 import scala.collection.jcl.Conversions._
 import scala.collection.jcl._
 import scala.collection.mutable.HashMap
@@ -31,6 +32,7 @@ class RemotePeerImpl @throws(classOf[java.rmi.RemoteException]) (selfUrl:String,
   val reverse = new HashMap[Int, String](); //posting to topic
 
   val badWords = new HashSet[String]();
+  private var pattern:Pattern = null
 
   @throws (classOf[java.rmi.RemoteException])
   override def getPostings(name:String):List[PostingInfo] = synchronized {
@@ -61,8 +63,12 @@ class RemotePeerImpl @throws(classOf[java.rmi.RemoteException]) (selfUrl:String,
 
   @throws (classOf[java.rmi.RemoteException])
   override def post(topic:String, parent:Integer, author:String, subject:String, content:String ):Integer = synchronized {
+    logger debug ("Uncensored content: " + content);
+    val censored = if (pattern == null) content
+                   else pattern.matcher(content).replaceAll("***");
+    logger debug ("Censored content: " + censored);
     index =  index.intValue + 1;
-    val post = new PostingInfo(index, parent, author, subject, content, new GregorianCalendar());
+    val post = new PostingInfo(index, parent, author, subject, censored, new GregorianCalendar());
     indexPostings += ((index, post));
     if (parent == null) {
       postings.getOrElseUpdate(topic, new ArrayList[PostingInfo]()) += post;
@@ -175,6 +181,7 @@ class RemotePeerImpl @throws(classOf[java.rmi.RemoteException]) (selfUrl:String,
   def setBadWordFilter(words:Seq[String]) {
     badWords.clear;
     badWords addAll words;
+    pattern = Pattern.compile(badWords.mkString("","|",""));
   }
 
   def getBadWordFilter():Seq[String] = {
