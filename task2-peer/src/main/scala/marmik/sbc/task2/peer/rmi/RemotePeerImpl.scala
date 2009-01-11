@@ -30,7 +30,7 @@ class RemotePeerImpl @throws(classOf[java.rmi.RemoteException]) (selfUrl:String,
   val indexPostings = new HashMap[Int, PostingInfo](); // id to posting
   val reverse = new HashMap[Int, String](); //posting to topic
 
-  val badWords = new HashSet[String];
+  val badWords = new HashSet[String]();
 
   @throws (classOf[java.rmi.RemoteException])
   override def getPostings(name:String):List[PostingInfo] = synchronized {
@@ -172,11 +172,12 @@ class RemotePeerImpl @throws(classOf[java.rmi.RemoteException]) (selfUrl:String,
   }
   */
 
-  def setBadWord(words:Seq[String]) {
+  def setBadWordFilter(words:Seq[String]) {
     badWords.clear;
     badWords addAll words;
   }
-  def getBadWords():Seq[String] = {
+
+  def getBadWordFilter():Seq[String] = {
     badWords.toSeq
   }
 

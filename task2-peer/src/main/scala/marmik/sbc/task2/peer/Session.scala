@@ -16,4 +16,7 @@ trait Session {
 
   def logout();
 
+  def setBadWordList(list:Seq[String]);
+
+  def getBadWordList():Seq[String];
 }

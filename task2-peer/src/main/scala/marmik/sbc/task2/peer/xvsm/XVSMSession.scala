@@ -17,6 +17,7 @@ class XVSMSession(superPeerUrl:String, selfName:String) extends Session {
 
 	def login():XVSMSession = {
 	  capi.writePeerInfo();
+
       this
 	}
 
@@ -45,6 +46,12 @@ class XVSMSession(superPeerUrl:String, selfName:String) extends Session {
      capi.dumpTopics();
   }
 
+  def setBadWordList(list:Seq[String]) {
+    capi.setBadWordFilter(list);
+  }
 
+  def getBadWordList():Seq[String] = {
+    capi.getBadWordFilter();
+  }
 
 }

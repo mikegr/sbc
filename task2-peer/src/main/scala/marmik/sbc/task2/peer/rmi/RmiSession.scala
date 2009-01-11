@@ -88,4 +88,12 @@ class RmiSession(val superPeerUrl:String, val selfName:String, val selfUrl:Strin
       superPeer.hashCode + selfName.hashCode + selfUrl.hashCode
     }
 
+  def setBadWordList(list:Seq[String]) {
+    selfPeer.setBadWordFilter(list);
+  }
+
+  def getBadWordList():Seq[String] = {
+    selfPeer.getBadWordFilter();
+  }
+
 }

@@ -62,4 +62,16 @@ class MockSession(url: String, name: String) extends Session {
   def logout() {
     loggedIn = false
   }
+
+  def setBadWordList(list:Seq[String]) {
+    log error "setBadWordList called but not implemented!";
+    throw new UnsupportedOperationException("setBadWordList called but not implemented!");
+  }
+
+  def getBadWordList():Seq[String] = {
+    log error "setBadWordList called but not implemented!";
+    throw new UnsupportedOperationException("setBadWordList called but not implemented!");
+  }
+
+
 }

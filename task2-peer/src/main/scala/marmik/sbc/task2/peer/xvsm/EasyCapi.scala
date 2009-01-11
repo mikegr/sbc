@@ -355,4 +355,19 @@ class EasyCapi(val capi:ICapi, val session:XVSMSession, superPeer:URI, selfName:
   def notify(call:((Listener)=>Unit))  {
     session.listener.foreach(call(_));
   }
+
+  private var filterUrl:URI = null
+  private var badWords:Seq[String] = null
+
+  def setBadWordFilter(list:Seq[String]) {
+    val ct = postingContainer(null, null)
+    val filter = new BadWordFilterAspect(list);
+    if (filterUrl != null) capi.removeAspect(ct, filter.points, filterUrl);
+    filterUrl = capi.addAspect(ct, filter.points, filter);
+  }
+
+  def getBadWordFilter():Seq[String] = {
+    badWords;
+  }
+
 }

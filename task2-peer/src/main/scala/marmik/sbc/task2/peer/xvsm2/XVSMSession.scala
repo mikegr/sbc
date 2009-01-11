@@ -35,6 +35,14 @@ class XVSMSession(val elevator: SpaceElevator, val superPeer: Space, val name: S
     })
   }
 
+  def setBadWordList(seq:Seq[String]) {
+    throw new UnsupportedOperationException("setBadWordList not implemented")
+  }
+
+  def getBadWordList():Seq[String] = {
+    throw new UnsupportedOperationException("getBadWordList not implemented")
+  }
+
   override def hashCode = elevator.hashCode
 
   override def equals(other: Any) =
@@ -47,4 +55,5 @@ class XVSMSession(val elevator: SpaceElevator, val superPeer: Space, val name: S
     for(listener <- listeners)
       func(listener)
   }
+
 }
