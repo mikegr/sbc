@@ -33,11 +33,6 @@
       <version>[1.2.0,2.0.0)</version>
     </dependency>
     <dependency>
-      <groupId>${swt.os-specific-groupId}</groupId>
-      <artifactId>${swt.os-specific-artifactId}</artifactId>
-      <version>[3.4.0,4.0.0)</version>
-    </dependency>
-    <dependency>
       <groupId>org.eclipse</groupId>
       <artifactId>swt</artifactId>
       <version>[3.4.0,4.0.0)</version>
@@ -77,9 +72,15 @@
           <name>Linux</name>
         </os>
       </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.eclipse.swt.gtk.linux</groupId>
+          <artifactId>x86</artifactId>
+          <version>[3.4.0,4.0.0)</version>
+        </dependency>
+      </dependencies>
       <properties>
-        <swt.os-specific-groupId>org.eclipse.swt.gtk.linux</swt.os-specific-groupId>
-        <swt.os-specific-artifactId>x86</swt.os-specific-artifactId>
+        <jvm.additional-args>-ea</jvm.additional-args>
       </properties>
     </profile>
     <profile>
@@ -90,8 +91,15 @@
         </os>
       </activation>
       <properties>
-        <swt.os-specific-dep>org.eclipse.swt.win32.win32.x86</swt.os-specific-dep>
+        <jvm.additional-args>-ea</jvm.additional-args>
       </properties>
+      <dependencies>
+        <dependency>
+          <groupId>org.eclipse.swt.win32.win32</groupId>
+          <artifactId>x86</artifactId>
+          <version>[3.4.0,4.0.0)</version>
+        </dependency>
+      </dependencies>
     </profile>
     <profile>
       <id>mac</id>
@@ -100,8 +108,15 @@
           <name>Mac OS X</name>
         </os>
       </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.eclipse.swt.carbon</groupId>
+          <artifactId>macosx</artifactId>
+          <version>[3.4.0,4.0.0)</version>
+        </dependency>
+      </dependencies>
       <properties>
-        <swt.os-specific-dep>org.eclipse.swt.carbon.macosx</swt.os-specific-dep>
+        <jvm.additional-args>-XstartOnFirstThread</jvm.additional-args>
       </properties>
     </profile>
   </profiles>
@@ -144,6 +159,7 @@
               <mainClass>marmik.sbc.task2.peer.Application</mainClass>
               <jvmArgs>
                 <jvmArg>-Xmx128m</jvmArg>
+                <jvmArg>${jvm.additional-args}</jvmArg>
               </jvmArgs>
             </launcher>
           </launchers>
