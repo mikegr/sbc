@@ -347,8 +347,16 @@ class EasyCapi(val capi:ICapi, val session:XVSMSession, superPeer:URI, selfName:
      new XVSMPeer(this, session, sp.url, sp.name);
   }
 
-  def joinMethod(peer:XVSMPeer)(l:Listener) :Unit = l.peerJoins(peer);
-  def leaveMethod(peer:XVSMPeer)(l:Listener):Unit = l.peerLeaves(peer);
+  def joinMethod(peer:XVSMPeer)(l:Listener) :Unit = {
+    session.cachedPeers += (peer.url -> peer);
+    l.peerJoins(peer)
+  };
+
+  def leaveMethod(peer:XVSMPeer)(l:Listener):Unit = {
+    session.cachedPeers -= (peer.url);
+    l.peerLeaves(peer)
+  };
+
 
   def topicCreatedMethod(topic:XVSMTopic)(l:Listener):Unit = l.topicCreated(topic);
 

@@ -2,6 +2,7 @@ package marmik.sbc.task2.peer.xvsm
 
 import marmik.sbc.task2.peer._
 import java.util.GregorianCalendar;
+import org.apache.commons.lang.builder._
 
 
 class XVSMPosting(ec:EasyCapi, val topic:XVSMTopic, val parent:XVSMPosting, val id:Long, val author:String, val subject:String, val content:String, val createdAt:GregorianCalendar) extends Posting {
@@ -15,20 +16,29 @@ class XVSMPosting(ec:EasyCapi, val topic:XVSMTopic, val parent:XVSMPosting, val 
   def replies():List[Posting] = {
     ec.replies(this);
   }
-  
+
   override
-  def equals(o:Any):Boolean = {
-    if (o.isInstanceOf[XVSMPosting]) {
-      val that = o.asInstanceOf[XVSMPosting];
-      if (that.topic == this.topic && 
-          that.id == this.id && 
+  def equals(o:Any):Boolean = o match {
+    case that:XVSMPosting => {
+         that.topic == this.topic &&
+          that.id == this.id &&
+          that.author == this.author &&
+          that.subject == this.subject &&
           that.content == this.content
-      ) true
-    }
-    false
+         }
+    case _ => false
   }
-  override 
+
+  override
+  def hashCode():Int =
+    new HashCodeBuilder(17,37)
+    .append(topic)
+    .append(id)
+    .append(content)
+    .toHashCode
+
+  override
   def toString():String = {
-    topic.name + "|" + parent.id + "|" + id + "|" + author + "|" + subject + "|" + content + "|" + createdAt; 
+    topic.name + "|" + parent.id + "|" + id + "|" + author + "|" + subject + "|" + content + "|" + createdAt;
   }
 }

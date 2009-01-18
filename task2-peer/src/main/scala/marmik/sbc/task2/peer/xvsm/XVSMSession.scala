@@ -2,6 +2,7 @@ package marmik.sbc.task2.peer.xvsm
 
 import scala.collection.mutable._
 import org.xvsm.interfaces._
+import org.apache.commons.lang.builder._
 import org.xvsm.core._
 import org.xvsm.transactions._
 import org.xvsm.coordinators._
@@ -10,7 +11,7 @@ import marmik.sbc.task2.peer.xvsm.XVSMContants._
 
 import marmik.sbc.task2.peer._
 
-class XVSMSession(superPeerUrl:String, selfName:String) extends Session {
+class XVSMSession(val superPeerUrl:String, selfName:String) extends Session {
 
 	val uri = new java.net.URI(superPeerUrl);
 	val capi = new EasyCapi(new Capi(), this, uri, selfName);
@@ -54,4 +55,18 @@ class XVSMSession(superPeerUrl:String, selfName:String) extends Session {
     capi.getBadWordFilter();
   }
 
+  override
+    def equals(other:Any) = other match  {
+      case that:XVSMSession => {
+        that.superPeerUrl == this.superPeerUrl &&
+        that.capi.selfUrl == this.capi.selfUrl
+      }
+      case _ => false
+    }
+
+  override
+    def hashCode():Int = new HashCodeBuilder(17,37)
+      .append(superPeerUrl)
+      .append(capi.selfUrl)
+      .toHashCode
 }

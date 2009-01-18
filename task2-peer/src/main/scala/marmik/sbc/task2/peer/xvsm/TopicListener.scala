@@ -44,7 +44,8 @@ class TopicListener(ec:EasyCapi, topic:XVSMTopic) extends NotificationListenerAd
       val postId = tuple.getEntryAt(0).asInstanceOf[AtomicEntry[Long]].getValue;
       val topicId = tuple.getEntryAt(1).asInstanceOf[AtomicEntry[String]].getValue;
 	  val parentId = tuple.getEntryAt(2).asInstanceOf[AtomicEntry[Long]].getValue;
-      val parent:XVSMPosting = topic.cachedPosts.get(parentId).get;
+      log debug ("ParentId is " + parentId);
+      val parent:XVSMPosting = topic.cachedPosts.getOrElse(parentId, null);
       val post = topic.cachedPosts.getOrElse(postId, ec.entry2Posting(topic, parent, tuple));
       val method = if (topic.cachedPosts.contains(postId)) postEditedMethod (post) _
            else postCreatedMethod (post) _

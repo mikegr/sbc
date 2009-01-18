@@ -2,6 +2,7 @@ package marmik.sbc.task2.peer.xvsm
 
 import marmik.sbc.task2.peer._
 import scala.collection.mutable._
+import org.apache.commons.lang.builder._
 
 class XVSMPeer(ec:EasyCapi, val session:XVSMSession, val url:String, val name:String) extends Peer {
 
@@ -26,10 +27,15 @@ class XVSMPeer(ec:EasyCapi, val session:XVSMSession, val url:String, val name:St
     internal;
   }
 
-  override def equals(o:Any):Boolean = {
-    if (! o.isInstanceOf[XVSMPeer] ) false
-    else if (o.asInstanceOf[XVSMPeer].url != this.url) false
-    else true;
+  override def equals(obj:Any):Boolean = obj match {
+    case that:XVSMPeer => {this.url == that.url }
+    case _ => false
+  }
+
+  override def hashCode:Int = {
+    new HashCodeBuilder(17, 37)
+      .append(url)
+      .toHashCode
   }
 
   def dumpPostings() {

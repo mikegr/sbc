@@ -2,6 +2,8 @@ package marmik.sbc.task2.peer.xvsm
 
 import java.util.GregorianCalendar
 import java.net._
+
+import org.apache.commons.lang.builder._
 import org.xvsm.core._
 import org.xvsm.core.notifications._
 import org.xvsm.core.aspect._
@@ -40,13 +42,17 @@ class XVSMTopic(ec:EasyCapi, val peer:XVSMPeer, val name:String) extends Topic {
   }
 
   override
-  def equals(o:Any):Boolean = {
-    if (o.isInstanceOf[XVSMTopic]) {
-      val that = o.asInstanceOf[XVSMTopic];
-      if (that.peer == this.peer && that.name == this.name) true
-    }
-    false
+  def equals(o:Any):Boolean = o match {
+    case that:XVSMTopic => { that.peer == this.peer && that.name == this.name }
+    case _ => false
   }
+
+  override
+    def hashCode():Int =
+      new HashCodeBuilder(17,37)
+      .append(peer)
+      .append(name)
+      .toHashCode
 
   var listener:TopicListener = _;
 
