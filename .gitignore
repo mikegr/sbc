@@ -1,5 +1,8 @@
 target
 .~*
+*.iml
+*.iws
+*.ipr
 .checkstyle
 .externalToolBuilder
 .nbactions.xml
