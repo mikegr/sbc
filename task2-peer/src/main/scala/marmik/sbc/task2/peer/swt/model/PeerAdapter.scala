@@ -17,12 +17,16 @@ object PeerAdapter {
 
     peer.session.registerListener(new Listener() {
       def peerJoins(peer: ScalaPeer) = {}
+
       def peerLeaves(peer: ScalaPeer) = {}
+
       def postingCreated(posting: ScalaPosting) = {}
+
       def postingEdited(posting: ScalaPosting) = {}
+
       def topicCreated(topic: ScalaTopic) {
-        val eventPeer:ScalaPeer = topic.peer;
-        if (peer==eventPeer)
+        val eventPeer: ScalaPeer = topic.peer;
+        if (peer == eventPeer)
           withRealm(() => swtPeer.getTopics.add(toSwtTopic(topic)): Unit)
       }
     })

@@ -1,17 +1,14 @@
 package marmik.sbc.task2.peer.swt;
 
+import marmik.sbc.task2.peer.swt.model.Posting;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
-import marmik.sbc.task2.peer.swt.PostingComposite;
-import marmik.sbc.task2.peer.swt.model.Posting;
-
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 public class PostingDialog extends Dialog {
@@ -81,17 +78,17 @@ public class PostingDialog extends Dialog {
   }
 
   protected void buttonPressed(int buttonId) {
-    if (buttonId == IDialogConstants.CANCEL_ID) {
-      if (posting != null) {
+    if(buttonId == IDialogConstants.CANCEL_ID) {
+      if(posting != null) {
         this.subject = posting.getSubject();
         this.content = posting.getContent();
       }
       modified = false;
     }
-    if (buttonId == IDialogConstants.OK_ID) {
+    if(buttonId == IDialogConstants.OK_ID) {
       this.subject = postingComposite.getSubject();
       this.content = postingComposite.getContent();
-      if (posting != null) {
+      if(posting != null) {
         boolean subjectModified = !(this.subject.equals(posting.getSubject()));
         boolean contentModified = !(this.content.equals(posting.getContent()));
         modified = subjectModified || contentModified;

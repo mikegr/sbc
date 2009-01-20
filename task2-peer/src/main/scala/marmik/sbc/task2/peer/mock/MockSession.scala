@@ -12,6 +12,7 @@ class MockSession(url: String, name: String) extends Session {
   var mockLocalPeer = new MockPeer(this, "Complang", List(sbcTopic, new MockTopic("GMA", List())))
   var mockPeers = List(mockLocalPeer, new MockPeer(this, "PRIP", List(new MockTopic("EPROG", List()))))
   val listeners = new ListBuffer[Listener]();
+  var wordlist: Seq[String] = List("Molterer")
 
   val t = new Thread(new Runnable() {
     def run {
@@ -63,15 +64,11 @@ class MockSession(url: String, name: String) extends Session {
     loggedIn = false
   }
 
-  def setBadWordList(list:Seq[String]) {
-    log error "setBadWordList called but not implemented!";
-    throw new UnsupportedOperationException("setBadWordList called but not implemented!");
+  def setBadWordList(list: Seq[String]) {
+    wordlist = list
   }
 
-  def getBadWordList():Seq[String] = {
-    log error "setBadWordList called but not implemented!";
-    throw new UnsupportedOperationException("setBadWordList called but not implemented!");
-  }
+  def getBadWordList(): Seq[String] = wordlist
 
 
 }

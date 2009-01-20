@@ -18,7 +18,7 @@ public class SessionFactory extends ModelObject {
   @Override
   public boolean equals(Object obj) {
     if(obj instanceof SessionFactory)
-      return ((SessionFactory)obj).backing == backing;
+      return ((SessionFactory) obj).backing == backing;
     else
       return false;
   }

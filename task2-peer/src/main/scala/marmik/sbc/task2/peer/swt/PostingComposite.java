@@ -1,7 +1,6 @@
 package marmik.sbc.task2.peer.swt;
 
 import marmik.sbc.task2.peer.swt.model.Posting;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -53,7 +52,7 @@ public class PostingComposite extends Composite {
     final Label subjectLabel = new Label(this, SWT.NONE);
     subjectLabel.setText("Subject:");
 
-    if (subjectEditable) {
+    if(subjectEditable) {
       subjectText = new Text(this, SWT.BORDER);
     } else {
       subjectText = new Text(this, SWT.READ_ONLY);
@@ -95,7 +94,7 @@ public class PostingComposite extends Composite {
   }
 
   public void setInput(Posting posting) {
-    if (posting != null) {
+    if(posting != null) {
       this.posting = posting;
       this.authorText.setText(posting.getAuthor());
       this.subjectText.setText(posting.getSubject());

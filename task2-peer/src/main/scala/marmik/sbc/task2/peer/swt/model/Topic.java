@@ -1,8 +1,8 @@
 package marmik.sbc.task2.peer.swt.model;
 
-import java.util.List;
-
 import org.eclipse.core.databinding.observable.list.WritableList;
+
+import java.util.List;
 
 
 public class Topic extends ModelObject implements SidebarEntry {
@@ -38,7 +38,7 @@ public class Topic extends ModelObject implements SidebarEntry {
   }
 
   public void setSubscribed(boolean subscribed) {
-    if(subscribed!=this.subscribed) {
+    if(subscribed != this.subscribed) {
       boolean oldValue = this.subscribed;
       this.subscribed = subscribed;
       firePropertyChange("subscribed", oldValue, subscribed);
@@ -105,7 +105,7 @@ public class Topic extends ModelObject implements SidebarEntry {
   @Override
   public boolean equals(Object obj) {
     if(obj instanceof Topic)
-      return ((Topic)obj).backing == backing;
+      return ((Topic) obj).backing == backing;
     else
       return false;
   }

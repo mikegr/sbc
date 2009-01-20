@@ -13,7 +13,7 @@ public abstract class ModelObject {
   }
 
   public void addPropertyChangeListener(String propertyName,
-      PropertyChangeListener listener) {
+                                        PropertyChangeListener listener) {
     propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
   }
 
@@ -22,19 +22,20 @@ public abstract class ModelObject {
   }
 
   public void removePropertyChangeListener(String propertyName,
-      PropertyChangeListener listener) {
+                                           PropertyChangeListener listener) {
     propertyChangeSupport.removePropertyChangeListener(propertyName,
         listener);
   }
 
   protected void firePropertyChange(String propertyName, Object oldValue,
-      Object newValue) {
+                                    Object newValue) {
     propertyChangeSupport.firePropertyChange(propertyName, oldValue,
         newValue);
   }
+
   protected void fireIndexedPropertyChange(String propertyName, int index,
-        Object oldValue, Object newValue) {
-    propertyChangeSupport.fireIndexedPropertyChange( propertyName,  index,
-           oldValue,  newValue);
+                                           Object oldValue, Object newValue) {
+    propertyChangeSupport.fireIndexedPropertyChange(propertyName, index,
+        oldValue, newValue);
   }
 }

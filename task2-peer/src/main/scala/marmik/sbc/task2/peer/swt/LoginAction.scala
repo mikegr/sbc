@@ -21,7 +21,7 @@ class LoginAction {
       val dialog = new LoginDialog(null, scalaSessionFactories2SwtFactories(factories))
 
       val model = dialog.getModel
-      if(args.size==2) {
+      if(args.size == 2) {
       }
 
       dialog.setBlockOnOpen(true)

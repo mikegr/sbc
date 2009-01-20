@@ -55,7 +55,7 @@ public class Posting extends ModelObject {
   @Override
   public boolean equals(Object obj) {
     if(obj instanceof Posting)
-      return ((Posting)obj).backing == backing;
+      return ((Posting) obj).backing == backing;
     else
       return false;
   }

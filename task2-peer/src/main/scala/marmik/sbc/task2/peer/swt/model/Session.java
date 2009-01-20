@@ -4,6 +4,8 @@ import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 
+import java.util.List;
+
 public class Session extends ModelObject {
   private marmik.sbc.task2.peer.Session backing;
   private WritableList peers;
@@ -38,29 +40,37 @@ public class Session extends ModelObject {
     this.sidebarViewer = viewer;
   }
 
+  public void setWordlist(List<String> wordlist) {
+    backing.setBadWordList(scalaz.javas.List.JavaList_ScalaList(wordlist));
+  }
+
+  public List<String> getWordlist() {
+    return (List<String>) scalaz.javas.List.ScalaList_JavaList(backing.getBadWordList().toList());
+  }
+
   public void firePostingCreated(Posting posting) {
-    for (Object e : sidebar) {
-      if (e instanceof Topic) {
+    for(Object e : sidebar) {
+      if(e instanceof Topic) {
         Topic t = (Topic) e;
-        if (t.equals(posting.getTopic())) {
+        if(t.equals(posting.getTopic())) {
           t.newPostings += 1;
           Posting previous = t.getTopLevelPosting();
           t.getPostings().add(posting);
           t.fireTopLevelPostingChanged(previous);
-          if(sidebarViewer!=null) {
-            Topic selected = (Topic) ((IStructuredSelection)sidebarViewer.getSelection()).getFirstElement();
-            if(selected!=null)
+          if(sidebarViewer != null) {
+            Topic selected = (Topic) ((IStructuredSelection) sidebarViewer.getSelection()).getFirstElement();
+            if(selected != null)
               selected.resetNewPostings();
             sidebarViewer.refresh(true);
           }
         }
       }
     }
-    for (Object p : peers) {
+    for(Object p : peers) {
       Peer peer = (Peer) p;
-      for (Object t : peer.getTopics()) {
+      for(Object t : peer.getTopics()) {
         Topic topic = (Topic) t;
-        if (topic.equals(posting.getTopic())) {
+        if(topic.equals(posting.getTopic())) {
           Posting previous = topic.getTopLevelPosting();
           topic.getPostings().add(posting);
           topic.fireTopLevelPostingChanged(previous);
@@ -71,7 +81,7 @@ public class Session extends ModelObject {
 
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof Session)
+    if(obj instanceof Session)
       return ((Session) obj).backing == backing;
     else
       return false;

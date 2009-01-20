@@ -1,11 +1,6 @@
 package marmik.sbc.task2.peer.swt;
 
-import marmik.sbc.task2.peer.swt.model.Peer;
-import marmik.sbc.task2.peer.swt.model.Posting;
-import marmik.sbc.task2.peer.swt.model.Session;
-import marmik.sbc.task2.peer.swt.model.SidebarEntry;
-import marmik.sbc.task2.peer.swt.model.Topic;
-
+import marmik.sbc.task2.peer.swt.model.*;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeansObservables;
@@ -24,15 +19,8 @@ import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.TreeViewerColumn;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -43,15 +31,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.*;
 import org.slf4j.Logger;
 
 public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
@@ -110,7 +90,7 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
 
   /**
    * Create contents of the application window
-   * 
+   *
    * @param parent
    */
   @Override
@@ -207,7 +187,11 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     wordfilterButton.addSelectionListener(new SelectionAdapter() {
       public void widgetSelected(final SelectionEvent e) {
         WordFilterDialog d = new WordFilterDialog(PeerWindow.this.getShell());
-        d.open();
+        d.create();
+        d.setInput(session.getWordlist());
+        if (d.open() == Window.OK) {
+          session.setWordlist(d.getInput());
+        }
       }
     });
     final GridData gd_wordfilterButton = new GridData(SWT.FILL, SWT.CENTER, false, false);
@@ -286,8 +270,8 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     postingComposite = new PostingComposite(scrolledComposite, SWT.NONE);
     postingComposite.setSize(300, 0);
     scrolledComposite.setContent(postingComposite);
-    sashForm_1.setWeights(new int[] { 1, 2 });
-    sashForm.setWeights(new int[] { 1, 3 });
+    sashForm_1.setWeights(new int[]{1, 2});
+    sashForm.setWeights(new int[]{1, 3});
 
     //
     bindingContext = initDataBindings();
@@ -303,7 +287,7 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
 
   /**
    * Create the menu manager
-   * 
+   *
    * @return the menu manager
    */
   @Override
@@ -314,7 +298,7 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
 
   /**
    * Create the toolbar manager
-   * 
+   *
    * @return the toolbar manager
    */
   @Override
@@ -325,7 +309,7 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
 
   /**
    * Create the status line manager
-   * 
+   *
    * @return the status line manager
    */
   @Override
@@ -363,9 +347,9 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
     ObservableListTreeContentProvider contentProvider = new ObservableListTreeContentProvider(BeansObservables.listFactory(Realm
         .getDefault(), "replies", Posting.class), null);
     treeViewer.setContentProvider(contentProvider);
-    treeViewer.setLabelProvider(new ObservableMapLabelProvider(new IObservableMap[] {
+    treeViewer.setLabelProvider(new ObservableMapLabelProvider(new IObservableMap[]{
         BeansObservables.observeMap(contentProvider.getKnownElements(), Posting.class, "subject"),
-        BeansObservables.observeMap(contentProvider.getKnownElements(), Posting.class, "author") }));
+        BeansObservables.observeMap(contentProvider.getKnownElements(), Posting.class, "author")}));
 
     topicSelection = ViewersObservables.observeSingleSelection(tableViewer);
     postingSelection = ViewersObservables.observeSingleSelection(treeViewer);

@@ -1,17 +1,10 @@
 package marmik.sbc.task2.peer.swt;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-import java.util.LinkedList;
-import java.util.List;
-
 import marmik.sbc.task2.peer.swt.model.SessionFactory;
-
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
@@ -19,19 +12,15 @@ import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
+
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.util.LinkedList;
+import java.util.List;
 
 public class LoginDialog extends Dialog {
   private ComboViewer serviceComboViewer;
@@ -187,7 +176,7 @@ public class LoginDialog extends Dialog {
     // And a standard label provider that maps columns
     IObservableMap[] attributeMaps = BeansObservables.observeMaps(
         serviceComboViewerContentProvider.getKnownElements(), SessionFactory.class,
-        new String[] { "name" });
+        new String[]{"name"});
     serviceComboViewer.setLabelProvider(new ObservableMapLabelProvider(attributeMaps));
 
     // Now set the Viewer's input

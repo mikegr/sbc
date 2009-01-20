@@ -20,17 +20,18 @@ object SessionAdapter {
     val sessionPeers = session.peers();
     val peers = scalaPeers2WritableList(sessionPeers);
 
-    val topicEntries: Seq[SidebarEntry] = for(peer <- sessionPeers; topic <- peer.topics) yield topic
+    val topicEntries: Seq[SidebarEntry] = for (peer <- sessionPeers; topic <- peer.topics) yield topic
     val sidebarEntries = toSwtPeerList(sessionPeers) ++ (topicEntries)
 
     val swtSession = new SwtSession(session, peers, session.localPeer, new WritableList(sidebarEntries.toList, classOf[SidebarEntry]))
 
     session.registerListener(new Listener() {
       def peerJoins(peer: ScalaPeer) = withRealm(() => {
-        log debug "Got notification that peer " + peer.name  + " joined"
+        log debug "Got notification that peer " + peer.name + " joined"
         peers.add(peer)
         swtSession.getSidebarEntries.add(toSwtPeer(peer))
       }: Unit)
+
       def peerLeaves(peer: ScalaPeer) = withRealm(() => {
         log debug "Got notification that peer " + peer.name + " leaves"
         peers.remove(peer)
@@ -41,11 +42,13 @@ object SessionAdapter {
         withRealm(() => {
           swtSession.firePostingCreated(posting)
         }: Unit)
+
       def postingEdited(posting: ScalaPosting) {
 
       }
+
       def topicCreated(topic: ScalaTopic) {
-        val peer:ScalaPeer = topic.peer;
+        val peer: ScalaPeer = topic.peer;
         log debug "Got notification that topic " + topic.name + " was created on " + peer.name
         withRealm(() => swtSession.getSidebarEntries.add(toSwtTopic(topic)): Unit)
       }
