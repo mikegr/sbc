@@ -44,14 +44,14 @@ class TestXVSM extends TestCase {
 
     val sessionFactory = new XVSMSessionFactory();
 
-    val peerSession = sessionFactory.login(superPeerUrl, "Peer 1", peerUrl);
+    val peerSession = sessionFactory.login(superPeerUrl, "Peer 1");
     peerSession.localPeer.newTopic("How to use OOP and Multithreading properly");
     assertEquals("1 peer (ourselves)", 1, peerSession.peers.size);
 
     assertEquals("1 Topic after newTopic", 1, peerSession.localPeer.topics.size);
 
 
-    val mySelfSession = sessionFactory.login(superPeerUrl, "MySelf", myselfUrl);
+    val mySelfSession = sessionFactory.login(superPeerUrl, "MySelf");
     assertEquals("2 peers including ourselves after login", 2 , mySelfSession.peers.size);
 
     mySelfSession.asInstanceOf[XVSMSession].dumpTopics;

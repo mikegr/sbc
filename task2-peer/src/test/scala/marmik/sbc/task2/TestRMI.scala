@@ -23,12 +23,12 @@ class TestRMI extends TestCase {
       val superPeer = SuperPeerMain.setup(superPeerUrl);
 
       val sf1:SessionFactory = new RmiSessionFactory();
-      val session1 = sf1.login(superPeerUrl, peer1Name, peer1Url);
+      val session1 = sf1.login(superPeerUrl, peer1Name);
       val localPeer1 = session1.localPeer;
       val topic1 = localPeer1.newTopic("Peer1/Topic1");
 
       val sf2:SessionFactory = new RmiSessionFactory();
-      val session2 = sf2.login(superPeerUrl, peer2Name, peer2Url);
+      val session2 = sf2.login(superPeerUrl, peer2Name);
       val localPeer2 = session2.localPeer;
       val topic2 = localPeer2.newTopic("Peer2/Topic1");
 

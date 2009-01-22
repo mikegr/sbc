@@ -27,12 +27,12 @@ object TestMain {
 
     val factory = new XVSMSessionFactory();
 
-    val session1 = factory.login(superPeerUrl, peer1Name, peer1Url);
+    val session1 = factory.login(superPeerUrl, peer1Name);
       val localPeer1 = session1.localPeer;
       val topic1 = localPeer1.newTopic("Peer1/Topic1");
 
 
-      val session2 = factory.login(superPeerUrl, peer2Name, peer2Url);
+      val session2 = factory.login(superPeerUrl, peer2Name);
       val localPeer2 = session2.localPeer;
       val topic2 = localPeer2.newTopic("Peer2/Topic1");
 
@@ -59,7 +59,7 @@ object TestMain {
                             def postingEdited(posting: Posting) {
                               calls += 1;
                             };
-                            def topicCreated(peer: Peer, topic: Topic) {
+                            def topicCreated(topic: Topic) {
                               // TODO: Implement
                             }
                         });
