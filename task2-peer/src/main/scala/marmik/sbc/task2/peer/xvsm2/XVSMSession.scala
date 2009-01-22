@@ -11,26 +11,25 @@ class XVSMSession(val elevator: SpaceElevator, val superPeer: Space, val name: S
   val log = org.slf4j.LoggerFactory.getLogger(this.getClass);
   var localPeer: XVSMPeer = new XVSMPeer(elevator, this, (name, elevator.localSpace.url))
   var listeners: ListBuffer[Listener] = new ListBuffer()
+  var peers: ListBuffer[Peer] = new ListBuffer[Peer]()
+  peers.appendAll(superPeer.transaction().apply( tx => {
+    val peersContainer = tx.container("peers")
+    peersContainer.read[(String, java.net.URI)](0, new RandomSelector(Selector.CNT_ALL))
+  }).map(new XVSMPeer(elevator, this, _)))
+
   superPeer.registerNotification("peers", List(Operation.Write))( entry => {
-    log info "Peer joins" + entry
-    fire( l => l.peerJoins(new XVSMPeer(elevator, this, entry.asInstanceOf[(String, java.net.URI)])) )
+    val peer = new XVSMPeer(elevator, this, entry.asInstanceOf[(String, java.net.URI)])
+    peers += peer
+    fire( l => l.peerJoins(peer) )
   })
   log info "Connected"
 
   def registerListener(l: Listener) { listeners += l }
 
-  def peers(): Seq[XVSMPeer] = {
-    log debug "Read peers"
-    superPeer.transaction()( tx => {
-      val peers = tx.container("peers", Coordinators.peers: _*)
-      peers.read[(String, java.net.URI)](0, new RandomSelector(Selector.CNT_ALL)).map(new XVSMPeer(elevator, this, _))
-    })
-  }
-
   def logout() {
     log debug "Logout"
     superPeer.transaction()( tx => {
-      val peers = tx.container("peers", Coordinators.peers: _*)
+      val peers = tx.container("peers")
       peers.takeOne[(String, java.net.URI)](0, new KeySelector("name", localPeer.name))
     })
   }
@@ -52,6 +51,7 @@ class XVSMSession(val elevator: SpaceElevator, val superPeer: Space, val name: S
     }
 
   private[xvsm2] def fire(func: Listener => Any) {
+    log.debug("Fireing")
     for(listener <- listeners)
       func(listener)
   }

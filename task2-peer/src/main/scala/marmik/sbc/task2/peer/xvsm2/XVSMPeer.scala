@@ -10,19 +10,21 @@ class XVSMPeer(elevator: SpaceElevator, val session: XVSMSession, nameUrl: (Stri
   val url = nameUrl._2
   val name = nameUrl._1
   val space = elevator.remoteSpace(url)
-  space.registerNotification("topics", List(Operation.Write))( entry => {
-    session.fire( l => l.topicCreated(new XVSMTopic(elevator, session, this, entry.toString, List())))
+  log.info("New peer " + name + " " + url.toString)
+  space.registerNotification("topics", List(Operation.Write))(entry => {
+    session.fire(l => l.topicCreated(new XVSMTopic(elevator, session, this, entry.toString, List())))
   })
-  log debug "new Peer: " + url
+  log debug "peer constructor finished"
 
-  def topics(): List[Topic] = space.transaction()( tx => {
+  def topics(): List[Topic] = space.transaction()(tx => {
     log debug "topics" + url
-    val c = tx.container("topics", Coordinators.topics: _*)
+    val c = tx.container("topics")
     c.read[String](0, new RandomSelector(Selector.CNT_ALL)).map(new XVSMTopic(elevator, session, this, _, List())).toList
   })
-  def newTopic(name:String): Topic = space.transaction()( tx => {
+
+  def newTopic(name: String): Topic = space.transaction()(tx => {
     log debug "newTopic" + url
-    val c = tx.container("topics", Coordinators.topics: _*)
+    val c = tx.container("topics")
     c.write(0, name, new KeySelector("name", name))
     new XVSMTopic(elevator, session, this, name, List())
   })
@@ -31,7 +33,7 @@ class XVSMPeer(elevator: SpaceElevator, val session: XVSMSession, nameUrl: (Stri
 
   override def equals(other: Any) =
     other match {
-      case p: XVSMPeer => p.url==this.url && p.session==this.session
+      case p: XVSMPeer => p.url == this.url && p.session == this.session
       case _ => false
     }
 }

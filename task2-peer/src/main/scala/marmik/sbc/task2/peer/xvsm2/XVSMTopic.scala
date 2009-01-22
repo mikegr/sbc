@@ -11,4 +11,10 @@ class XVSMTopic(val elevator: SpaceElevator, val session: XVSMSession, val peer:
 
   def createPosting(author:String, subject:String, content:String): Posting = null
 
+  override def equals(obj: Any) = obj match {
+    case t: XVSMTopic => t.peer == this.peer && t.name == this.name
+    case _ => false
+  }
+
+  override def hashCode = this.name.hashCode + this.peer.hashCode
 }

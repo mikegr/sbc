@@ -29,7 +29,7 @@ object TestElevator {
     val elevator = new marmik.xvsm.SpaceElevator()
     log info elevator.url.toString
     val tx = elevator.localSpace.implicitTransaction
-    val c = tx.container("test", new FifoCoordinator(), new LifoCoordinator())
+    val c = tx.lookupOrCreateContainer("test", new FifoCoordinator(), new LifoCoordinator())
     c.write(0, "Hallo")
     c.take[String](0, new FifoSelector(1)).firstOption match {
       case Some(x) => println(x)
@@ -45,7 +45,7 @@ object TestElevator {
       case None => println("FAIL")
     }
 
-    val c2 = tx.container("keys", new RandomCoordinator(), new KeyCoordinator(new KeyCoordinator.KeyType("Name", classOf[String])))
+    val c2 = tx.lookupOrCreateContainer("keys", new RandomCoordinator(), new KeyCoordinator(new KeyCoordinator.KeyType("Name", classOf[String])))
     c2.write(0, "Aha?", new KeySelector("Name", "u"))
     c2.write(0, "Böse!", new KeySelector("Name", "z"))
     c2.readOne[String](0, new KeySelector("Name", "u")) match {
@@ -57,12 +57,12 @@ object TestElevator {
     val remoteSpace = elevator.remoteSpace(new java.net.URI("tcpjava://localhost:56473"))
 
     remoteSpace.transaction()( tx => {
-      tx.container("TestElevatorFifo", new FifoCoordinator())
+      tx.lookupOrCreateContainer("TestElevatorFifo", new FifoCoordinator())
       log info "Created container"
     })
 
     remoteSpace.transaction()( tx => {
-      val remoteC = tx.container("TestElevatorFifo", new FifoCoordinator())
+      val remoteC = tx.container("TestElevatorFifo")
       remoteSpace.registerNotification("TestElevatorFifo", List(org.xvsm.core.notifications.Operation.Write))( entry => {
         println("N" + entry)
       })

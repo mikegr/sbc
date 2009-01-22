@@ -33,7 +33,7 @@ public class Peer extends ModelObject implements SidebarEntry {
 
   @Override
   public boolean equals(Object obj) {
-    if(obj instanceof Peer)
+    if (obj instanceof Peer)
       return ((Peer) obj).backing == backing;
     else
       return false;

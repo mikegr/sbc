@@ -35,7 +35,7 @@ object SessionAdapter {
       def peerLeaves(peer: ScalaPeer) = withRealm(() => {
         log debug "Got notification that peer " + peer.name + " leaves"
         peers.remove(peer)
-        swtSession.getSidebarEntries.add(toSwtPeer(peer))
+        swtSession.getSidebarEntries.remove(toSwtPeer(peer))
       }: Unit)
 
       def postingCreated(posting: ScalaPosting) =
@@ -50,7 +50,10 @@ object SessionAdapter {
       def topicCreated(topic: ScalaTopic) {
         val peer: ScalaPeer = topic.peer;
         log debug "Got notification that topic " + topic.name + " was created on " + peer.name
-        withRealm(() => swtSession.getSidebarEntries.add(toSwtTopic(topic)): Unit)
+        withRealm(() => {
+          if (!swtSession.getSidebarEntries.contains(toSwtTopic(topic)))
+            swtSession.getSidebarEntries.add(toSwtTopic(topic))
+        }: Unit)
       }
     })
 

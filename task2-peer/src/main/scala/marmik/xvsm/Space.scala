@@ -22,15 +22,17 @@ class Space(val elevator: SpaceElevator, val url: URI) {
   }
 
   def registerNotification(container: String, operations: Seq[Operation])(func: Any => Any) = {
+    Thread.sleep(500)
     val listener = new NotificationListenerAdapter() {
       def handleNotificationScala(operation: Operation, entries: Array[Entry]) {
-        println("NOTIFY")
-        for(entry <- entries)
+        log debug "Received notification"
+        for (entry <- entries)
           func(Container.fromXVSMEntry(entry))
       }
     }
     val cref = elevator.capi.lookupContainer(null, url, container);
     elevator.capi.createNotification(cref, listener, operations.toArray: _*)
+    log debug "Created notification"
   }
 
   override def equals(that: Any) = {
@@ -39,5 +41,6 @@ class Space(val elevator: SpaceElevator, val url: URI) {
       case _ => false
     }
   }
-  override def hashCode() = { url.hashCode }
+
+  override def hashCode() = {url.hashCode}
 }
