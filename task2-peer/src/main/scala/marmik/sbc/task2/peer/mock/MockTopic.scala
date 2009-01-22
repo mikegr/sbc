@@ -19,7 +19,7 @@ class MockTopic(n: String, var p: List[Posting]) extends Topic {
 
   def createPosting(author:String, subject:String, content:String): Posting = {
     val posting = new MockPosting(pe.session, subject, author, content, null, this, null, List())
-    p += posting
+    p = posting :: p
     pe.session.asInstanceOf[MockSession].firePostingCreated(posting)
     posting
   }

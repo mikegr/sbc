@@ -15,7 +15,7 @@ class MockPeer(s: Session, name: String, var ts: List[Topic]) extends Peer {
   def newTopic(name:String): Topic = {
     val t = new MockTopic(name, List())
     t.setPeer(this)
-    ts += t
+    ts = t :: ts
     s.asInstanceOf[MockSession].fireTopicCreated(this, t)
     t
   }
