@@ -19,10 +19,12 @@ class XVSMTopic(val elevator: SpaceElevator, val session: XVSMSession, val peer:
     log info "Refreshing"
     peer.space.transaction()(tx => {
       val postingContainer = tx.container(containerId)
-      val postingTupels = postingContainer.read[(String, String, String, String)](0, new RandomSelector(Selector.CNT_ALL))
+      val postingTupels = postingContainer.read[(String, String, String, String, String)](0, new RandomSelector(Selector.CNT_ALL))
       postings = postingTupels.map(_ match {
-        case (author: String, subject: String, content: String, uuid: String) =>
-          new XVSMPosting(elevator, peer, this, author, subject, content, List(), uuid)
+        case (author: String, subject: String, content: String, uuid: String, parentUUID: String) => {
+          val pUUID = if(parentUUID=="") null else parentUUID
+          new XVSMPosting(elevator, peer, this, author, subject, content, List(), uuid, pUUID)
+        }
       }).toList
       log info "Refreshed"
       postings
@@ -34,7 +36,7 @@ class XVSMTopic(val elevator: SpaceElevator, val session: XVSMSession, val peer:
     notification1 = peer.space.registerNotification(containerId, List(Operation.Write))(entry => {
       log.debug("NEW POSTING" + entry)
       //val posting = new XVSMPosting(elevator, peer, this, entry._0, entry._1, entry._2, List())
-      val posting = new XVSMPosting(elevator, peer, this, "author", "subject", "leer", List(), "uuid leer");
+      val posting = new XVSMPosting(elevator, peer, this, "author", "subject", "leer", List(), "uuid leer", null);
       session.fire(l => l.postingCreated(posting))
     })
   }
@@ -46,9 +48,9 @@ class XVSMTopic(val elevator: SpaceElevator, val session: XVSMSession, val peer:
 
   def createPosting(author: String, subject: String, content: String): Posting =
     peer.space.transaction()(tx => {
-      val posting = new XVSMPosting(elevator, peer, this, author, subject, content, List(), java.util.UUID.randomUUID.toString)
+      val posting = new XVSMPosting(elevator, peer, this, author, subject, content, List(), java.util.UUID.randomUUID.toString, null)
       val postingContainer = tx.container(containerId)
-      postingContainer.write(0, (posting.author, posting.subject, posting.content, posting.uuid), new KeySelector("uuid", posting.uuid))
+      postingContainer.write(0, (posting.author, posting.subject, posting.content, posting.uuid, ""), new KeySelector("uuid", posting.uuid))
       postings = posting :: postings
       posting
     })

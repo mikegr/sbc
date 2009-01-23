@@ -17,6 +17,7 @@ object Container {
       case (a: Serializable, b: Serializable) => new org.xvsm.core.Tuple(toXVSMEntry(a), toXVSMEntry(b))
       case (a: Serializable, b: Serializable, c: Serializable) => new org.xvsm.core.Tuple(toXVSMEntry(a), toXVSMEntry(b), toXVSMEntry(c))
       case (a: Serializable, b: Serializable, c: Serializable, d: Serializable) => new org.xvsm.core.Tuple(toXVSMEntry(a), toXVSMEntry(b), toXVSMEntry(c), toXVSMEntry(d))
+      case (a: Serializable, b: Serializable, c: Serializable, d: Serializable, e: Serializable) => new org.xvsm.core.Tuple(toXVSMEntry(a), toXVSMEntry(b), toXVSMEntry(c), toXVSMEntry(d), toXVSMEntry(e))
       case x: Serializable => new org.xvsm.core.AtomicEntry[Serializable](x, x.getClass.asInstanceOf[Class[Serializable]])
     }
   }
@@ -27,6 +28,7 @@ object Container {
       case e: org.xvsm.core.Tuple if e.size == 2 => (fromXVSMEntry[Serializable](e.getEntryAt(0)), fromXVSMEntry[Serializable](e.getEntryAt(1))).asInstanceOf[T]
       case e: org.xvsm.core.Tuple if e.size == 3 => (fromXVSMEntry[Serializable](e.getEntryAt(0)), fromXVSMEntry[Serializable](e.getEntryAt(1)), fromXVSMEntry[Serializable](e.getEntryAt(2))).asInstanceOf[T]
       case e: org.xvsm.core.Tuple if e.size == 4 => (fromXVSMEntry[Serializable](e.getEntryAt(0)), fromXVSMEntry[Serializable](e.getEntryAt(1)), fromXVSMEntry[Serializable](e.getEntryAt(2)), fromXVSMEntry[Serializable](e.getEntryAt(3))).asInstanceOf[T]
+      case e: org.xvsm.core.Tuple if e.size == 5 => (fromXVSMEntry[Serializable](e.getEntryAt(0)), fromXVSMEntry[Serializable](e.getEntryAt(1)), fromXVSMEntry[Serializable](e.getEntryAt(2)), fromXVSMEntry[Serializable](e.getEntryAt(3)), fromXVSMEntry[Serializable](e.getEntryAt(4))).asInstanceOf[T]
     }
   }
   def toXVSMEntryWithSelector(rawEntry: Any, selector: Selector): org.xvsm.core.Entry = {
