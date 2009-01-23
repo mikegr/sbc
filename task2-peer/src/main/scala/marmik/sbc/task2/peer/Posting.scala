@@ -17,4 +17,5 @@ trait Posting {
 
   def edit(newContent: String);
 
+  def shouldAdd = false
 }

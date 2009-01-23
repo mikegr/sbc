@@ -16,16 +16,22 @@ class XVSMTopic(val elevator: SpaceElevator, val session: XVSMSession, val peer:
 
 
   override def refresh() {
-    log info "Refreshing"
     peer.space.transaction()(tx => {
       val postingContainer = tx.container(containerId)
       val postingTupels = postingContainer.read[(String, String, String, String, String)](0, new RandomSelector(Selector.CNT_ALL))
       postings = postingTupels.map(_ match {
         case (author: String, subject: String, content: String, uuid: String, parentUUID: String) => {
-          val pUUID = if(parentUUID=="") null else parentUUID
+          val pUUID = if (parentUUID == "") null else parentUUID
           new XVSMPosting(elevator, peer, this, author, subject, content, List(), uuid, pUUID)
         }
       }).toList
+      val pmap = Map(postings.map(posting => (posting.uuid, posting)): _*)
+      for(posting <- postings if posting.parentUUID!=null) {
+        val parent = pmap(posting.parentUUID)
+        parent._replies = posting :: parent._replies
+      }
+      postings = postings.filter(_.parentUUID==null)
+      log debug containerId + " " + postingTupels.mkString
       log info "Refreshed"
       postings
     })
@@ -33,17 +39,20 @@ class XVSMTopic(val elevator: SpaceElevator, val session: XVSMSession, val peer:
 
   def subscribe() {
     assume(subscribed == false)
-    notification1 = peer.space.registerNotification(containerId, List(Operation.Write))(entry => {
-      log.debug("NEW POSTING" + entry)
-      //val posting = new XVSMPosting(elevator, peer, this, entry._0, entry._1, entry._2, List())
-      val posting = new XVSMPosting(elevator, peer, this, "author", "subject", "leer", List(), "uuid leer", null);
+    notification1 = peer.space.registerNotification(containerId, List(Operation.Write))(e => {
+      refresh();
+      val entry = e.asInstanceOf[(String, String, String, String, String)]
+      val pUUID = if (entry._5 == "") null else entry._5
+      val posting = new XVSMPosting(elevator, peer, this, entry._1, entry._2, entry._3, List(), entry._4, pUUID);
       session.fire(l => l.postingCreated(posting))
     })
+    subscribed = true
   }
 
   def unsubscribe() {
     assume(subscribed == true)
     notification1.remove
+    subscribed = false
   }
 
   def createPosting(author: String, subject: String, content: String): Posting =

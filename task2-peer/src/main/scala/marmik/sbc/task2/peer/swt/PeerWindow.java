@@ -213,15 +213,16 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
         if (selection.getFirstElement() instanceof Peer)
           tableViewer.setSelection(previousSelection);
         else {
-          previousSelection = selection;
           postingComposite.setInput(null); // TODO: Delegate that to databinding
           Topic t = (Topic) selection.getFirstElement();
           if (t != null) {
-            t.refresh();
+            if(!selection.equals(previousSelection))
+              t.refresh();
             t.resetNewPostings();
             tableViewer.refresh(true);
             subscribeButton.setText(t.isSubscribed() ? "Unsubscribe" : "Subscribe");
           }
+          previousSelection = selection;
         }
       }
     });

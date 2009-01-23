@@ -13,6 +13,7 @@ import org.xvsm.core.notifications.Operation
 import scalaz.javas.List.{JavaList_ScalaList, ScalaList_JavaList}
 
 class Notification(elevator: SpaceElevator, val space: Space, val container: String, val url: java.net.URI, operations: Seq[Operation], val cref: ContainerRef) {
+  elevator.notifications = this :: elevator.notifications
   def remove() {
     elevator.capi.removeAspect(cref, operations.map(toLocalIPoint _).toList, url)
   }

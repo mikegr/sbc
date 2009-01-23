@@ -17,6 +17,10 @@ public class Posting extends ModelObject {
     return backing;
   }
 
+  public boolean shouldAdd() {
+    return backing.shouldAdd();
+  }
+
   public Posting reply(String subject, String content) {
     List<Posting> oldReplies = getReplies();
     Posting p = new Posting(backing.reply("autor", subject, content));

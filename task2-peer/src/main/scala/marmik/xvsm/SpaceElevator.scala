@@ -47,16 +47,18 @@ sealed class SpaceElevator(private val initialPort: Int) {
   def url = transportHandler.getListener("TcpJava").getUri
   def port = url.getPort
   def localSpace() = new Space(this, url)
+  private[xvsm] var notifications: List[Notification] = List()
 
   def remoteSpace(url: URI) = {
     new Space(this, url)
   }
 
   def shutdown() = {
+    notifications.foreach(_.remove)
     // copied from org.xvsm.internal.tasks.ShutdownTask
-    org.xvsm.internal.EventProcessingPool.getInstance.shutdown
-    org.xvsm.internal.TimeoutSchedulerPool.shutdown
-    org.xvsm.internal.ReplySenderPool.shutdown
-    TransportHandler.getInstance().shutdown();
+    //org.xvsm.internal.EventProcessingPool.getInstance.shutdown
+    //org.xvsm.internal.TimeoutSchedulerPool.shutdown
+    //org.xvsm.internal.ReplySenderPool.shutdown
+    //TransportHandler.getInstance().shutdown();
   }
 }

@@ -56,8 +56,10 @@ public class Session extends ModelObject {
         Topic t = (Topic) e;
         if(t.equals(posting.getTopic())) {
           t.newPostings += 1;
+          t.refresh();
           Posting previous = t.getTopLevelPosting();
-          t.getPostings().add(posting);
+          if(posting.shouldAdd())
+            t.getPostings().add(posting);
           t.fireTopLevelPostingChanged(previous);
           if(sidebarViewer != null) {
             Topic selected = (Topic) ((IStructuredSelection) sidebarViewer.getSelection()).getFirstElement();
@@ -75,7 +77,9 @@ public class Session extends ModelObject {
         Topic topic = (Topic) t;
         if(topic.equals(posting.getTopic())) {
           Posting previous = topic.getTopLevelPosting();
-          topic.getPostings().add(posting);
+          topic.refresh();
+          if(posting.shouldAdd())
+            topic.getPostings().add(posting);
           topic.fireTopLevelPostingChanged(previous);
         }
       }

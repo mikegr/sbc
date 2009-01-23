@@ -32,6 +32,7 @@ class XVSMSession(val elevator: SpaceElevator, val superPeer: Space, val name: S
       val peers = tx.container("peers")
       peers.takeOne[(String, java.net.URI)](0, new KeySelector("name", localPeer.name))
     })
+    elevator.shutdown
   }
 
   def setBadWordList(seq:Seq[String]) {
