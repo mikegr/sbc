@@ -20,21 +20,19 @@ class XVSMTopic(val elevator: SpaceElevator, val session: XVSMSession, val peer:
     val container = tx.lookupOrCreateContainer(containerId, Coordinators.postings: _*)
     elevator.capi.addAspect(container.backing, scalaz.javas.List.ScalaList_JavaList(List(LocalIPoint.PreWrite)), new LocalAspect() {
       override def preWrite(p1: ContainerRef, p2: Transaction, entries: java.util.List[Entry], p4: Int, p5: Properties) = {
-        log info "aspect " + entries.get(0).toString
         entries.get(0) match {
           case t: Tuple => t.getEntryAt(2) match {
             case a: AtomicEntry[String] => a.setValue(censor(a.getValue))
           }
         }
-
-     }
+      }
     })
   })
 
   def censor(content: String) = {
-   var censored = content
-   for(badword <- session.badwords)
-     censored = censored.replace(badword, "ZENSUR")
+    var censored = content
+    for (badword <- session.badwords)
+      censored = censored.replace(badword, "ZENSUR")
     censored
   }
 
@@ -50,11 +48,11 @@ class XVSMTopic(val elevator: SpaceElevator, val session: XVSMSession, val peer:
         }
       }).toList
       val pmap = Map(postings.map(posting => (posting.uuid, posting)): _*)
-      for(posting <- postings if posting.parentUUID!=null) {
+      for (posting <- postings if posting.parentUUID != null) {
         val parent = pmap(posting.parentUUID)
         parent._replies = posting :: parent._replies
       }
-      postings = postings.filter(_.parentUUID==null)
+      postings = postings.filter(_.parentUUID == null)
       log debug containerId + " " + postingTupels.mkString
       log info "Refreshed"
       postings
