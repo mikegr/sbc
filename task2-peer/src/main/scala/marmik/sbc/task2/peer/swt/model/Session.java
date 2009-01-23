@@ -3,10 +3,12 @@ package marmik.sbc.task2.peer.swt.model;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.slf4j.Logger;
 
 import java.util.List;
 
 public class Session extends ModelObject {
+  private static Logger log = org.slf4j.LoggerFactory.getLogger(Session.class);
   private marmik.sbc.task2.peer.Session backing;
   private WritableList peers;
   private WritableList sidebar;
@@ -67,6 +69,7 @@ public class Session extends ModelObject {
       }
     }
     for(Object p : peers) {
+      log.debug(p.toString());
       Peer peer = (Peer) p;
       for(Object t : peer.getTopics()) {
         Topic topic = (Topic) t;

@@ -6,6 +6,10 @@ import org.xvsm.selectors._
 object Coordinators {
   def peers: Array[org.xvsm.interfaces.ICoordinator] =
     Array(new RandomCoordinator, new KeyCoordinator(new KeyCoordinator.KeyType("name", classOf[String])))
+
   def topics: Array[org.xvsm.interfaces.ICoordinator] =
     Array(new RandomCoordinator, new KeyCoordinator(new KeyCoordinator.KeyType("name", classOf[String])))
+
+  def postings: Array[org.xvsm.interfaces.ICoordinator] =
+    Array(new RandomCoordinator, new KeyCoordinator(new KeyCoordinator.KeyType("uuid", classOf[String])))
 }

@@ -21,7 +21,7 @@ class Space(val elevator: SpaceElevator, val url: URI) {
     new Transaction(elevator, this, null)
   }
 
-  def registerNotification(container: String, operations: Seq[Operation])(func: Any => Any) = {
+  def registerNotification(container: String, operations: Seq[Operation])(func: Any => Any): Notification = {
     Thread.sleep(500)
     val listener = new NotificationListenerAdapter() {
       def handleNotificationScala(operation: Operation, entries: Array[Entry]) {
@@ -31,8 +31,9 @@ class Space(val elevator: SpaceElevator, val url: URI) {
       }
     }
     val cref = elevator.capi.lookupContainer(null, url, container);
-    elevator.capi.createNotification(cref, listener, operations.toArray: _*)
+    val notificationUrl = elevator.capi.createNotification(cref, listener, operations.toArray: _*)
     log debug "Created notification"
+    return new Notification(elevator, this, container, notificationUrl, operations, cref)
   }
 
   override def equals(that: Any) = {
