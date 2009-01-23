@@ -1,8 +1,14 @@
 package marmik.sbc.task2.peer.xvsm2
 
+
+import java.util.{Properties}
+import org.xvsm.core.{Entry, Tuple, AtomicEntry, ContainerRef}
 import marmik.xvsm._
 import marmik.sbc.task2.peer._
+
+import org.xvsm.transactions.Transaction
 import org.xvsm.selectors._
+import org.xvsm.core.aspect._
 import org.xvsm.core.notifications.Operation
 
 class XVSMTopic(val elevator: SpaceElevator, val session: XVSMSession, val peer: XVSMPeer, val name: String, var postings: List[XVSMPosting]) extends Topic {
@@ -11,8 +17,26 @@ class XVSMTopic(val elevator: SpaceElevator, val session: XVSMSession, val peer:
   val containerId = "postings" + name
   var notification1: Notification = null
   elevator.localSpace.implicitTransaction()(tx => {
-    tx.lookupOrCreateContainer(containerId, Coordinators.postings: _*)
+    val container = tx.lookupOrCreateContainer(containerId, Coordinators.postings: _*)
+    elevator.capi.addAspect(container.backing, scalaz.javas.List.ScalaList_JavaList(List(LocalIPoint.PreWrite)), new LocalAspect() {
+      override def preWrite(p1: ContainerRef, p2: Transaction, entries: java.util.List[Entry], p4: Int, p5: Properties) = {
+        log info "aspect " + entries.get(0).toString
+        entries.get(0) match {
+          case t: Tuple => t.getEntryAt(2) match {
+            case a: AtomicEntry[String] => a.setValue(censor(a.getValue))
+          }
+        }
+
+     }
+    })
   })
+
+  def censor(content: String) = {
+   var censored = content
+   for(badword <- session.badwords)
+     censored = censored.replace(badword, "ZENSUR")
+    censored
+  }
 
 
   override def refresh() {

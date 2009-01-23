@@ -39,7 +39,7 @@ sealed class SpaceElevator(private val initialPort: Int) {
   cm.setStringSetting("TcpJava.uri", "tcpjava://localhost:" + initialPort) // set the port. FUCK XVSM DEVS!
   log info "Created XVSM configuration with port " + initialPort
 
-  private[xvsm] val capi = new Capi() // BLACK MAGIC
+  val capi = new Capi() // BLACK MAGIC
   private val transportHandler = TransportHandler.getInstance
   log info "Created Capi, available at " + url
 

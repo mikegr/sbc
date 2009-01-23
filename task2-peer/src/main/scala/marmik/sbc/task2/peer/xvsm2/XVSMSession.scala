@@ -12,6 +12,7 @@ class XVSMSession(val elevator: SpaceElevator, val superPeer: Space, val name: S
   var localPeer: XVSMPeer = new XVSMPeer(elevator, this, (name, elevator.localSpace.url))
   var listeners: ListBuffer[Listener] = new ListBuffer()
   var peers: ListBuffer[Peer] = new ListBuffer[Peer]()
+  var badwords: List[String] = List()
   peers.appendAll(superPeer.transaction().apply(tx => {
     val peersContainer = tx.container("peers")
     peersContainer.read[(String, java.net.URI)](0, new RandomSelector(Selector.CNT_ALL))
@@ -52,12 +53,10 @@ class XVSMSession(val elevator: SpaceElevator, val superPeer: Space, val name: S
   }
 
   def setBadWordList(seq: Seq[String]) {
-    throw new UnsupportedOperationException("setBadWordList not implemented")
+    badwords = seq.toList
   }
 
-  def getBadWordList(): Seq[String] = {
-    throw new UnsupportedOperationException("getBadWordList not implemented")
-  }
+  def getBadWordList(): Seq[String] = badwords
 
   override def hashCode = elevator.hashCode
 
