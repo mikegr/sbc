@@ -10,4 +10,6 @@ trait Topic {
 
   def createPosting(author:String, subject:String, content:String):Posting;
 
+  def refresh() { /* NIL */ }
+
 }

@@ -18,7 +18,6 @@ class XVSMSessionFactory extends SessionFactory {
     })
     elevator.localSpace.implicitTransaction()(tx => {
       tx.createContainer("topics", Coordinators.topics: _*)
-      tx.createContainer("postings", Coordinators.postings: _*)
     })
     log info "Logged in"
 

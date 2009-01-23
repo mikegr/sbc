@@ -64,13 +64,23 @@ class Container(val elevator: SpaceElevator, val tx: Transaction, val backing: o
     writeRaw(timeout, Container.dynamicToXVSMEntry(entry, selector))
   }
 
+  def write(timeout: Int, entry: Any, selectors: List[org.xvsm.selectors.Selector]): Unit = {
+    val netEntry = Container.toXVSMEntry(entry)
+    netEntry.setSelectors(ListZ.ScalaList_JavaList(selectors))
+    writeRaw(timeout, netEntry)
+  }
+
   def write(timeout: Int, entry: Any): Unit = {
     writeRaw(timeout, Container.dynamicToXVSMEntry(entry, null))
   }
 
 
   def read[T](timeout: Int, selector: org.xvsm.selectors.Selector): Seq[T] = {
-    readRaw(timeout, selector).map(Container.fromXVSMEntry[T](_))
+    try {
+      readRaw(timeout, selector).map(Container.fromXVSMEntry[T](_))
+    } catch {
+      case e: org.xvsm.internal.exceptions.CountNotMetException => Nil
+    }
   }
 
   def readOne[T](timeout: Int, selector: org.xvsm.selectors.Selector): Option[T] = {

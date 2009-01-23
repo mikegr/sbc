@@ -129,6 +129,7 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
         if (d.isModified()) {
           Topic t = (Topic) topicSelection.getValue();
           t.createPosting(d.getSubject(), d.getContent());
+          t.refresh();
         }
       }
     });
@@ -216,6 +217,7 @@ public class PeerWindow extends org.eclipse.jface.window.ApplicationWindow {
           postingComposite.setInput(null); // TODO: Delegate that to databinding
           Topic t = (Topic) selection.getFirstElement();
           if (t != null) {
+            t.refresh();
             t.resetNewPostings();
             tableViewer.refresh(true);
             subscribeButton.setText(t.isSubscribed() ? "Unsubscribe" : "Subscribe");
