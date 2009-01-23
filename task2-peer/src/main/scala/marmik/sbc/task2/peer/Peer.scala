@@ -11,4 +11,9 @@ trait Peer {
     this == session().localPeer
   }
   def hashCode(): Int;
+
+  override def equals(other: Any) = other match {
+    case p: Peer => p.name == this.name
+    case _ => false
+  }
 }

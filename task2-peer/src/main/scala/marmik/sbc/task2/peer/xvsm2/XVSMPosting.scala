@@ -6,6 +6,7 @@ import marmik.sbc.task2.peer._
 
 import java.util.GregorianCalendar
 import org.xvsm.selectors.{RandomSelector, KeySelector}
+
 class XVSMPosting(elevator: SpaceElevator, peer: XVSMPeer, val _topic: XVSMTopic, var _author: String, var _subject: String, var _content: String, var _replies: List[Posting], val uuid: String, val parentUUID: String) extends Posting {
   def topic(): Topic = _topic
 
@@ -33,5 +34,10 @@ class XVSMPosting(elevator: SpaceElevator, peer: XVSMPeer, val _topic: XVSMTopic
     })
   }
 
-  def edit(newContent: String) = null
+  def edit(newContent: String) = peer.space.transaction()(tx => {
+    _content = newContent
+    val postingContainer = tx.container(_topic.containerId)
+    postingContainer.takeOne[(String, String, String, String, String)](0, new KeySelector("uuid", uuid))
+    postingContainer.write(0, (_author, _subject, _content, uuid, parentUUID), new KeySelector("uuid", uuid))
+  })
 }
